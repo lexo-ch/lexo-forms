@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: LEXO Forms\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-31 22:45+0000\n"
-"PO-Revision-Date: 2025-11-03 20:38+0000\n"
+"PO-Revision-Date: 2025-11-03 20:56+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -148,6 +148,10 @@ msgstr "CleverReach-Formularfehler"
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:533
 msgid "CleverReach Form ID"
 msgstr "CleverReach-Formular-ID"
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:412
+msgid "CleverReach Form Information"
+msgstr "CleverReach Formularinformationen"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:85
 msgid "CleverReach Forms management"
@@ -467,10 +471,6 @@ msgstr "Das Formular wurde mit CleverReach verbunden (Formular-ID: %s)."
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:454
 msgid "Form ID:"
 msgstr "Formular-ID:"
-
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:412
-msgid "Form Information"
-msgstr "Formularinformationen"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:229
 msgid "Form Shortcode"

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LEXO Forms\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-03 20:37+0000\n"
+"POT-Creation-Date: 2025-11-03 20:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -132,6 +132,10 @@ msgstr ""
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:533
 msgid "CleverReach Form ID"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:412
+msgid "CleverReach Form Information"
 msgstr ""
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:85
@@ -434,10 +438,6 @@ msgstr ""
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:454
 msgid "Form ID:"
-msgstr ""
-
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:412
-msgid "Form Information"
 msgstr ""
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:229
