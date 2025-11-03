@@ -1,0 +1,891 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LEXO Forms\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-03 09:02+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.8.0; wp-6.8.3; php-8.2.10\n"
+"X-Domain: lexoforms"
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:265
+#, php-format
+msgid "[%s] CleverReach Submission Failed - %s"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:349
+#, php-format
+msgid "[%s] Partial Form Submission Failure - %s (%s Failed)"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:347
+msgid ""
+"A form with this name already exists. Do you want to use the existing form "
+"instead?"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:348
+msgid ""
+"A group with this name already exists. Do you want to use the existing group "
+"instead?"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:154
+msgid ""
+"Add email addresses to receive form submissions. If empty, theme defaults "
+"will be used."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:61
+msgid "Add New"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:62
+msgid "Add New Form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:160
+msgid "Add Recipient"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:81
+msgid ""
+"After saving the settings, click the button below to connect to CleverReach:"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:33
+msgid "API Configurations"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:90
+msgid "API token is active and ready to use."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:308
+msgid "Attachment"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:67
+msgid "Auto Generate"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Editor/FormsToolbar.php:135
+msgid "Cancel"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:96
+msgid "Captcha validation failed. Please try again."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:70
+msgid ""
+"Choose how to handle form submissions - email notifications and/or "
+"CleverReach sync."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:388
+msgid "Choose whether to use an existing CleverReach form or create a new one."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:447
+msgid ""
+"Choose whether to use an existing CleverReach group or create a new one."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:564
+msgid ""
+"CleverReach API connection is not established. Please connect to CleverReach "
+"first."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:30
+msgid "CleverReach API Settings"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:365
+msgid "CleverReach Configuration"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:181
+msgid "CleverReach Connection Error:"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:336
+msgid "CleverReach Connection Required!"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:164
+msgid "CleverReach Connection Successful!"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:646
+msgid "CleverReach Form Error"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:533
+msgid "CleverReach Form ID"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:84
+msgid "CleverReach Forms management"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:544
+msgid "CleverReach Group ID"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:364
+msgid "CleverReach integration failed, but email was sent successfully."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:74
+msgid "CleverReach Only"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:149
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:164
+msgid "CleverReach Settings"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:274
+msgid "CleverReach Submission Failed"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:290
+msgid "Click to copy"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:42
+msgid "Client ID"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/CleverReachAuth.php:115
+msgid "Client ID or Client Secret are not configured"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:51
+msgid "Client Secret"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:106
+msgid "Configure fallback behavior when CleverReach integration fails"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:80
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:83
+msgid "Connect to CleverReach"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:258
+msgid "Connected"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:390
+msgid "Connection failed - check token"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:417
+msgid "Connection has been terminated"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:385
+msgid "Connection is successful!"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:522
+msgid "Connection Status"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:379
+msgid ""
+"Connection to CleverReach will be established automatically when you save "
+"this form."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/template-forms/contact.php:6
+msgid "Contact Form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:288
+msgid "Content of the email sent to the visitor."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:257
+msgid "Copy Shortcode"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:137
+msgid "Copy the Client ID and Client Secret into the fields above"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:69
+msgid ""
+"Copy this URL into your CleverReach App settings. Use \"Auto Generate\" for "
+"default setup or enter custom URL."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:385
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:191
+msgid "CR Form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:444
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:192
+msgid "CR Group"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:339
+msgid "CR Integration"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:190
+msgid "CR Status"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:135
+msgid "Create a new application or use an existing one"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:392
+msgid "Create New CR Form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:451
+msgid "Create New CR Group"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:525
+msgid "Current CleverReach connection status."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:194
+msgid "Date"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:281
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:376
+msgid "Date:"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:223
+msgid "Disabled"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:96
+msgid "Disconnect"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:64
+msgid "Edit Form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:164
+msgid "Email"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:67
+msgid "Email & Integration Method"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:75
+msgid "Email + CleverReach"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:197
+msgid ""
+"Email address to send from. If empty, email from theme settings will be used."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:250
+msgid ""
+"Email address to send visitor email from. If empty, form sender email will "
+"be used."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:105
+msgid "Email Backup Settings"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:141
+msgid "Email Configuration"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:366
+msgid "Email notification failed, but CleverReach integration succeeded."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:73
+msgid "Email Notification Only"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:151
+msgid "Email Recipients"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:115
+msgid "Email Settings"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:184
+msgid "Email Subject"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:222
+msgid "Enabled"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:428
+msgid "Enter a name for the new CleverReach form."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:501
+msgid "Enter a name for the new CleverReach group."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:47
+msgid "Enter your CleverReach Client ID"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:56
+msgid "Enter your CleverReach Client Secret"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:256
+msgid "Error"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:590
+#, php-format
+msgid "Error checking CleverReach group (ID: %d): %s"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/CleverReachAuth.php:142
+msgid "Error communicating with CleverReach"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:95
+msgid "Error Message"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:275
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:370
+msgid "Error:"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:396
+msgid "Error: "
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:150
+msgid "Error: Form ID is required."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:163
+msgid "Error: Form not found."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:176
+msgid "Error: Form template not configured."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:189
+msgid "Error: Template not found."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:260
+msgid "Failed to determine or create form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:273
+msgid "Failed to get group ID from form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:83
+msgid "Failed to send email"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:114
+msgid "Fallback Admin Email"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:237
+msgid "Fallback email settings have been successfully saved."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:288
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:383
+msgid "Field"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:58
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:60
+msgid "Form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:563
+msgid "Form Configuration"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:165
+#, php-format
+msgid "Form has been connected to CleverReach (Form ID: %s)."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:280
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:375
+msgid "Form ID:"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:277
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:372
+msgid "Form Information"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:228
+msgid "Form Shortcode"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:137
+msgid "Form submission failed due to validation. Please try again."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:82
+#, php-format
+msgid "Form submitted from: %s"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:279
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:374
+msgid "Form:"
+msgstr ""
+
+#. Parent slug
+#. Page title
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Editor/FormsToolbar.php:130
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:57
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:59
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:66
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:126
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:127
+msgid "Forms"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:31
+msgid "General"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:41
+msgid "General Configuration"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:134
+msgid "Go to"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:51
+msgid "HTML Form Template"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:189
+msgid "HTML Template"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://github.com/lexo-ch/lexo-forms/"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://www.lexo.ch"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:136
+msgid "In the application settings add Redirect URI:"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Editor/FormsToolbar.php:134
+msgid "Insert"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:110
+#, php-format
+msgid "Invalid email format in field: %s"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/CleverReachAuth.php:91
+msgid "Invalid OAuth state. Please try connecting again."
+msgstr ""
+
+#. Name of the plugin
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:150
+msgid "LEXO Forms"
+msgstr ""
+
+#. Description of the plugin
+msgid "LEXO forms plugin with CleverReach integration."
+msgstr ""
+
+#. Author of the plugin
+msgid "LEXO GmbH"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:87
+msgid ""
+"Message displayed when form is submitted successfully. If empty, default "
+"message will be used."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:98
+msgid ""
+"Message displayed when form submission fails. If empty, default error "
+"message will be used."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Handlers/CRSyncHandler.php:41
+msgid "Missing post ID"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:207
+msgid "Name to send from. If empty, site name will be used."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:269
+msgid ""
+"Name to send visitor email from. If empty, form sender name will be used."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:63
+msgid "New Form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:425
+msgid "New Form Name"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:498
+msgid "New Group Name"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/template-forms/newsletter.php:6
+msgid "Newsletter Subscription"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:595
+msgid ""
+"No CleverReach group selected. Please select a group for form submissions."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:202
+msgid "No fields configured for this form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:70
+msgid "No forms found in Trash."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Editor/FormsToolbar.php:136
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:69
+msgid "No forms found."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:350
+msgid "No, create new"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:528
+msgid "Not connected"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:361
+msgid "One system failed:"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:311
+msgid ""
+"Optional document to attach to the visitor email. Maximum file size: 20MB."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:68
+msgid "Parent Forms:"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:359
+msgid "Partial Form Submission Failure"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:261
+msgid "Pending Setup"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:183
+msgid "Please check your form configuration and try saving again."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Editor/FormsToolbar.php:137
+msgid "Please select a form first."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:60
+msgid "Redirect URI"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:216
+#, php-format
+msgid "Required fields are missing: %s"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:127
+msgid "Save Fallback Email"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:75
+msgid "Save Settings"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:138
+msgid "Save the settings and click \"Connect to CleverReach\""
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:67
+msgid "Search Forms"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Editor/FormsToolbar.php:131
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Editor/FormsToolbar.php:132
+msgid "Select a form:"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:403
+msgid ""
+"Select an existing CleverReach form. The group connected to this form will "
+"be used automatically."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:471
+msgid "Select an existing CleverReach group."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:400
+msgid "Select Existing Form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:468
+msgid "Select Existing Group"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:54
+msgid "Select HTML form template."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:588
+msgid ""
+"Selected CleverReach group (ID: %d) does not exist or was deleted. Please "
+"select a valid group."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:582
+msgid ""
+"Selected CleverReach group (ID: %d) does not exist. Please select a valid "
+"group."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:217
+msgid "Send an email to the person who submitted the form."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:214
+msgid "Send Email to Visitor"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:194
+msgid "Sender Email"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:204
+msgid "Sender Name"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:165
+msgid "Settings"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:132
+msgid "Setup Instructions"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:193
+msgid "Shortcode"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:70
+msgid "Sorry, there was an error sending your message. Please try again."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:187
+msgid ""
+"Subject line for notification emails. If empty, default subject will be used."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:231
+msgid "Subject line for the email sent to the visitor."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:284
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:379
+msgid "Submitted Data"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:84
+msgid "Success Message"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:89
+msgid "Successfully connected to CleverReach"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/CleverReachAuth.php:161
+msgid "Successfully connected to CleverReach!"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:235
+msgid "Template not found"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:94
+msgid "Test Connection"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:124
+msgid "Thank you for your message"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:402
+msgid ""
+"The form submission was successful from the user's perspective (added to "
+"CleverReach), but the email notification failed. You may not have received "
+"the standard notification email."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:400
+msgid ""
+"The form submission was successful from the user's perspective (email was "
+"sent), but the CleverReach integration failed. You may need to manually add "
+"this contact to CleverReach."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:536
+msgid "The ID of the connected CleverReach form."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:547
+msgid "The ID of the connected CleverReach group."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:206
+#, php-format
+msgid "The settings for the %s have been successfully saved."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:247
+msgid "This email address is already subscribed."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:303
+msgid ""
+"This email was sent because CleverReach integration failed. Please review "
+"the error and try to resubmit the data manually if needed."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:337
+msgid ""
+"This form is not connected to CleverReach. Please click the \"Connect to "
+"CleverReach\" button below and complete the setup before using this form."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:370
+msgid "Token could not be obtained or refreshed"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/CleverReachAuth.php:168
+msgid "Unknown error while obtaining token"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:391
+msgid "Use Existing CR Form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:450
+msgid "Use Existing CR Group"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:249
+msgid "Use this shortcode to display the form:"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:289
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Services/FormEmailService.php:384
+msgid "Value"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:65
+msgid "View Form"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:285
+msgid "Visitor Email Content"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:247
+msgid "Visitor Email Sender"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:266
+msgid "Visitor Email Sender Name"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:228
+msgid "Visitor Email Subject"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:234
+msgid ""
+"We encountered an issue submitting your information. Our team has been "
+"notified and will contact you shortly."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:120
+msgid ""
+"When CleverReach submission fails, form data will be sent to this email "
+"address. If empty, it will use the site admin email:"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:349
+msgid "Yes, use existing"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:184
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:224
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:361
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:410
+msgid "You do not have permission for this action"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:57
+msgid "Your message has been sent successfully. Thank you!"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:539
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:550
+msgid "—"
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Editor/FormsToolbar.php:133
+msgid "— Select a form —"
+msgstr ""

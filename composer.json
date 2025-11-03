@@ -1,0 +1,33 @@
+{
+    "name": "lexo/lexo-forms",
+    "description": "LEXO forms plugin with CleverReach integration.",
+    "version": "1.0.0",
+    "homepage": "https://www.lexo.ch/",
+    "license": "GPL-2.0-only",
+    "authors": [
+        {
+            "name": "LEXO GmbH",
+            "email": "websupport@lexo.ch"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "LEXO\\LF\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=7.4.1"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.7"
+    },
+    "config": {
+        "autoloader-suffix": "LexoForms"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "npm install",
+            "npx mix build"
+        ]
+    }
+}

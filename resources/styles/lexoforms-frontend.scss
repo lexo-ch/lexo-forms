@@ -1,0 +1,32 @@
+.grid-view {
+    display: grid;
+    gap: 1rem;
+    width: 100%;
+}
+
+.grid-view-1-columns {
+    grid-template-columns: 1fr;
+}
+
+.grid-view-2-columns {
+    grid-template-columns: repeat(2, 1fr);
+
+    > .form-field:has(textarea) {
+        grid-column: 1 / -1;
+    }
+}
+
+.grid-view-3-columns {
+    grid-template-columns: repeat(3, 1fr);
+
+    > .form-field:has(textarea) {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-view-2-columns,
+    .grid-view-3-columns {
+        grid-template-columns: 1fr;
+    }
+}
