@@ -120,6 +120,12 @@ class CleverReachSubmissionService extends Singleton
 
             $group_id = $cr_form['data']['customer_tables_id'];
             $allow_multiple_signup = $this->isMultipleSignupEnabled($cr_form['data'] ?? []);
+            $allow_multiple_signup = apply_filters(
+                'lexo_cr_allow_multiple_signup',
+                $allow_multiple_signup,
+                $cr_form['data'] ?? [],
+                $cr_form_id
+            );
 
             $group_details = $this->api->getGroup($group_id);
 
@@ -167,15 +173,30 @@ class CleverReachSubmissionService extends Singleton
 
             if ($result) {
                 if ($send_double_opt_in) {
-                    $double_opt_in_result = $this->api->sendDoubleOptInEmail($group_id, $email, $cr_form_id);
+                    $allow_failure = $allow_multiple_signup && $recipient_status === 'activated';
+                    try {
+                        $double_opt_in_result = $this->api->sendDoubleOptInEmail($group_id, $email, $cr_form_id);
 
-                    if (
-                        !$double_opt_in_result['success']
-                        || $double_opt_in_result['http_code'] < 200
-                        || $double_opt_in_result['http_code'] >= 300
-                    ) {
-                        Logger::apiError('Failed to send double opt-in email for: ' . $email);
-                        return ['success' => false, 'already_exists' => false, 'error' => 'Failed to send double opt-in email'];
+                        $double_opt_in_success = (
+                            $double_opt_in_result['success']
+                            && $double_opt_in_result['http_code'] >= 200
+                            && $double_opt_in_result['http_code'] < 300
+                        );
+
+                        if (!$double_opt_in_success) {
+                            if ($allow_failure) {
+                                Logger::warning('Double opt-in email skipped for already activated recipient: ' . $email, Logger::CATEGORY_API);
+                            } else {
+                                Logger::apiError('Failed to send double opt-in email for: ' . $email);
+                                return ['success' => false, 'already_exists' => false, 'error' => 'Failed to send double opt-in email'];
+                            }
+                        }
+                    } catch (Exception $e) {
+                        if ($allow_failure) {
+                            Logger::warning('Double opt-in email failed but ignored for already activated recipient: ' . $email . '. Error: ' . $e->getMessage(), Logger::CATEGORY_API);
+                        } else {
+                            throw $e;
+                        }
                     }
                 }
 
@@ -317,6 +338,22 @@ class CleverReachSubmissionService extends Singleton
             foreach ($data as $key => $value) {
                 if ($enabled) {
                     return;
+                }
+
+                if (is_string($key)) {
+                    $normalizedKey = strtolower($key);
+                    if (
+                        strpos($normalizedKey, 'multiple_signup') !== false
+                        || strpos($normalizedKey, 'allow_multiple') !== false
+                    ) {
+                        if (is_string($value)) {
+                            $value = strtolower($value);
+                            $enabled = in_array($value, ['1', 'true', 'yes', 'on', 'enabled'], true);
+                        } else {
+                            $enabled = (bool) $value;
+                        }
+                        continue;
+                    }
                 }
 
                 if ($key === 'multiple_signup') {
