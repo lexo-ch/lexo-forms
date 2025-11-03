@@ -61,7 +61,7 @@ class FormEmailService extends EmailHandler
         ?>
             <table>
                 <tr>
-                    <td colspan='2' style="padding-bottom: 15px;"><b><?php echo esc_html(FormHelpers::getTemplateName($template['name'] ?? '', $form_id)); ?></b></td>
+                    <td colspan='2' style="padding-bottom: 15px;"><b><?php echo esc_html($this->getTemplateNameForEmail($template['name'] ?? '')); ?></b></td>
                 </tr>
                 
                 <?php foreach ($template['fields'] as $field_config) { ?>
@@ -92,6 +92,31 @@ class FormEmailService extends EmailHandler
         <?php
 
         return ob_get_clean();
+    }
+
+    /**
+     * Get template name for email using site language
+     *
+     * @param string|array $name Template name (string or multilingual array)
+     * @return string Translated name
+     */
+    private function getTemplateNameForEmail($name): string
+    {
+        // If already a string, return as-is
+        if (is_string($name)) {
+            return $name;
+        }
+
+        // If not an array, return empty string
+        if (!is_array($name)) {
+            return '';
+        }
+
+        // Get site language for admin emails
+        $language = FormMessages::getSiteLanguage();
+
+        // Try current language, fallback to 'de', then first available
+        return $name[$language] ?? $name['de'] ?? reset($name);
     }
 
     /**
@@ -243,6 +268,26 @@ class FormEmailService extends EmailHandler
     }
 
     /**
+     * Convert front-end error message to admin version (site locale)
+     *
+     * @param string $error_message Front-end error message
+     * @return string Admin-friendly error message in site locale
+     */
+    private function convertErrorMessageForAdmin(string $error_message): string
+    {
+        // Check if this is the "already subscribed" message and convert to admin version
+        // We need to check against the form locale version to detect it
+        $frontEndAlreadySubscribed = FormMessages::getAlreadySubscribedMessage();
+
+        if ($error_message === $frontEndAlreadySubscribed) {
+            return FormMessages::getAlreadySubscribedMessageForAdmin();
+        }
+
+        // For other messages, return as-is (they should already be in site locale)
+        return $error_message;
+    }
+
+    /**
      * Send failure notification to admin when form submission fails completely
      *
      * @param int $form_id
@@ -261,6 +306,9 @@ class FormEmailService extends EmailHandler
         if (empty($admin_email)) {
             return false;
         }
+
+        // Convert error message to admin version (site locale)
+        $error_message = $this->convertErrorMessageForAdmin($error_message);
 
         $site_name = get_bloginfo('name');
         $form_title = get_the_title($form_id);
@@ -340,6 +388,9 @@ class FormEmailService extends EmailHandler
         if (empty($admin_email)) {
             return false;
         }
+
+        // Convert error message to admin version (site locale)
+        $error_message = $this->convertErrorMessageForAdmin($error_message);
 
         $site_name = get_bloginfo('name');
         $form_title = get_the_title($form_id);

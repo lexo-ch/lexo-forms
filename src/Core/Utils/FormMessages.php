@@ -197,7 +197,7 @@ class FormMessages
     }
 
     /**
-     * Get already subscribed message
+     * Get already subscribed message (for front-end display)
      *
      * @return string
      */
@@ -208,6 +208,20 @@ class FormMessages
         });
 
         return apply_filters('lexo-forms/cr/messages/already-subscribed', $message);
+    }
+
+    /**
+     * Get already subscribed message for admin notifications (uses site locale)
+     *
+     * @return string
+     */
+    public static function getAlreadySubscribedMessageForAdmin(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('This email address is already subscribed.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/messages/already-subscribed-admin', $message);
     }
 
     /**
