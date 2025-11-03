@@ -30,6 +30,17 @@ class SettingsPage
             <h1><?php echo __('CleverReach API Settings', 'lexoforms'); ?></h1>
 
             <div class="card">
+                <h2><?php echo __('Setup Instructions', 'lexoforms'); ?></h2>
+                <ol>
+                    <li><?php echo __('Go to', 'lexoforms'); ?> <a href="https://www.cleverreach.com/de/login/" target="_blank">CleverReach</a></li>
+                    <li><?php echo __('Create a new application or use an existing one', 'lexoforms'); ?></li>
+                    <li><?php echo __('In the application settings add Redirect URI:', 'lexoforms'); ?> <code><?php echo esc_html($auth->getDefaultRedirectUri()); ?></code></li>
+                    <li><?php echo __('Copy the Client ID and Client Secret into the fields above', 'lexoforms'); ?></li>
+                    <li><?php echo __('Save the settings and click "Connect to CleverReach"', 'lexoforms'); ?></li>
+                </ol>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
                 <h2><?php echo __('API Configurations', 'lexoforms'); ?></h2>
 
                 <?php if (!$isConnected) { ?>
@@ -126,17 +137,6 @@ class SettingsPage
 
                     <?php submit_button(__('Save Fallback Email', 'lexoforms')); ?>
                 </form>
-            </div>
-
-            <div class="card" style="margin-top: 20px;">
-                <h2><?php echo __('Setup Instructions', 'lexoforms'); ?></h2>
-                <ol>
-                    <li><?php echo __('Go to', 'lexoforms'); ?> <a href="https://www.cleverreach.com/de/login/" target="_blank">CleverReach</a></li>
-                    <li><?php echo __('Create a new application or use an existing one', 'lexoforms'); ?></li>
-                    <li><?php echo __('In the application settings add Redirect URI:', 'lexoforms'); ?> <code><?php echo esc_html($auth->getDefaultRedirectUri()); ?></code></li>
-                    <li><?php echo __('Copy the Client ID and Client Secret into the fields above', 'lexoforms'); ?></li>
-                    <li><?php echo __('Save the settings and click "Connect to CleverReach"', 'lexoforms'); ?></li>
-                </ol>
             </div>
         </div>
         <?php
