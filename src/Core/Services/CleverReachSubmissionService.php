@@ -120,22 +120,6 @@ class CleverReachSubmissionService extends Singleton
 
             $group_id = $cr_form['data']['customer_tables_id'];
             $allow_multiple_signup = $this->isMultipleSignupEnabled($cr_form['data'] ?? []);
-            $allow_multiple_signup = apply_filters(
-                'lexo_cr_allow_multiple_signup',
-                $allow_multiple_signup,
-                $cr_form['data'] ?? [],
-                $cr_form_id
-            );
-            Logger::debug(
-                'CleverReach form multiple signup detection',
-                Logger::CATEGORY_API,
-                [
-                    'form_id' => $cr_form_id,
-                    'group_id' => $group_id,
-                    'allow_multiple_signup' => $allow_multiple_signup,
-                    'form_response' => $this->formatFormDebugData($cr_form['data'] ?? [])
-                ]
-            );
 
             $group_details = $this->api->getGroup($group_id);
 
@@ -165,15 +149,6 @@ class CleverReachSubmissionService extends Singleton
                     if ($allow_multiple_signup) {
                         $result = $this->updateExistingRecipient($group_id, $email, $recipient_data);
                         $send_double_opt_in = true;
-                        Logger::debug(
-                            'Multiple signup enabled, updating activated recipient',
-                            Logger::CATEGORY_API,
-                            [
-                                'email' => $email,
-                                'form_id' => $cr_form_id,
-                                'group_id' => $group_id
-                            ]
-                        );
                     } else {
                         Logger::warning('Recipient already activated: ' . $email, Logger::CATEGORY_API);
                         return ['success' => false, 'already_exists' => true, 'error' => 'Recipient already activated'];
@@ -192,77 +167,25 @@ class CleverReachSubmissionService extends Singleton
 
             if ($result) {
                 if ($send_double_opt_in) {
-                    $allow_failure = $allow_multiple_signup && $recipient_status === 'activated';
-                    try {
-                        $double_opt_in_result = $this->api->sendDoubleOptInEmail($group_id, $email, $cr_form_id);
+                    $double_opt_in_result = $this->api->sendDoubleOptInEmail($group_id, $email, $cr_form_id);
 
-                        Logger::debug(
-                            'Double opt-in API response',
-                            Logger::CATEGORY_API,
-                            [
-                                'email' => $email,
-                                'form_id' => $cr_form_id,
-                                'group_id' => $group_id,
-                                'http_code' => $double_opt_in_result['http_code'] ?? null,
-                                'success' => $double_opt_in_result['success'] ?? null,
-                                'data' => $this->formatFormDebugData($double_opt_in_result['data'] ?? [])
-                            ]
-                        );
-
-                        $double_opt_in_success = (
-                            $double_opt_in_result['success']
-                            && $double_opt_in_result['http_code'] >= 200
-                            && $double_opt_in_result['http_code'] < 300
-                        );
-
-                        if (!$double_opt_in_success) {
-                            if ($allow_failure) {
-                                Logger::warning('Double opt-in email skipped for already activated recipient: ' . $email, Logger::CATEGORY_API);
-                            } else {
-                                Logger::apiError('Failed to send double opt-in email for: ' . $email);
-                                return ['success' => false, 'already_exists' => false, 'error' => 'Failed to send double opt-in email'];
-                            }
-                        }
-                    } catch (Exception $e) {
-                        if ($allow_failure) {
-                            Logger::warning('Double opt-in email failed but ignored for already activated recipient: ' . $email . '. Error: ' . $e->getMessage(), Logger::CATEGORY_API);
-                        } else {
-                            Logger::apiError(
-                                'Double opt-in API exception for: ' . $email . ' - ' . $e->getMessage()
-                            );
-                            return ['success' => false, 'already_exists' => false, 'error' => 'Failed to send double opt-in email: ' . $e->getMessage()];
-                        }
+                    if (
+                        !$double_opt_in_result['success']
+                        || $double_opt_in_result['http_code'] < 200
+                        || $double_opt_in_result['http_code'] >= 300
+                    ) {
+                        Logger::apiError('Failed to send double opt-in email for: ' . $email);
+                        return ['success' => false, 'already_exists' => false, 'error' => 'Failed to send double opt-in email'];
                     }
                 }
 
                 return ['success' => true, 'already_exists' => false, 'error' => null];
             } else {
-                Logger::apiError(
-                    'CleverReach recipient add/update failed',
-                    '',
-                    '',
-                    [
-                        'result' => $result,
-                        'recipient_status' => $recipient_status,
-                        'allow_multiple_signup' => $allow_multiple_signup,
-                        'recipient_data' => $this->formatFormDebugData($recipient_data)
-                    ]
-                );
                 return ['success' => false, 'already_exists' => false, 'error' => 'Failed to add/update recipient'];
             }
 
         } catch (Exception $e) {
-            Logger::error(
-                'CleverReach submission error: ' . $e->getMessage(),
-                Logger::CATEGORY_API,
-                [
-                    'exception' => $e->getMessage(),
-                    'handler' => 'submitFormToCleverReach',
-                    'form_id' => $form_id ?? null,
-                    'cr_form_id' => $cr_form_id ?? null,
-                    'group_id' => $group_id ?? null
-                ]
-            );
+            Logger::error('CleverReach submission error: ' . $e->getMessage(), Logger::CATEGORY_API);
             return ['success' => false, 'already_exists' => false, 'error' => $e->getMessage()];
         }
     }
@@ -396,26 +319,14 @@ class CleverReachSubmissionService extends Singleton
                     return;
                 }
 
-                if (is_string($key)) {
-                    $normalizedKey = strtolower($key);
-                    if (
-                        strpos($normalizedKey, 'multiple_signup') !== false
-                        || strpos($normalizedKey, 'allow_multiple') !== false
-                        || strpos($normalizedKey, 'multi_signup') !== false
-                    ) {
-                        if (is_string($value)) {
-                            $lowerValue = strtolower($value);
-                            $enabled = in_array($lowerValue, ['1', 'true', 'yes', 'on', 'enabled'], true);
-                        } else {
-                            $enabled = (bool) $value;
-                        }
-                        if ($enabled) {
-                            return;
-                        }
+                if ($key === 'multiple_signup') {
+                    if (is_string($value)) {
+                        $value = strtolower($value);
+                        $enabled = in_array($value, ['1', 'true', 'yes', 'on'], true);
+                    } else {
+                        $enabled = (bool) $value;
                     }
-                }
-
-                if (is_array($value)) {
+                } elseif (is_array($value)) {
                     $walker($value);
                 }
             }
@@ -424,37 +335,6 @@ class CleverReachSubmissionService extends Singleton
         $walker($form_data);
 
         return $enabled;
-    }
-
-    /**
-     * Format CleverReach form data for safe debug logging
-     *
-     * @param array $form_data
-     * @return array
-     */
-    private function formatFormDebugData(array $form_data): array
-    {
-        $sanitized = [];
-
-        foreach ($form_data as $key => $value) {
-            if (is_array($value)) {
-                $sanitized[$key] = $this->formatFormDebugData($value);
-            } elseif (is_bool($value)) {
-                $sanitized[$key] = $value ? 'true' : 'false';
-            } elseif (is_scalar($value)) {
-                $stringValue = (string) $value;
-
-                if (strlen($stringValue) > 200) {
-                    $sanitized[$key] = substr($stringValue, 0, 200) . '...';
-                } else {
-                    $sanitized[$key] = $stringValue;
-                }
-            } else {
-                $sanitized[$key] = gettype($value);
-            }
-        }
-
-        return $sanitized;
     }
 
     /**
