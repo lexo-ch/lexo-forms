@@ -61,8 +61,9 @@ class FormEmailService extends EmailHandler
         ?>
             <table>
                 <tr>
-                    <td colspan='2'><b><?php echo esc_html(FormHelpers::getTemplateName($template['name'] ?? '', $form_id)); ?></b></td>
+                    <td colspan='2' style="padding-bottom: 15px;"><b><?php echo esc_html(FormHelpers::getTemplateName($template['name'] ?? '', $form_id)); ?></b></td>
                 </tr>
+                
                 <?php foreach ($template['fields'] as $field_config) { ?>
                     <?php
                     $field_name = $field_config['name'];
@@ -85,9 +86,9 @@ class FormEmailService extends EmailHandler
                 </p>
             <?php } ?>
 
-        <?php if (function_exists('get_lexo_webdata_html')) { ?>
-            <?php echo get_lexo_webdata_html() ?>
-        <?php } ?>
+            <?php if (function_exists('get_lexo_webdata_html')) { ?>
+                <?php echo get_lexo_webdata_html() ?>
+            <?php } ?>
         <?php
 
         return ob_get_clean();

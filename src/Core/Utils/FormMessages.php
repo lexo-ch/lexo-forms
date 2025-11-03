@@ -402,14 +402,14 @@ class FormMessages
     }
 
     /**
-     * Get "Form Information" heading
+     * Get "CleverReach Form Information" heading
      *
      * @return string
      */
     public static function getFormInformationHeading(): string
     {
         $message = self::translateWithSiteLocale(function () {
-            return __('Form Information', 'lexoforms');
+            return __('CleverReach Form Information', 'lexoforms');
         });
 
         return apply_filters('lexo-forms/cr/email/form-information-heading', $message);
