@@ -141,6 +141,7 @@ class CleverReachSubmissionService extends Singleton
             // Check recipient status and handle accordingly
             $email = $recipient_data['email'];
             $recipient_status = $this->getRecipientStatus($group_id, $email);
+            $send_double_opt_in = in_array($recipient_status, ['inactive', 'not_found'], true);
 
             switch ($recipient_status) {
                 case 'activated':
@@ -159,6 +160,19 @@ class CleverReachSubmissionService extends Singleton
             }
 
             if ($result) {
+                if ($send_double_opt_in) {
+                    $double_opt_in_result = $this->api->sendDoubleOptInEmail($group_id, $email, $cr_form_id);
+
+                    if (
+                        !$double_opt_in_result['success']
+                        || $double_opt_in_result['http_code'] < 200
+                        || $double_opt_in_result['http_code'] >= 300
+                    ) {
+                        Logger::apiError('Failed to send double opt-in email for: ' . $email);
+                        return ['success' => false, 'already_exists' => false, 'error' => 'Failed to send double opt-in email'];
+                    }
+                }
+
                 return ['success' => true, 'already_exists' => false, 'error' => null];
             } else {
                 return ['success' => false, 'already_exists' => false, 'error' => 'Failed to add/update recipient'];
