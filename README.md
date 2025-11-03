@@ -974,18 +974,6 @@ add_action('lexo_lf_log', function($level, $category, $message, $context) {
 
 ---
 
-## Custom Post Types
-
-### `lexo-form`
-
-Forms custom post type.
-
-- **Capabilities:** `edit_lexo-form`, `read_lexo-form`, `delete_lexo-form`, `edit_lexо-forms`, `edit_others_lexo-forms`, `publish_lexo-forms`, `read_private_lexo-forms`
-- **Supports:** `title`
-- **Menu Icon:** `dashicons-feedback`
-
----
-
 ## Changelog
 
 For detailed changelog, see [Releases](https://github.com/lexo-ch/lexo-forms/releases).
