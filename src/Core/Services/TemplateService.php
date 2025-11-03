@@ -73,12 +73,18 @@ class TemplateService extends Singleton
     }
 
     /**
-     * Get template name
+     * Get template name (raw - string or multilingual array)
+     *
+     * Returns the raw template name which can be:
+     * - string: Simple text name
+     * - array: Multilingual name (e.g., ['de' => 'Name', 'en' => 'Name'])
+     *
+     * For translated name, use FormHelpers::getTemplateName() instead
      *
      * @param string $templateId
-     * @return string|null
+     * @return string|array|null
      */
-    public function getTemplateName(string $templateId): ?string
+    public function getTemplateName(string $templateId)
     {
         $template = $this->loadTemplate($templateId);
 

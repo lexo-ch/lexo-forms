@@ -10,6 +10,7 @@ use LEXO\LF\Core\Templates\TemplateLoader;
 use LEXO\LF\Core\Notices\Notice;
 use LEXO\LF\Core\Notices\Notices;
 use LEXO\LF\Core\Utils\Logger;
+use LEXO\LF\Core\Utils\FormHelpers;
 
 use const LEXO\LF\{
     FIELD_PREFIX,
@@ -62,7 +63,7 @@ class CleverReachIntegration extends Singleton
 
         $choices = [];
         foreach ($templates as $template_id => $template) {
-            $choices[$template_id] = $template['name'];
+            $choices[$template_id] = FormHelpers::getTemplateName($template['name']);
         }
 
         $field['choices'] = $choices;

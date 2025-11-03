@@ -2,8 +2,13 @@
 
 use LEXO\LF\Core\Utils\FormHelpers;
 
-// Form name (displayed in ACF select dropdown)
-$name = __('Contact Form', 'lexoforms');
+// Form name (displayed in ACF select dropdown) - supports multilingual
+$name = [
+    'de' => 'Kontaktformular',
+    'en' => 'Contact Form',
+    'fr' => 'Formulaire de contact',
+    'it' => 'Modulo di contatto'
+];
 
 // CleverReach Group attributes (fields that must exist in CR group)
 $fields = [

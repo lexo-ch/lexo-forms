@@ -5,15 +5,48 @@ namespace LEXO\LF\Core\Utils;
 /**
  * Form Messages
  *
- * Centralized location for all default form messages.
+ * Centralized location for all default form messages with intelligent multi-language support.
  * Messages can be overridden per-form via ACF fields or via WordPress filters.
  *
- * Available Filters (General Form Messages):
+ * === TRANSLATION SYSTEM ===
+ *
+ * This class implements a dual-locale translation system:
+ *
+ * 1. Front-end Messages (translateWithFormLocale):
+ *    - Uses session language ($_SESSION['jez']) or filter 'lexo-forms/forms/language'
+ *    - Supports 15+ languages with automatic fallback to base language codes
+ *    - Used for user-facing messages (success, errors shown to visitors)
+ *
+ * 2. Admin Messages (translateWithSiteLocale):
+ *    - Uses WordPress site locale (get_locale() or WPLANG)
+ *    - Used for admin notifications, system errors, email templates
+ *    - Ensures admins see messages in their configured language
+ *
+ * Edge Cases Handled:
+ * - Invalid filter output: Falls back to session or default language
+ * - Unmapped language codes: Attempts base language extraction (e.g., "en" from "en_GB")
+ * - Missing locale installations: Logs error in WP_DEBUG mode, continues gracefully
+ * - Exception during translation: Locale is always restored via try-finally
+ *
+ * Supported Languages:
+ * - German (de, de_DE, de_CH, de_AT)
+ * - English (en, en_US, en_GB, en_CA, en_AU)
+ * - French (fr, fr_FR, fr_CA, fr_BE)
+ * - Italian (it, it_IT)
+ * - Spanish (es, es_ES, es_MX, es_AR)
+ * - Serbian (sr, sr_RS)
+ * - Croatian (hr)
+ * - Dutch, Portuguese, Polish, Russian, Japanese, Chinese, and more
+ *
+ * === AVAILABLE FILTERS ===
+ *
+ * General Form Messages:
  * - lexo-forms/forms/messages/success
  * - lexo-forms/forms/messages/email-fail
  * - lexo-forms/forms/messages/captcha-fail
  * - lexo-forms/forms/messages/invalid-email (receives $field_label as second parameter)
  * - lexo-forms/forms/messages/confirmation-email-subject
+ * - lexo-forms/forms/messages/form-submitted-from (receives $page as second parameter)
  * - lexo-forms/forms/errors/form-id-required
  * - lexo-forms/forms/errors/form-not-found
  * - lexo-forms/forms/errors/template-not-configured
@@ -21,17 +54,43 @@ namespace LEXO\LF\Core\Utils;
  * - lexo-forms/forms/errors/no-fields-configured
  * - lexo-forms/forms/errors/required-fields-missing (receives $field_list as second parameter)
  *
- * Available Filters (CleverReach Integration):
+ * CleverReach Integration:
  * - lexo-forms/cr/messages/error
  * - lexo-forms/cr/messages/already-subscribed
  * - lexo-forms/cr/errors/form-creation-failed
  * - lexo-forms/cr/errors/group-id-failed
  *
+ * Failure Notification Emails:
+ * - lexo-forms/cr/email/failure/subject (receives $site_name, $form_title)
+ * - lexo-forms/cr/email/failure/heading
+ * - lexo-forms/cr/email/failure/error-label
+ * - lexo-forms/cr/email/failure/footer
+ * - lexo-forms/cr/email/partial-failure/subject (receives $site_name, $form_title, $failed_label)
+ * - lexo-forms/cr/email/partial-failure/heading
+ * - lexo-forms/cr/email/partial-failure/one-system-failed-label
+ * - lexo-forms/cr/email/partial-failure/cr-failed-message
+ * - lexo-forms/cr/email/partial-failure/email-failed-message
+ * - lexo-forms/cr/email/partial-failure/cr-failed-footer
+ * - lexo-forms/cr/email/partial-failure/email-failed-footer
+ * - lexo-forms/cr/email/form-information-heading
+ * - lexo-forms/cr/email/submitted-data-heading
+ * - lexo-forms/cr/email/form-label
+ * - lexo-forms/cr/email/form-id-label
+ * - lexo-forms/cr/email/date-label
+ * - lexo-forms/cr/email/field-header
+ * - lexo-forms/cr/email/value-header
+ *
  * Example Usage:
  * ```php
+ * // Override a message
  * add_filter('lexo-forms/forms/messages/success', function($message) {
  *     return 'Custom success message!';
  * });
+ *
+ * // Control form language globally
+ * add_filter('lexo-forms/forms/language', function($lang, $form_id) {
+ *     return 'fr'; // Force French for all forms
+ * }, 10, 2);
  * ```
  *
  * @package LEXO\LF\Core\Utils
@@ -112,6 +171,21 @@ class FormMessages
         });
 
         return apply_filters('lexo-forms/forms/messages/confirmation-email-subject', $message);
+    }
+
+    /**
+     * Get "form submitted from" message for email body
+     *
+     * @param string $page Page URL/name where form was submitted
+     * @return string
+     */
+    public static function getFormSubmittedFromMessage(string $page): string
+    {
+        $message = self::translateWithFormLocale(function () use ($page) {
+            return sprintf(__('Form submitted from: %s', 'lexoforms'), $page);
+        });
+
+        return apply_filters('lexo-forms/forms/messages/form-submitted-from', $message, $page);
     }
 
     /**
@@ -259,22 +333,310 @@ class FormMessages
         return apply_filters('lexo-forms/cr/errors/group-id-failed', $message);
     }
 
+    // ========================================================================
+    // FAILURE NOTIFICATION MESSAGES (Admin Emails)
+    // ========================================================================
+
+    /**
+     * Get subject for complete failure notification email
+     *
+     * @param string $site_name Site name
+     * @param string $form_title Form title
+     * @return string
+     */
+    public static function getFailureNotificationSubject(string $site_name, string $form_title): string
+    {
+        $message = self::translateWithSiteLocale(function () use ($site_name, $form_title) {
+            return sprintf(__('[%s] CleverReach Submission Failed - %s', 'lexoforms'), $site_name, $form_title);
+        });
+
+        return apply_filters('lexo-forms/cr/email/failure/subject', $message, $site_name, $form_title);
+    }
+
+    /**
+     * Get heading for failure notification email
+     *
+     * @return string
+     */
+    public static function getFailureNotificationHeading(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('CleverReach Submission Failed', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/failure/heading', $message);
+    }
+
+    /**
+     * Get error label for failure notification email
+     *
+     * @return string
+     */
+    public static function getFailureNotificationErrorLabel(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('Error:', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/failure/error-label', $message);
+    }
+
+    /**
+     * Get footer message for failure notification email
+     *
+     * @return string
+     */
+    public static function getFailureNotificationFooter(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('This email was sent because CleverReach integration failed. Please review the error and try to resubmit the data manually if needed.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/failure/footer', $message);
+    }
+
+    /**
+     * Get subject for partial failure notification email
+     *
+     * @param string $site_name Site name
+     * @param string $form_title Form title
+     * @param string $failed_label Failed system label (CleverReach or Email)
+     * @return string
+     */
+    public static function getPartialFailureNotificationSubject(string $site_name, string $form_title, string $failed_label): string
+    {
+        $message = self::translateWithSiteLocale(function () use ($site_name, $form_title, $failed_label) {
+            return sprintf(__('[%s] Partial Form Submission Failure - %s (%s Failed)', 'lexoforms'), $site_name, $form_title, $failed_label);
+        });
+
+        return apply_filters('lexo-forms/cr/email/partial-failure/subject', $message, $site_name, $form_title, $failed_label);
+    }
+
+    /**
+     * Get heading for partial failure notification email
+     *
+     * @return string
+     */
+    public static function getPartialFailureNotificationHeading(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('Partial Form Submission Failure', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/partial-failure/heading', $message);
+    }
+
+    /**
+     * Get "one system failed" label
+     *
+     * @return string
+     */
+    public static function getPartialFailureOneSystemFailedLabel(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('One system failed:', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/partial-failure/one-system-failed-label', $message);
+    }
+
+    /**
+     * Get CleverReach failed but email succeeded message
+     *
+     * @return string
+     */
+    public static function getPartialFailureCleverReachFailedMessage(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('CleverReach integration failed, but email was sent successfully.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/partial-failure/cr-failed-message', $message);
+    }
+
+    /**
+     * Get email failed but CleverReach succeeded message
+     *
+     * @return string
+     */
+    public static function getPartialFailureEmailFailedMessage(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('Email notification failed, but CleverReach integration succeeded.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/partial-failure/email-failed-message', $message);
+    }
+
+    /**
+     * Get CleverReach failed footer message
+     *
+     * @return string
+     */
+    public static function getPartialFailureCleverReachFailedFooter(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('The form submission was successful from the user\'s perspective (email was sent), but the CleverReach integration failed. You may need to manually add this contact to CleverReach.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/partial-failure/cr-failed-footer', $message);
+    }
+
+    /**
+     * Get email failed footer message
+     *
+     * @return string
+     */
+    public static function getPartialFailureEmailFailedFooter(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('The form submission was successful from the user\'s perspective (added to CleverReach), but the email notification failed. You may not have received the standard notification email.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/partial-failure/email-failed-footer', $message);
+    }
+
+    /**
+     * Get "Form Information" heading
+     *
+     * @return string
+     */
+    public static function getFormInformationHeading(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('Form Information', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/form-information-heading', $message);
+    }
+
+    /**
+     * Get "Submitted Data" heading
+     *
+     * @return string
+     */
+    public static function getSubmittedDataHeading(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('Submitted Data', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/submitted-data-heading', $message);
+    }
+
+    /**
+     * Get "Form:" label
+     *
+     * @return string
+     */
+    public static function getFormLabel(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('Form:', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/form-label', $message);
+    }
+
+    /**
+     * Get "Form ID:" label
+     *
+     * @return string
+     */
+    public static function getFormIdLabel(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('Form ID:', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/form-id-label', $message);
+    }
+
+    /**
+     * Get "Date:" label
+     *
+     * @return string
+     */
+    public static function getDateLabel(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('Date:', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/date-label', $message);
+    }
+
+    /**
+     * Get "Field" table header
+     *
+     * @return string
+     */
+    public static function getFieldTableHeader(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('Field', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/field-header', $message);
+    }
+
+    /**
+     * Get "Value" table header
+     *
+     * @return string
+     */
+    public static function getValueTableHeader(): string
+    {
+        $message = self::translateWithSiteLocale(function () {
+            return __('Value', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/email/value-header', $message);
+    }
+
     /**
      * Translate using form/session locale (front-end messages).
      *
-     * @param callable():string $callback
-     * @return string
+     * Gets the language from the current form session, validates it,
+     * and maps it to a WordPress locale for translation.
+     *
+     * Edge cases handled:
+     * - Filter returns non-string value: falls back to session language
+     * - Language code is empty: falls back to 'de'
+     * - Language code not in map: returns null, uses current WP locale
+     *
+     * @param callable():string $callback Translation callback
+     * @return string Translated message
      */
     protected static function translateWithFormLocale(callable $callback): string
     {
-        return self::translateWithLocale($callback, self::mapLanguageToLocale(FormHelpers::getLanguage()));
+        $language = FormHelpers::getLanguage();
+
+        // Validate that filter didn't return invalid value
+        if (!is_string($language) || empty($language)) {
+            $language = isset($_SESSION['jez']) && is_string($_SESSION['jez']) ? $_SESSION['jez'] : 'de';
+        }
+
+        $locale = self::mapLanguageToLocale($language);
+
+        return self::translateWithLocale($callback, $locale);
     }
 
     /**
      * Translate using site locale (admin/system messages).
      *
-     * @param callable():string $callback
-     * @return string
+     * Uses the WordPress site locale (from get_locale() or WPLANG option)
+     * for translating admin notifications and system error messages.
+     *
+     * This ensures that system messages are displayed in the admin's language,
+     * regardless of the front-end user's language preference.
+     *
+     * Edge cases handled:
+     * - Site locale cannot be determined: uses current WordPress locale
+     * - Locale switch fails: logs error and continues with current locale
+     *
+     * @param callable():string $callback Translation callback that returns translated string
+     * @return string Translated message in site locale
      */
     protected static function translateWithSiteLocale(callable $callback): string
     {
@@ -284,46 +646,127 @@ class FormMessages
     /**
      * Map session language codes to WordPress locale codes.
      *
-     * @param string $language
-     * @return string|null
+     * Supports common language codes and provides fallback logic for unmapped languages.
+     * If an exact match is not found, attempts to find a partial match (e.g., "en" from "en_GB").
+     *
+     * @param string $language Language code (e.g., "de", "en", "sr", "en_GB")
+     * @return string|null WordPress locale code or null if no match found
      */
     protected static function mapLanguageToLocale(string $language): ?string
     {
         $map = [
+            // German
             'de' => 'de_DE',
+            'de_de' => 'de_DE',
+            'de_ch' => 'de_CH',
+            'de_at' => 'de_AT',
+
+            // English
             'en' => 'en_US',
-            'usca' => 'en_US',
+            'en_us' => 'en_US',
+            'en_gb' => 'en_GB',
+            'en_ca' => 'en_CA',
+            'en_au' => 'en_AU',
+            'usca' => 'en_US', // Legacy support
+
+            // French
             'fr' => 'fr_FR',
+            'fr_fr' => 'fr_FR',
+            'fr_ca' => 'fr_CA',
+            'fr_be' => 'fr_BE',
+
+            // Italian
             'it' => 'it_IT',
+            'it_it' => 'it_IT',
+
+            // Spanish
+            'es' => 'es_ES',
+            'es_es' => 'es_ES',
+            'es_mx' => 'es_MX',
+            'es_ar' => 'es_AR',
+
+            // Serbian
+            'sr' => 'sr_RS',
+            'sr_rs' => 'sr_RS',
+
+            // Croatian
+            'hr' => 'hr',
+            'hr_hr' => 'hr',
+
+            // Other common languages
+            'nl' => 'nl_NL',
+            'pt' => 'pt_PT',
+            'pt_br' => 'pt_BR',
+            'pl' => 'pl_PL',
+            'ru' => 'ru_RU',
+            'ja' => 'ja',
+            'zh' => 'zh_CN',
         ];
 
         $key = strtolower($language);
 
-        return $map[$key] ?? null;
+        // Exact match
+        if (isset($map[$key])) {
+            return $map[$key];
+        }
+
+        // Fallback: Try to extract base language code (e.g., "en" from "en-GB" or "en_GB")
+        $base_lang = strtok($key, '_-');
+        if ($base_lang && isset($map[$base_lang])) {
+            return $map[$base_lang];
+        }
+
+        // If still no match, return null (will use current WordPress locale)
+        return null;
     }
 
     /**
-     * Resolve site locale, preferring explicit site language setting.
+     * Resolve site locale for admin and system messages.
      *
-     * @return string|null
+     * Uses get_locale() as primary source (recommended for WordPress 4.0+),
+     * with WPLANG as fallback for legacy installations.
+     *
+     * Edge cases handled:
+     * - get_locale() doesn't exist: falls back to WPLANG option
+     * - Both sources empty: returns null (uses current locale)
+     * - get_locale() returns empty string: tries WPLANG
+     *
+     * @return string|null WordPress locale code (e.g., 'de_DE') or null
      */
     protected static function getSiteLocale(): ?string
     {
-        $site_locale = get_option('WPLANG');
+        // Primary: Use get_locale() which always returns the active locale
+        if (function_exists('get_locale')) {
+            $locale = get_locale();
+            if (!empty($locale)) {
+                return $locale;
+            }
+        }
 
+        // Fallback: WPLANG option (legacy WordPress < 4.0)
+        $site_locale = get_option('WPLANG');
         if (!empty($site_locale)) {
             return $site_locale;
         }
 
-        return function_exists('get_locale') ? get_locale() : null;
+        return null;
     }
 
     /**
      * Run translation callback within a specific locale context.
      *
-     * @param callable():string $callback
-     * @param string|null $locale
-     * @return string
+     * Temporarily switches WordPress to the specified locale for translation,
+     * then restores the previous locale. Logs errors if locale switching fails.
+     *
+     * Edge cases handled:
+     * - Locale is null: skips switching, uses current locale
+     * - switch_to_locale() doesn't exist: skips switching (WP < 4.7)
+     * - switch_to_locale() returns false: logs error, continues with current locale
+     * - Callback throws exception: still restores locale before re-throwing
+     *
+     * @param callable():string $callback Translation callback that returns translated string
+     * @param string|null $locale WordPress locale code (e.g., 'de_DE', 'en_US')
+     * @return string Translated message
      */
     protected static function translateWithLocale(callable $callback, ?string $locale): string
     {
@@ -331,12 +774,23 @@ class FormMessages
 
         if ($locale && function_exists('switch_to_locale')) {
             $switched = switch_to_locale($locale);
+
+            // Log if locale switch failed (locale might not be installed)
+            if (!$switched && WP_DEBUG) {
+                error_log(sprintf(
+                    '[LEXO Forms] Failed to switch to locale "%s". The locale may not be installed. Using current locale instead.',
+                    $locale
+                ));
+            }
         }
 
-        $result = $callback();
-
-        if ($switched) {
-            restore_previous_locale();
+        try {
+            $result = $callback();
+        } finally {
+            // Always restore locale, even if callback throws exception
+            if ($switched) {
+                restore_previous_locale();
+            }
         }
 
         return $result;

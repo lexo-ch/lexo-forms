@@ -173,8 +173,19 @@ class TemplateLoader extends Singleton
             return false;
         }
 
-        // name must be string
-        if (!is_string($data['name']) || empty($data['name'])) {
+        // name must be string OR multilingual array
+        if (is_string($data['name'])) {
+            // String format: must not be empty
+            if (empty($data['name'])) {
+                return false;
+            }
+        } elseif (is_array($data['name'])) {
+            // Array format: must have at least one language
+            if (empty($data['name'])) {
+                return false;
+            }
+        } else {
+            // Invalid format
             return false;
         }
 

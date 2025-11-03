@@ -3,6 +3,7 @@
 namespace LEXO\LF\Core\PostTypes;
 
 use LEXO\LF\Core\Abstracts\Singleton;
+use LEXO\LF\Core\Utils\FormHelpers;
 
 use const LEXO\LF\FIELD_PREFIX;
 
@@ -230,7 +231,7 @@ class FormsPostType extends Singleton
 
                     if (isset($templates[$template_id])) {
                         $template = $templates[$template_id];
-                        echo esc_html($template['name']);
+                        echo esc_html(FormHelpers::getTemplateName($template['name'], $post_id));
                     } else {
                         echo '<span style="color: #d63638;">' . __('Template not found', 'lexoforms') . '</span>';
                     }

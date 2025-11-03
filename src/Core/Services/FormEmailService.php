@@ -5,6 +5,7 @@ namespace LEXO\LF\Core\Services;
 use LEXO\LF\Core\Abstracts\EmailHandler;
 use LEXO\LF\Core\Abstracts\Singleton;
 use LEXO\LF\Core\Utils\FormMessages;
+use LEXO\LF\Core\Utils\FormHelpers;
 use LEXO\LF\Core\Utils\Logger;
 
 /**
@@ -40,7 +41,7 @@ class FormEmailService extends EmailHandler
     public function sendFormEmail(int $form_id, array $template, array $form_data): bool
     {
         // Generate email content
-        $message = $this->generateEmailContent($template, $form_data);
+        $message = $this->generateEmailContent($form_id, $template, $form_data);
 
         // Send email
         return $this->sendEmail($form_id, $form_data, $message);
@@ -49,17 +50,18 @@ class FormEmailService extends EmailHandler
     /**
      * Generate email content from template and form data
      *
+     * @param int $form_id
      * @param array $template
      * @param array $form_data
      * @return string
      */
-    private function generateEmailContent(array $template, array $form_data): string
+    private function generateEmailContent(int $form_id, array $template, array $form_data): string
     {
         ob_start();
         ?>
             <table>
                 <tr>
-                    <td colspan='2'><b><?php echo esc_html($template['name'] ?? ''); ?></b></td>
+                    <td colspan='2'><b><?php echo esc_html(FormHelpers::getTemplateName($template['name'] ?? '', $form_id)); ?></b></td>
                 </tr>
                 <?php foreach ($template['fields'] as $field_config) { ?>
                     <?php
@@ -79,7 +81,7 @@ class FormEmailService extends EmailHandler
 
             <?php if (!empty($_POST['page'])) { ?>
                 <p>
-                    <?php echo esc_html(sprintf(__('Form submitted from: %s', 'lexoforms'), $_POST['page'])) ?>
+                    <?php echo esc_html(FormMessages::getFormSubmittedFromMessage($_POST['page'])) ?>
                 </p>
             <?php } ?>
 
@@ -261,32 +263,28 @@ class FormEmailService extends EmailHandler
 
         $site_name = get_bloginfo('name');
         $form_title = get_the_title($form_id);
-        $subject = sprintf(
-            __('[%s] CleverReach Submission Failed - %s', 'lexoforms'),
-            $site_name,
-            $form_title
-        );
+        $subject = FormMessages::getFailureNotificationSubject($site_name, $form_title);
 
         $field_labels = $this->buildFieldLabelMap($template['fields'] ?? []);
 
         ob_start();
         ?>
-        <h2><?php echo __('CleverReach Submission Failed', 'lexoforms'); ?></h2>
-        <p><strong><?php echo __('Error:', 'lexoforms'); ?></strong> <span style="text-decoration: underline;"><?php echo esc_html($error_message); ?></span></p>
+        <h2><?php echo FormMessages::getFailureNotificationHeading(); ?></h2>
+        <p><strong><?php echo FormMessages::getFailureNotificationErrorLabel(); ?></strong> <span style="text-decoration: underline;"><?php echo esc_html($error_message); ?></span></p>
 
-        <h3><?php echo __('Form Information', 'lexoforms'); ?></h3>
+        <h3><?php echo FormMessages::getFormInformationHeading(); ?></h3>
         <ul>
-            <li><strong><?php echo __('Form:', 'lexoforms'); ?></strong> <?php echo esc_html($form_title); ?></li>
-            <li><strong><?php echo __('Form ID:', 'lexoforms'); ?></strong> <?php echo esc_html($form_id); ?></li>
-            <li><strong><?php echo __('Date:', 'lexoforms'); ?></strong> <?php echo esc_html(current_time('Y-m-d H:i:s')); ?></li>
+            <li><strong><?php echo FormMessages::getFormLabel(); ?></strong> <?php echo esc_html($form_title); ?></li>
+            <li><strong><?php echo FormMessages::getFormIdLabel(); ?></strong> <?php echo esc_html($form_id); ?></li>
+            <li><strong><?php echo FormMessages::getDateLabel(); ?></strong> <?php echo esc_html(current_time('Y-m-d H:i:s')); ?></li>
         </ul>
 
-        <h3><?php echo __('Submitted Data', 'lexoforms'); ?></h3>
+        <h3><?php echo FormMessages::getSubmittedDataHeading(); ?></h3>
         <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse;">
             <thead>
                 <tr>
-                    <th><?php echo __('Field', 'lexoforms'); ?></th>
-                    <th><?php echo __('Value', 'lexoforms'); ?></th>
+                    <th><?php echo FormMessages::getFieldTableHeader(); ?></th>
+                    <th><?php echo FormMessages::getValueTableHeader(); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -300,7 +298,7 @@ class FormEmailService extends EmailHandler
         </table>
 
         <p style="margin-top: 20px; color: #666;">
-            <?php echo __('This email was sent because CleverReach integration failed. Please review the error and try to resubmit the data manually if needed.', 'lexoforms'); ?>
+            <?php echo FormMessages::getFailureNotificationFooter(); ?>
         </p>
         <?php
         $message = ob_get_clean();
@@ -345,43 +343,38 @@ class FormEmailService extends EmailHandler
         $site_name = get_bloginfo('name');
         $form_title = get_the_title($form_id);
         $failed_label = $failed_system === 'cleverreach' ? 'CleverReach' : 'Email';
-        $subject = sprintf(
-            __('[%s] Partial Form Submission Failure - %s (%s Failed)', 'lexoforms'),
-            $site_name,
-            $form_title,
-            $failed_label
-        );
+        $subject = FormMessages::getPartialFailureNotificationSubject($site_name, $form_title, $failed_label);
 
         $field_labels = $this->buildFieldLabelMap($template['fields'] ?? []);
 
         ob_start();
         ?>
-        <h2><?php echo __('Partial Form Submission Failure', 'lexoforms'); ?></h2>
+        <h2><?php echo FormMessages::getPartialFailureNotificationHeading(); ?></h2>
         <p style="color: #d63638;">
-            <strong><?php echo __('One system failed:', 'lexoforms'); ?></strong>
+            <strong><?php echo FormMessages::getPartialFailureOneSystemFailedLabel(); ?></strong>
             <?php
             if ($failed_system === 'cleverreach') {
-                echo __('CleverReach integration failed, but email was sent successfully.', 'lexoforms');
+                echo FormMessages::getPartialFailureCleverReachFailedMessage();
             } else {
-                echo __('Email notification failed, but CleverReach integration succeeded.', 'lexoforms');
+                echo FormMessages::getPartialFailureEmailFailedMessage();
             }
             ?>
         </p>
-        <p><strong><?php echo __('Error:', 'lexoforms'); ?></strong> <span style="text-decoration: underline;"><?php echo esc_html($error_message); ?></span></p>
+        <p><strong><?php echo FormMessages::getFailureNotificationErrorLabel(); ?></strong> <span style="text-decoration: underline;"><?php echo esc_html($error_message); ?></span></p>
 
-        <h3><?php echo __('Form Information', 'lexoforms'); ?></h3>
+        <h3><?php echo FormMessages::getFormInformationHeading(); ?></h3>
         <ul>
-            <li><strong><?php echo __('Form:', 'lexoforms'); ?></strong> <?php echo esc_html($form_title); ?></li>
-            <li><strong><?php echo __('Form ID:', 'lexoforms'); ?></strong> <?php echo esc_html($form_id); ?></li>
-            <li><strong><?php echo __('Date:', 'lexoforms'); ?></strong> <?php echo esc_html(current_time('Y-m-d H:i:s')); ?></li>
+            <li><strong><?php echo FormMessages::getFormLabel(); ?></strong> <?php echo esc_html($form_title); ?></li>
+            <li><strong><?php echo FormMessages::getFormIdLabel(); ?></strong> <?php echo esc_html($form_id); ?></li>
+            <li><strong><?php echo FormMessages::getDateLabel(); ?></strong> <?php echo esc_html(current_time('Y-m-d H:i:s')); ?></li>
         </ul>
 
-        <h3><?php echo __('Submitted Data', 'lexoforms'); ?></h3>
+        <h3><?php echo FormMessages::getSubmittedDataHeading(); ?></h3>
         <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse;">
             <thead>
                 <tr>
-                    <th><?php echo __('Field', 'lexoforms'); ?></th>
-                    <th><?php echo __('Value', 'lexoforms'); ?></th>
+                    <th><?php echo FormMessages::getFieldTableHeader(); ?></th>
+                    <th><?php echo FormMessages::getValueTableHeader(); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -397,9 +390,9 @@ class FormEmailService extends EmailHandler
         <p style="margin-top: 20px; color: #666;">
             <?php
             if ($failed_system === 'cleverreach') {
-                echo __('The form submission was successful from the user\'s perspective (email was sent), but the CleverReach integration failed. You may need to manually add this contact to CleverReach.', 'lexoforms');
+                echo FormMessages::getPartialFailureCleverReachFailedFooter();
             } else {
-                echo __('The form submission was successful from the user\'s perspective (added to CleverReach), but the email notification failed. You may not have received the standard notification email.', 'lexoforms');
+                echo FormMessages::getPartialFailureEmailFailedFooter();
             }
             ?>
         </p>

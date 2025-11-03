@@ -2,8 +2,13 @@
 
 use LEXO\LF\Core\Utils\FormHelpers;
 
-// Form name (displayed in ACF select dropdown)
-$name = __('Newsletter Subscription', 'lexoforms');
+// Form name (displayed in ACF select dropdown) - supports multilingual
+$name = [
+    'de' => 'Newsletter-Abonnement',
+    'en' => 'Newsletter Subscription',
+    'fr' => 'Abonnement à la newsletter',
+    'it' => 'Iscrizione alla newsletter'
+];
 
 // CleverReach Group attributes (fields that must exist in CR group)
 $fields = [

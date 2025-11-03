@@ -15,9 +15,12 @@ class FormHelpers
 	/**
 	 * Get current language from session
 	 *
-	 * @return string Language code (de, en, fr, it)
+	 * Supports centralized language control via filter 'lexo-forms/forms/language'
+	 *
+	 * @param int|null $form_id Optional form ID for form-specific language control
+	 * @return string Language code (de, en, fr, it) - defaults to 'de'
 	 */
-	public static function getLanguage(): string
+	public static function getLanguage(?int $form_id = null): string
 	{
 		static $lang = null;
 
@@ -25,19 +28,59 @@ class FormHelpers
 			$lang = isset($_SESSION['jez']) ? $_SESSION['jez'] : 'de';
 		}
 
-		return $lang;
+		/**
+		 * Filter the language used for form display
+		 *
+		 * Allows centralized control of form language. This affects:
+		 * - Template names
+		 * - Field labels
+		 * - Placeholders
+		 * - Email labels
+		 * - Submit button text
+		 *
+		 * @param string $lang Current language code (de, en, fr, it)
+		 * @param int|null $form_id Form ID if available
+		 * @return string Filtered language code
+		 *
+		 * @since 1.0.0
+		 */
+		return apply_filters('lexo-forms/forms/language', $lang, $form_id);
 	}
 
 	/**
 	 * Get translated text based on current language
 	 *
 	 * @param array $translations Array with language keys
+	 * @param int|null $form_id Optional form ID for form-specific language
 	 * @return string Translated text
 	 */
-	public static function getTranslatedText(array $translations): string
+	public static function getTranslatedText(array $translations, ?int $form_id = null): string
 	{
-		$lang = self::getLanguage();
-		return isset($translations[$lang]) ? $translations[$lang] : reset($translations);
+		$lang = self::getLanguage($form_id);
+		return isset($translations[$lang]) ? $translations[$lang] : (isset($translations['de']) ? $translations['de'] : reset($translations));
+	}
+
+	/**
+	 * Get translated template name
+	 *
+	 * @param string|array $name Template name (string or multilingual array)
+	 * @param int|null $form_id Optional form ID for form-specific language
+	 * @return string Translated name
+	 */
+	public static function getTemplateName($name, ?int $form_id = null): string
+	{
+		// If already a string, return as-is
+		if (is_string($name)) {
+			return $name;
+		}
+
+		// If not an array, return empty string
+		if (!is_array($name)) {
+			return '';
+		}
+
+		// Get translated text using centralized language control
+		return self::getTranslatedText($name, $form_id);
 	}
 
 	/**
