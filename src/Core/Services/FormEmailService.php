@@ -367,7 +367,7 @@ class FormEmailService extends EmailHandler
             }
             ?>
         </p>
-        <p><strong><?php echo __('Error:', 'lexoforms'); ?></strong> <?php echo esc_html($error_message); ?></p>
+        <p><strong><?php echo __('Error:', 'lexoforms'); ?></strong> <span style="text-decoration: underline;"><?php echo esc_html($error_message); ?></span></p>
 
         <h3><?php echo __('Form Information', 'lexoforms'); ?></h3>
         <ul>
