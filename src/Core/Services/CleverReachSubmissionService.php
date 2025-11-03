@@ -126,6 +126,15 @@ class CleverReachSubmissionService extends Singleton
                 $cr_form['data'] ?? [],
                 $cr_form_id
             );
+            Logger::debug(
+                'CleverReach form multiple signup detection',
+                Logger::CATEGORY_API,
+                [
+                    'form_id' => $cr_form_id,
+                    'group_id' => $group_id,
+                    'allow_multiple_signup' => $allow_multiple_signup
+                ]
+            );
 
             $group_details = $this->api->getGroup($group_id);
 
@@ -155,6 +164,15 @@ class CleverReachSubmissionService extends Singleton
                     if ($allow_multiple_signup) {
                         $result = $this->updateExistingRecipient($group_id, $email, $recipient_data);
                         $send_double_opt_in = true;
+                        Logger::debug(
+                            'Multiple signup enabled, updating activated recipient',
+                            Logger::CATEGORY_API,
+                            [
+                                'email' => $email,
+                                'form_id' => $cr_form_id,
+                                'group_id' => $group_id
+                            ]
+                        );
                     } else {
                         Logger::warning('Recipient already activated: ' . $email, Logger::CATEGORY_API);
                         return ['success' => false, 'already_exists' => true, 'error' => 'Recipient already activated'];
