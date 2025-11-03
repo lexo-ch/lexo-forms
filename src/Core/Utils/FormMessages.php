@@ -10,12 +10,10 @@ namespace LEXO\LF\Core\Utils;
  *
  * Available Filters (General Form Messages):
  * - lexo-forms/forms/messages/success
- * - lexo-forms/forms/messages/fail
  * - lexo-forms/forms/messages/email-fail
  * - lexo-forms/forms/messages/captcha-fail
  * - lexo-forms/forms/messages/invalid-email (receives $field_label as second parameter)
  * - lexo-forms/forms/messages/confirmation-email-subject
- * - lexo-forms/forms/messages/validation-fail
  * - lexo-forms/forms/errors/form-id-required
  * - lexo-forms/forms/errors/form-not-found
  * - lexo-forms/forms/errors/template-not-configured
@@ -52,23 +50,11 @@ class FormMessages
      */
     public static function getSuccessMessage(): string
     {
-        return apply_filters(
-            'lexo-forms/forms/messages/success',
-            __('Your message has been sent successfully. Thank you!', 'lexoforms')
-        );
-    }
+        $message = self::translateWithFormLocale(function () {
+            return __('Your message has been sent successfully. Thank you!', 'lexoforms');
+        });
 
-    /**
-     * Get default fail message
-     *
-     * @return string
-     */
-    public static function getFailMessage(): string
-    {
-        return apply_filters(
-            'lexo-forms/forms/messages/fail',
-            __('Sorry, there was an error sending your message. Please try again.', 'lexoforms')
-        );
+        return apply_filters('lexo-forms/forms/messages/success', $message);
     }
 
     /**
@@ -78,10 +64,11 @@ class FormMessages
      */
     public static function getEmailFailMessage(): string
     {
-        return apply_filters(
-            'lexo-forms/forms/messages/email-fail',
-            __('Failed to send email', 'lexoforms')
-        );
+        $message = self::translateWithFormLocale(function () {
+            return __('Failed to send email', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/forms/messages/email-fail', $message);
     }
 
     /**
@@ -91,10 +78,11 @@ class FormMessages
      */
     public static function getCaptchaFailMessage(): string
     {
-        return apply_filters(
-            'lexo-forms/forms/messages/captcha-fail',
-            __('Captcha validation failed. Please try again.', 'lexoforms')
-        );
+        $message = self::translateWithSiteLocale(function () {
+            return __('Captcha validation failed. Please try again.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/forms/messages/captcha-fail', $message);
     }
 
     /**
@@ -105,11 +93,11 @@ class FormMessages
      */
     public static function getInvalidEmailMessage(string $field_label): string
     {
-        return apply_filters(
-            'lexo-forms/forms/messages/invalid-email',
-            sprintf(__('Invalid email format in field: %s', 'lexoforms'), $field_label),
-            $field_label
-        );
+        $message = self::translateWithSiteLocale(function () use ($field_label) {
+            return sprintf(__('Invalid email format in field: %s', 'lexoforms'), $field_label);
+        });
+
+        return apply_filters('lexo-forms/forms/messages/invalid-email', $message, $field_label);
     }
 
     /**
@@ -119,23 +107,11 @@ class FormMessages
      */
     public static function getConfirmationEmailSubject(): string
     {
-        return apply_filters(
-            'lexo-forms/forms/messages/confirmation-email-subject',
-            __('Thank you for your message', 'lexoforms')
-        );
-    }
+        $message = self::translateWithSiteLocale(function () {
+            return __('Thank you for your message', 'lexoforms');
+        });
 
-    /**
-     * Get validation failure message
-     *
-     * @return string
-     */
-    public static function getValidationFailMessage(): string
-    {
-        return apply_filters(
-            'lexo-forms/forms/messages/validation-fail',
-            __('Form submission failed due to validation. Please try again.', 'lexoforms')
-        );
+        return apply_filters('lexo-forms/forms/messages/confirmation-email-subject', $message);
     }
 
     /**
@@ -145,10 +121,11 @@ class FormMessages
      */
     public static function getFormIdRequiredError(): string
     {
-        return apply_filters(
-            'lexo-forms/forms/errors/form-id-required',
-            __('Error: Form ID is required.', 'lexoforms')
-        );
+        $message = self::translateWithSiteLocale(function () {
+            return __('Error: Form ID is required.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/forms/errors/form-id-required', $message);
     }
 
     /**
@@ -158,10 +135,11 @@ class FormMessages
      */
     public static function getFormNotFoundError(): string
     {
-        return apply_filters(
-            'lexo-forms/forms/errors/form-not-found',
-            __('Error: Form not found.', 'lexoforms')
-        );
+        $message = self::translateWithSiteLocale(function () {
+            return __('Error: Form not found.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/forms/errors/form-not-found', $message);
     }
 
     /**
@@ -171,10 +149,11 @@ class FormMessages
      */
     public static function getFormTemplateNotConfiguredError(): string
     {
-        return apply_filters(
-            'lexo-forms/forms/errors/template-not-configured',
-            __('Error: Form template not configured.', 'lexoforms')
-        );
+        $message = self::translateWithSiteLocale(function () {
+            return __('Error: Form template not configured.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/forms/errors/template-not-configured', $message);
     }
 
     /**
@@ -184,10 +163,11 @@ class FormMessages
      */
     public static function getTemplateNotFoundError(): string
     {
-        return apply_filters(
-            'lexo-forms/forms/errors/template-not-found',
-            __('Error: Template not found.', 'lexoforms')
-        );
+        $message = self::translateWithSiteLocale(function () {
+            return __('Error: Template not found.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/forms/errors/template-not-found', $message);
     }
 
     /**
@@ -197,10 +177,11 @@ class FormMessages
      */
     public static function getNoFieldsConfiguredError(): string
     {
-        return apply_filters(
-            'lexo-forms/forms/errors/no-fields-configured',
-            __('No fields configured for this form', 'lexoforms')
-        );
+        $message = self::translateWithSiteLocale(function () {
+            return __('No fields configured for this form', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/forms/errors/no-fields-configured', $message);
     }
 
     /**
@@ -211,11 +192,11 @@ class FormMessages
      */
     public static function getRequiredFieldsMissingError(string $field_list): string
     {
-        return apply_filters(
-            'lexo-forms/forms/errors/required-fields-missing',
-            sprintf(__('Required fields are missing: %s', 'lexoforms'), $field_list),
-            $field_list
-        );
+        $message = self::translateWithSiteLocale(function () use ($field_list) {
+            return sprintf(__('Required fields are missing: %s', 'lexoforms'), $field_list);
+        });
+
+        return apply_filters('lexo-forms/forms/errors/required-fields-missing', $message, $field_list);
     }
 
     // ========================================================================
@@ -229,10 +210,11 @@ class FormMessages
      */
     public static function getCleverReachErrorMessage(): string
     {
-        return apply_filters(
-            'lexo-forms/cr/messages/error',
-            __('We encountered an issue submitting your information. Our team has been notified and will contact you shortly.', 'lexoforms')
-        );
+        $message = self::translateWithSiteLocale(function () {
+            return __('We encountered an issue submitting your information. Our team has been notified and will contact you shortly.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/messages/error', $message);
     }
 
     /**
@@ -242,10 +224,11 @@ class FormMessages
      */
     public static function getAlreadySubscribedMessage(): string
     {
-        return apply_filters(
-            'lexo-forms/cr/messages/already-subscribed',
-            __('This email address is already subscribed.', 'lexoforms')
-        );
+        $message = self::translateWithFormLocale(function () {
+            return __('This email address is already subscribed.', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/messages/already-subscribed', $message);
     }
 
     /**
@@ -255,10 +238,11 @@ class FormMessages
      */
     public static function getCRFormCreationFailedError(): string
     {
-        return apply_filters(
-            'lexo-forms/cr/errors/form-creation-failed',
-            __('Failed to determine or create form', 'lexoforms')
-        );
+        $message = self::translateWithSiteLocale(function () {
+            return __('Failed to determine or create form', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/errors/form-creation-failed', $message);
     }
 
     /**
@@ -268,32 +252,110 @@ class FormMessages
      */
     public static function getCRGroupIdFailedError(): string
     {
-        return apply_filters(
-            'lexo-forms/cr/errors/group-id-failed',
-            __('Failed to get group ID from form', 'lexoforms')
-        );
+        $message = self::translateWithSiteLocale(function () {
+            return __('Failed to get group ID from form', 'lexoforms');
+        });
+
+        return apply_filters('lexo-forms/cr/errors/group-id-failed', $message);
     }
 
-    // ========================================================================
-    // HELPER METHODS
-    // ========================================================================
+    /**
+     * Translate using form/session locale (front-end messages).
+     *
+     * @param callable():string $callback
+     * @return string
+     */
+    protected static function translateWithFormLocale(callable $callback): string
+    {
+        return self::translateWithLocale($callback, self::mapLanguageToLocale(FormHelpers::getLanguage()));
+    }
 
     /**
-     * Get all default messages as array (for reference or export)
+     * Translate using site locale (admin/system messages).
+     *
+     * @param callable():string $callback
+     * @return string
+     */
+    protected static function translateWithSiteLocale(callable $callback): string
+    {
+        return self::translateWithLocale($callback, self::getSiteLocale());
+    }
+
+    /**
+     * Map session language codes to WordPress locale codes.
+     *
+     * @param string $language
+     * @return string|null
+     */
+    protected static function mapLanguageToLocale(string $language): ?string
+    {
+        $map = [
+            'de' => 'de_DE',
+            'en' => 'en_US',
+            'usca' => 'en_US',
+            'fr' => 'fr_FR',
+            'it' => 'it_IT',
+        ];
+
+        $key = strtolower($language);
+
+        return $map[$key] ?? null;
+    }
+
+    /**
+     * Resolve site locale, preferring explicit site language setting.
+     *
+     * @return string|null
+     */
+    protected static function getSiteLocale(): ?string
+    {
+        $site_locale = get_option('WPLANG');
+
+        if (!empty($site_locale)) {
+            return $site_locale;
+        }
+
+        return function_exists('get_locale') ? get_locale() : null;
+    }
+
+    /**
+     * Run translation callback within a specific locale context.
+     *
+     * @param callable():string $callback
+     * @param string|null $locale
+     * @return string
+     */
+    protected static function translateWithLocale(callable $callback, ?string $locale): string
+    {
+        $switched = false;
+
+        if ($locale && function_exists('switch_to_locale')) {
+            $switched = switch_to_locale($locale);
+        }
+
+        $result = $callback();
+
+        if ($switched) {
+            restore_previous_locale();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get all default messages as array (for reference or export).
      *
      * @return array
      */
     public static function getAllMessages(): array
     {
         return [
-            // General Form Messages
             'general' => [
                 'success' => self::getSuccessMessage(),
-                'fail' => self::getFailMessage(),
                 'email_fail' => self::getEmailFailMessage(),
                 'captcha_fail' => self::getCaptchaFailMessage(),
+                'invalid_email' => self::getInvalidEmailMessage('example'),
                 'confirmation_email_subject' => self::getConfirmationEmailSubject(),
-                'validation_fail' => self::getValidationFailMessage(),
                 'form_id_required' => self::getFormIdRequiredError(),
                 'form_not_found' => self::getFormNotFoundError(),
                 'form_template_not_configured' => self::getFormTemplateNotConfiguredError(),
@@ -301,8 +363,6 @@ class FormMessages
                 'no_fields_configured' => self::getNoFieldsConfiguredError(),
                 'required_fields_missing' => self::getRequiredFieldsMissingError('example_field'),
             ],
-
-            // CleverReach Integration Messages
             'cleverreach' => [
                 'cleverreach_error' => self::getCleverReachErrorMessage(),
                 'already_subscribed' => self::getAlreadySubscribedMessage(),

@@ -474,18 +474,6 @@ add_filter('lexo-forms/forms/messages/success', function($message) {
 
 ---
 
-#### `lexo-forms/forms/messages/fail`
-
-Filter the default failure message shown when form submission fails.
-
-```php
-apply_filters('lexo-forms/forms/messages/fail', string $message);
-```
-
-**Default:** `'Sorry, there was an error sending your message. Please try again.'`
-
----
-
 #### `lexo-forms/forms/messages/email-fail`
 
 Filter the message shown when email sending fails.
@@ -536,18 +524,6 @@ apply_filters('lexo-forms/forms/messages/confirmation-email-subject', string $su
 ```
 
 **Default:** `'Thank you for your message'`
-
----
-
-#### `lexo-forms/forms/messages/validation-fail`
-
-Filter the message shown when form validation fails.
-
-```php
-apply_filters('lexo-forms/forms/messages/validation-fail', string $message);
-```
-
-**Default:** `'Form submission failed due to validation. Please try again.'`
 
 ---
 

@@ -272,7 +272,7 @@ class FormEmailService extends EmailHandler
         ob_start();
         ?>
         <h2><?php echo __('CleverReach Submission Failed', 'lexoforms'); ?></h2>
-        <p><strong><?php echo __('Error:', 'lexoforms'); ?></strong> <?php echo esc_html($error_message); ?></p>
+        <p><strong><?php echo __('Error:', 'lexoforms'); ?></strong> <span style="text-decoration: underline;"><?php echo esc_html($error_message); ?></span></p>
 
         <h3><?php echo __('Form Information', 'lexoforms'); ?></h3>
         <ul>
