@@ -86,7 +86,7 @@ class FormMessages
      */
     public static function getFormSubmittedFromMessage(string $page): string
     {
-        $message = self::translateWithFormLocale(function () use ($page) {
+        $message = self::translateWithSiteLocale(function () use ($page) {
             return sprintf(__('Form submitted from: %s', 'lexoforms'), $page);
         });
 
@@ -506,7 +506,7 @@ class FormMessages
      * and maps it to a WordPress locale for translation.
      *
      * Edge cases handled:
-     * - Filter returns non-string value: falls back to session language
+     * - Filter returns non-string value: falls back to 'de'
      * - Language code is empty: falls back to 'de'
      * - Language code not in map: returns null, uses current WP locale
      *
@@ -519,7 +519,7 @@ class FormMessages
 
         // Validate that filter didn't return invalid value
         if (!is_string($language) || empty($language)) {
-            $language = isset($_SESSION['jez']) && is_string($_SESSION['jez']) ? $_SESSION['jez'] : 'de';
+            $language = 'de';
         }
 
         $locale = self::mapLanguageToLocale($language);
@@ -658,6 +658,34 @@ class FormMessages
     }
 
     /**
+     * Get site language code from site locale.
+     *
+     * Converts WordPress locale (e.g., 'de_CH', 'en_US') to a simple language code
+     * (e.g., 'de', 'en') for use in email labels and admin notifications.
+     *
+     * @return string Language code (e.g., 'de', 'en', 'fr') - defaults to 'de'
+     */
+    public static function getSiteLanguage(): string
+    {
+        $locale = self::getSiteLocale();
+
+        if (empty($locale)) {
+            return 'de';
+        }
+
+        // Extract base language code from locale (e.g., 'de' from 'de_CH')
+        $parts = explode('_', $locale);
+        $language = strtolower($parts[0]);
+
+        // Map special cases if needed (e.g., 'usca' -> 'en')
+        $special_cases = [
+            'usca' => 'en',
+        ];
+
+        return $special_cases[$language] ?? $language;
+    }
+
+    /**
      * Run translation callback within a specific locale context.
      *
      * Temporarily switches WordPress to the specified locale for translation,
@@ -681,11 +709,11 @@ class FormMessages
             $switched = switch_to_locale($locale);
 
             // Log if locale switch failed (locale might not be installed)
-            if (!$switched && WP_DEBUG) {
-                error_log(sprintf(
-                    '[LEXO Forms] Failed to switch to locale "%s". The locale may not be installed. Using current locale instead.',
-                    $locale
-                ));
+            if (!$switched) {
+                Logger::debug(
+                    sprintf('Failed to switch to locale "%s". The locale may not be installed. Using current locale instead.', $locale),
+                    Logger::CATEGORY_GENERAL
+                );
             }
         }
 

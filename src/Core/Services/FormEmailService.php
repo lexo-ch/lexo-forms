@@ -187,8 +187,8 @@ class FormEmailService extends EmailHandler
      */
     private function getEmailLabel(array $field_config, string $field_name): string
     {
-        // Get default language from filter (default: 'de')
-        $language = apply_filters('lexo-forms/forms/email/label-language', 'de');
+        // Get site language for admin emails, but allow override via filter
+        $language = apply_filters('lexo-forms/forms/email/label-language', FormMessages::getSiteLanguage());
 
         // Check if email_label exists
         if (!isset($field_config['email_label'])) {
@@ -216,7 +216,7 @@ class FormEmailService extends EmailHandler
     private function buildFieldLabelMap(array $fields): array
     {
         $field_labels = [];
-        $language = apply_filters('lexo-forms/cr/email/admin-notification/label-language', 'de');
+        $language = apply_filters('lexo-forms/cr/email/admin-notification/label-language', FormMessages::getSiteLanguage());
 
         foreach ($fields as $field_config) {
             $field_name = $field_config['name'] ?? '';
