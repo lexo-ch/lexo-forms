@@ -119,7 +119,6 @@ class CleverReachSubmissionService extends Singleton
             }
 
             $group_id = $cr_form['data']['customer_tables_id'];
-            $allow_multiple_signup = $this->isMultipleSignupEnabled($cr_form['data'] ?? []);
 
             $group_details = $this->api->getGroup($group_id);
 
@@ -146,14 +145,9 @@ class CleverReachSubmissionService extends Singleton
 
             switch ($recipient_status) {
                 case 'activated':
-                    if ($allow_multiple_signup) {
-                        $result = $this->updateExistingRecipient($group_id, $email, $recipient_data);
-                        $send_double_opt_in = true;
-                    } else {
-                        Logger::warning('Recipient already activated: ' . $email, Logger::CATEGORY_API);
-                        return ['success' => false, 'already_exists' => true, 'error' => 'Recipient already activated'];
-                    }
-                    break;
+                    // Recipient already exists and is active
+                    Logger::warning('Recipient already activated: ' . $email, Logger::CATEGORY_API);
+                    return ['success' => false, 'already_exists' => true, 'error' => 'Recipient already activated'];
 
                 case 'inactive':
                     $result = $this->updateExistingRecipient($group_id, $email, $recipient_data);
@@ -297,44 +291,6 @@ class CleverReachSubmissionService extends Singleton
         } catch (Exception $e) {
             return 'not_found';
         }
-    }
-
-    /**
-     * Detect if Multiple Signup is enabled on CleverReach form
-     *
-     * @param array $form_data
-     * @return bool
-     */
-    private function isMultipleSignupEnabled(array $form_data): bool
-    {
-        if (empty($form_data)) {
-            return false;
-        }
-
-        $enabled = false;
-
-        $walker = function ($data) use (&$enabled, &$walker): void {
-            foreach ($data as $key => $value) {
-                if ($enabled) {
-                    return;
-                }
-
-                if ($key === 'multiple_signup') {
-                    if (is_string($value)) {
-                        $value = strtolower($value);
-                        $enabled = in_array($value, ['1', 'true', 'yes', 'on'], true);
-                    } else {
-                        $enabled = (bool) $value;
-                    }
-                } elseif (is_array($value)) {
-                    $walker($value);
-                }
-            }
-        };
-
-        $walker($form_data);
-
-        return $enabled;
     }
 
     /**
