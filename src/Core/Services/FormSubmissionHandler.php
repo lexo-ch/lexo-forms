@@ -309,7 +309,7 @@ class FormSubmissionHandler extends Singleton
 
             if ($result['success']) {
                 // Apply filter to allow additional custom processing
-                do_action('lexo_cr_after_submission', $form_id, $form_data, $template);
+                do_action('lexo-forms/cr/after-submission', $form_id, $form_data, $template);
 
                 return [
                     'success' => true,

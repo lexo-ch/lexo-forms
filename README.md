@@ -894,12 +894,12 @@ add_action('lf/localize/admin-lf.js', function() {
 
 ---
 
-### `lexo_cr_after_submission`
+### `lexo-forms/cr/after-submission`
 
 Fires after successful CleverReach form submission.
 
 ```php
-do_action('lexo_cr_after_submission', int $form_id, array $form_data, array $template);
+do_action('lexo-forms/cr/after-submission', int $form_id, array $form_data, array $template);
 ```
 
 **Parameters**
@@ -911,7 +911,7 @@ do_action('lexo_cr_after_submission', int $form_id, array $form_data, array $tem
 **Example**
 
 ```php
-add_action('lexo_cr_after_submission', function($form_id, $form_data, $template) {
+add_action('lexo-forms/cr/after-submission', function($form_id, $form_data, $template) {
     // Log submission to custom analytics
     error_log('Form submitted: ' . $form_id);
 
@@ -922,12 +922,12 @@ add_action('lexo_cr_after_submission', function($form_id, $form_data, $template)
 
 ---
 
-### `lexo_lf_log`
+### `lexo-forms/core/log`
 
 Fires when plugin logs a message.
 
 ```php
-do_action('lexo_lf_log', string $level, string $category, string $message, array $context);
+do_action('lexo-forms/core/log', string $level, string $category, string $message, array $context);
 ```
 
 **Parameters**
@@ -940,7 +940,7 @@ do_action('lexo_lf_log', string $level, string $category, string $message, array
 **Example**
 
 ```php
-add_action('lexo_lf_log', function($level, $category, $message, $context) {
+add_action('lexo-forms/core/log', function($level, $category, $message, $context) {
     if ($level === 'error') {
         // Send error notification
         mail('admin@example.com', 'Plugin Error', $message);

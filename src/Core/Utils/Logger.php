@@ -93,7 +93,7 @@ class Logger {
         error_log($formatted_message);
 
         if (function_exists('do_action')) {
-            do_action('lexo_lf_log', $level, $category, $message, $context);
+            do_action('lexo-forms/core/log', $level, $category, $message, $context);
         }
     }
 
