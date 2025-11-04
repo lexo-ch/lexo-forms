@@ -113,7 +113,7 @@ class FormSubmissionHandler extends Singleton
                 case 'cr_only':
                     // CR must succeed
                     if (!$cr_success) {
-                        $this->email_service->sendFailureNotification($form_id, $form_data, $template, $cr_error);
+                        $this->email_service->sendFailureNotification($form_id, $form_data, $template, $cr_error, $handler_type);
                         throw new Exception(FormMessages::getCleverReachErrorMessage());
                     }
                     break;
@@ -121,19 +121,19 @@ class FormSubmissionHandler extends Singleton
                 case 'email_and_cr':
                     // Both failed - error to user
                     if (!$cr_success && !$email_success) {
-                        $this->email_service->sendFailureNotification($form_id, $form_data, $template, "CR Error: $cr_error | Email Error: $email_error");
+                        $this->email_service->sendFailureNotification($form_id, $form_data, $template, "CR Error: $cr_error | Email Error: $email_error", $handler_type);
                         throw new Exception(FormMessages::getEmailFailMessage());
                     }
 
                     // CR failed, Email succeeded - success to user, admin notified
                     if (!$cr_success && $email_success) {
-                        $this->email_service->sendPartialFailureNotification($form_id, $form_data, $template, 'cleverreach', $cr_error);
+                        $this->email_service->sendPartialFailureNotification($form_id, $form_data, $template, 'cleverreach', $cr_error, $handler_type);
                         // Continue to success
                     }
 
                     // CR succeeded, Email failed - success to user, admin notified
                     if ($cr_success && !$email_success) {
-                        $this->email_service->sendPartialFailureNotification($form_id, $form_data, $template, 'email', $email_error);
+                        $this->email_service->sendPartialFailureNotification($form_id, $form_data, $template, 'email', $email_error, $handler_type);
                         // Continue to success
                     }
 
@@ -141,8 +141,10 @@ class FormSubmissionHandler extends Singleton
                     break;
             }
 
-            // Send confirmation email to visitor if enabled
-            $this->sendConfirmationEmail($form_id, $form_data, $template, $email_settings);
+            // Send confirmation email to visitor if enabled (only for email_only and email_and_cr)
+            if ($handler_type === 'email_only' || $handler_type === 'email_and_cr') {
+                $this->sendConfirmationEmail($form_id, $form_data, $template, $email_settings);
+            }
 
             // Get custom success message or use default (from general_settings group)
             $success_message = $general_settings[FIELD_PREFIX . 'success_message'] ?? '';

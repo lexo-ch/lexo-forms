@@ -26,9 +26,10 @@ abstract class EmailHandler
      *
      * @param int $form_id
      * @param array $form_data
+     * @param string $handler_type Handler type to determine if email_settings should be loaded
      * @return array
      */
-    protected function getEmailConfig(int $form_id, array $form_data): array
+    protected function getEmailConfig(int $form_id, array $form_data, string $handler_type = ''): array
     {
         // Start with system defaults
         $default_config = [
@@ -42,6 +43,31 @@ abstract class EmailHandler
 
         // Allow theme to override defaults via filter
         $config = apply_filters('lexo-forms/cr/email/config', $default_config, $form_id, $form_data);
+
+        // Skip email_settings for cr_only handler type
+        if ($handler_type === 'cr_only') {
+            // Validate and normalize recipients
+            if (empty($config['recipients'])) {
+                Logger::emailError('No email recipients configured', $form_id);
+                $config['recipients'] = [EMAIL_FROM_EMAIL];
+            }
+
+            // Ensure recipients is array and filter out empty values
+            if (!is_array($config['recipients'])) {
+                $config['recipients'] = [$config['recipients']];
+            }
+
+            $config['recipients'] = array_filter($config['recipients'], function($email) {
+                return !empty($email) && is_email($email);
+            });
+
+            if (empty($config['recipients'])) {
+                Logger::emailError('No valid email recipients after filtering', $form_id);
+                $config['recipients'] = [EMAIL_FROM_EMAIL];
+            }
+
+            return $config;
+        }
 
         // OPTIMIZATION: Get email settings group (1 DB query instead of 4)
         $email_settings = get_field(FIELD_PREFIX . 'email_settings', $form_id) ?: [];

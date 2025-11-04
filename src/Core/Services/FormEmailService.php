@@ -328,9 +328,10 @@ class FormEmailService extends EmailHandler
      * @param array $form_data
      * @param array $template
      * @param string $error_message Error message already in site locale
+     * @param string $handler_type Handler type to determine if email_settings should be loaded
      * @return bool
      */
-    public function sendFailureNotification(int $form_id, array $form_data, array $template, string $error_message): bool
+    public function sendFailureNotification(int $form_id, array $form_data, array $template, string $error_message, string $handler_type = ''): bool
     {
         $admin_email = get_option('cleverreach_fallback_admin_email', '');
         if (empty($admin_email)) {
@@ -342,7 +343,7 @@ class FormEmailService extends EmailHandler
         }
 
         // Get email config (uses same hierarchy as regular form emails: defaults -> filter -> ACF)
-        $email_config = $this->getEmailConfig($form_id, $form_data);
+        $email_config = $this->getEmailConfig($form_id, $form_data, $handler_type);
 
         $site_name = get_bloginfo('name');
         $form_title = get_the_title($form_id);
@@ -426,6 +427,7 @@ class FormEmailService extends EmailHandler
      * @param array $template
      * @param string $failed_system Either 'cleverreach' or 'email'
      * @param string $error_message Error message already in site locale
+     * @param string $handler_type Handler type to determine if email_settings should be loaded
      * @return bool
      */
     public function sendPartialFailureNotification(
@@ -433,7 +435,8 @@ class FormEmailService extends EmailHandler
         array $form_data,
         array $template,
         string $failed_system,
-        string $error_message
+        string $error_message,
+        string $handler_type = ''
     ): bool {
         $admin_email = get_option('cleverreach_fallback_admin_email', '');
         if (empty($admin_email)) {
@@ -445,7 +448,7 @@ class FormEmailService extends EmailHandler
         }
 
         // Get email config (uses same hierarchy as regular form emails: defaults -> filter -> ACF)
-        $email_config = $this->getEmailConfig($form_id, $form_data);
+        $email_config = $this->getEmailConfig($form_id, $form_data, $handler_type);
 
         $site_name = get_bloginfo('name');
         $form_title = get_the_title($form_id);

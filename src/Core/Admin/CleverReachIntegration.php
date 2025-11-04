@@ -11,6 +11,7 @@ use LEXO\LF\Core\Notices\Notice;
 use LEXO\LF\Core\Notices\Notices;
 use LEXO\LF\Core\Utils\Logger;
 use LEXO\LF\Core\Utils\FormHelpers;
+use LEXO\LF\Core\Utils\FormMessages;
 
 use const LEXO\LF\{
     FIELD_PREFIX,
@@ -62,8 +63,17 @@ class CleverReachIntegration extends Singleton
         $templates = $templateLoader->getAvailableTemplates() ?: [];
 
         $choices = [];
+        $site_language = FormMessages::getSiteLanguage();
+
         foreach ($templates as $template_id => $template) {
-            $choices[$template_id] = FormHelpers::getTemplateName($template['name']);
+            $template_name = $template['name'];
+
+            // If template name is multilingual array, use site language
+            if (is_array($template_name)) {
+                $template_name = $template_name[$site_language] ?? $template_name['de'] ?? reset($template_name);
+            }
+
+            $choices[$template_id] = $template_name;
         }
 
         $field['choices'] = $choices;

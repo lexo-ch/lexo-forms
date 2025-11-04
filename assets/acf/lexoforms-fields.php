@@ -144,6 +144,22 @@ $fields[] = [
     'instructions' => '',
     'required' => 0,
     'layout' => 'block',
+    'conditional_logic' => [
+        [
+            [
+                'field' => FIELD_PREFIX . 'handler_type',
+                'operator' => '==',
+                'value' => 'email_only',
+            ],
+        ],
+        [
+            [
+                'field' => FIELD_PREFIX . 'handler_type',
+                'operator' => '==',
+                'value' => 'email_and_cr',
+            ],
+        ],
+    ],
     'sub_fields' => [
         // Recipients Override (Repeater)
         [
