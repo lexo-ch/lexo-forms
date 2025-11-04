@@ -5,7 +5,7 @@
  * Plugin URI:        https://github.com/lexo-ch/lexo-forms/
  * Description:       LEXO forms plugin with CleverReach integration.
  * Version:           1.0.0
- * Requires at least: 4.7
+ * Requires at least: 6.4
  * Requires PHP:      7.4.1
  * Requires Plugins:  advanced-custom-fields-pro, lexo-captcha
  * Author:            LEXO GmbH

@@ -1,9 +1,9 @@
 === LEXO Forms ===
 Contributors: mpuzovic
 Donate link: https://www.lexo.ch
-Tags: plugin, pages, conserve
-Requires at least: 4.7
-Tested up to: 6.7.1
+Tags: plugin, forms
+Requires at least: 6.4
+Tested up to: 6.8.3
 Stable tag: 1.0.0
 Requires PHP: 7.4.1
 License: GPLv2 or later

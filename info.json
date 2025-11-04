@@ -6,8 +6,8 @@
     "donate_link": "https://www.lexo.ch/",
     "version": "1.0.0",
     "download_url": "https://github.com/lexo-ch/lexo-forms/releases/download/v1.0.0/lexo-forms-1.0.0.zip",
-    "requires": "4.7",
-    "tested": "6.7.1",
+    "requires": "6.4",
+    "tested": "6.8.3",
     "requires_php": "7.4.1",
     "sections": {
         "description": "LEXO forms plugin with CleverReach integration.<br><a href='https://github.com/lexo-ch/lexo-forms/' target='_blank'>More about plugin</a>",

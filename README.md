@@ -7,9 +7,8 @@ WordPress plugin for advanced form management with CleverReach integration.
 Release tags are created with Semantic versioning in mind. Commit messages were following convention of [Conventional Commits](https://www.conventionalcommits.org/).
 
 ## Compatibility
-
-- **WordPress:** `>=4.7` (tested to `6.8.3`)
-- **PHP:** `>=7.4.1` (tested to `8.4.4`)
+- WordPress version `>=6.4`. Tested and works fine up to `6.8.3`.
+- PHP version `>=7.4.1`. Tested and works fine up to `8.4.4`.
 
 ## Requirements
 
