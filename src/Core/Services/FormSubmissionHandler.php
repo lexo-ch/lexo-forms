@@ -323,7 +323,7 @@ class FormSubmissionHandler extends Singleton
                 if ($result['already_exists']) {
                     return [
                         'success' => false,
-                        'error' => FormMessages::getAlreadySubscribedMessage(),
+                        'error' => FormMessages::getAlreadySubscribedMessage(true), // Use site locale for admin notifications
                         'message' => 'Recipient already activated',
                         'skipped' => false,
                         'already_exists' => true

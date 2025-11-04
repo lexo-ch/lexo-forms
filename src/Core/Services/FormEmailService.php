@@ -268,23 +268,57 @@ class FormEmailService extends EmailHandler
     }
 
     /**
-     * Convert front-end error message to admin version (site locale)
+     * Separate form data into table fields and additional info fields
      *
-     * @param string $error_message Front-end error message
-     * @return string Admin-friendly error message in site locale
+     * @param array $form_data Submitted form data
+     * @param array $template Template configuration
+     * @return array ['table' => [...], 'additional' => [...]]
      */
-    private function convertErrorMessageForAdmin(string $error_message): string
+    private function separateFieldsForDisplay(array $form_data, array $template): array
     {
-        // Check if this is the "already subscribed" message and convert to admin version
-        // We need to check against the form locale version to detect it
-        $frontEndAlreadySubscribed = FormMessages::getAlreadySubscribedMessage();
+        $table_fields = [];
+        $additional_fields = [];
 
-        if ($error_message === $frontEndAlreadySubscribed) {
-            return FormMessages::getAlreadySubscribedMessageForAdmin();
+        $fields_config = $template['fields'] ?? [];
+
+        // Create a map of field configurations by name
+        $field_config_map = [];
+        foreach ($fields_config as $field_config) {
+            $field_name = $field_config['name'] ?? '';
+            if ($field_name) {
+                $field_config_map[$field_name] = $field_config;
+            }
         }
 
-        // For other messages, return as-is (they should already be in site locale)
-        return $error_message;
+        foreach ($form_data as $field_name => $value) {
+            $field_config = $field_config_map[$field_name] ?? null;
+
+            // Check if field should go to table (has send_to_cr flag)
+            $send_to_cr = $field_config['send_to_cr'] ?? false;
+
+            // Allow filtering of field placement
+            $should_be_in_table = apply_filters(
+                'lexo-forms/cr/email/admin-notification/field-in-table',
+                $send_to_cr,
+                $field_name,
+                $field_config,
+                $value
+            );
+
+            if ($should_be_in_table) {
+                $table_fields[$field_name] = $value;
+            } else {
+                $additional_fields[$field_name] = $value;
+            }
+        }
+
+        $result = [
+            'table' => $table_fields,
+            'additional' => $additional_fields
+        ];
+
+        // Allow complete override of separation logic
+        return apply_filters('lexo-forms/cr/email/admin-notification/separated-fields', $result, $form_data, $template);
     }
 
     /**
@@ -293,7 +327,7 @@ class FormEmailService extends EmailHandler
      * @param int $form_id
      * @param array $form_data
      * @param array $template
-     * @param string $error_message
+     * @param string $error_message Error message already in site locale
      * @return bool
      */
     public function sendFailureNotification(int $form_id, array $form_data, array $template, string $error_message): bool
@@ -307,14 +341,15 @@ class FormEmailService extends EmailHandler
             return false;
         }
 
-        // Convert error message to admin version (site locale)
-        $error_message = $this->convertErrorMessageForAdmin($error_message);
+        // Get email config (uses same hierarchy as regular form emails: defaults -> filter -> ACF)
+        $email_config = $this->getEmailConfig($form_id, $form_data);
 
         $site_name = get_bloginfo('name');
         $form_title = get_the_title($form_id);
         $subject = FormMessages::getFailureNotificationSubject($site_name, $form_title);
 
         $field_labels = $this->buildFieldLabelMap($template['fields'] ?? []);
+        $separated_fields = $this->separateFieldsForDisplay($form_data, $template);
 
         ob_start();
         ?>
@@ -337,14 +372,25 @@ class FormEmailService extends EmailHandler
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($form_data as $field_name => $value) { ?>
+                <?php foreach ($separated_fields['table'] as $field_name => $value) { ?>
                     <tr>
                         <td><strong><?php echo esc_html($field_labels[$field_name] ?? ucwords(str_replace(['_', '-'], ' ', $field_name))); ?></strong></td>
-                        <td><?php echo esc_html($value); ?></td>
+                        <td><?php echo nl2br(esc_html($value)); ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
+
+        <?php if (!empty($separated_fields['additional'])) { ?>
+            <?php foreach ($separated_fields['additional'] as $field_name => $value) { ?>
+                <div style="margin-top: 15px;">
+                    <strong><?php echo esc_html($field_labels[$field_name] ?? ucwords(str_replace(['_', '-'], ' ', $field_name))); ?>:</strong>
+                    <p style="margin: 5px 0; padding: 10px; background-color: #f5f5f5; border-left: 3px solid #0073aa;">
+                        <?php echo nl2br(esc_html($value)); ?>
+                    </p>
+                </div>
+            <?php } ?>
+        <?php } ?>
 
         <p style="margin-top: 20px; color: #666;">
             <?php echo FormMessages::getFailureNotificationFooter(); ?>
@@ -352,7 +398,16 @@ class FormEmailService extends EmailHandler
         <?php
         $message = ob_get_clean();
 
-        $result = $this->sendSimpleEmail($admin_email, $subject, $message);
+        // Allow complete override of email HTML
+        $message = apply_filters('lexo-forms/cr/email/failure-notification/html', $message, $form_id, $form_data, $template, $error_message);
+
+        $result = $this->sendSimpleEmail(
+            $admin_email,
+            $subject,
+            $message,
+            $email_config['from_email'],
+            $email_config['from_name']
+        );
 
         if (!$result) {
             Logger::emailError('Failed to send failure notification to admin: ' . $admin_email, $form_id);
@@ -370,7 +425,7 @@ class FormEmailService extends EmailHandler
      * @param array $form_data
      * @param array $template
      * @param string $failed_system Either 'cleverreach' or 'email'
-     * @param string $error_message
+     * @param string $error_message Error message already in site locale
      * @return bool
      */
     public function sendPartialFailureNotification(
@@ -389,15 +444,15 @@ class FormEmailService extends EmailHandler
             return false;
         }
 
-        // Convert error message to admin version (site locale)
-        $error_message = $this->convertErrorMessageForAdmin($error_message);
+        // Get email config (uses same hierarchy as regular form emails: defaults -> filter -> ACF)
+        $email_config = $this->getEmailConfig($form_id, $form_data);
 
         $site_name = get_bloginfo('name');
         $form_title = get_the_title($form_id);
-        $failed_label = $failed_system === 'cleverreach' ? 'CleverReach' : 'Email';
-        $subject = FormMessages::getPartialFailureNotificationSubject($site_name, $form_title, $failed_label);
+        $subject = FormMessages::getPartialFailureNotificationSubject($site_name, $form_title, $failed_system);
 
         $field_labels = $this->buildFieldLabelMap($template['fields'] ?? []);
+        $separated_fields = $this->separateFieldsForDisplay($form_data, $template);
 
         ob_start();
         ?>
@@ -430,14 +485,25 @@ class FormEmailService extends EmailHandler
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($form_data as $field_name => $value) { ?>
+                <?php foreach ($separated_fields['table'] as $field_name => $value) { ?>
                     <tr>
                         <td><strong><?php echo esc_html($field_labels[$field_name] ?? ucwords(str_replace(['_', '-'], ' ', $field_name))); ?></strong></td>
-                        <td><?php echo esc_html($value); ?></td>
+                        <td><?php echo nl2br(esc_html($value)); ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
+
+        <?php if (!empty($separated_fields['additional'])) { ?>
+            <?php foreach ($separated_fields['additional'] as $field_name => $value) { ?>
+                <div style="margin-top: 15px;">
+                    <strong><?php echo esc_html($field_labels[$field_name] ?? ucwords(str_replace(['_', '-'], ' ', $field_name))); ?>:</strong>
+                    <p style="margin: 5px 0; padding: 10px; background-color: #f5f5f5; border-left: 3px solid #0073aa;">
+                        <?php echo nl2br(esc_html($value)); ?>
+                    </p>
+                </div>
+            <?php } ?>
+        <?php } ?>
 
         <p style="margin-top: 20px; color: #666;">
             <?php
@@ -451,7 +517,16 @@ class FormEmailService extends EmailHandler
         <?php
         $message = ob_get_clean();
 
-        $result = $this->sendSimpleEmail($admin_email, $subject, $message);
+        // Allow complete override of email HTML
+        $message = apply_filters('lexo-forms/cr/email/partial-failure-notification/html', $message, $form_id, $form_data, $template, $failed_system, $error_message);
+
+        $result = $this->sendSimpleEmail(
+            $admin_email,
+            $subject,
+            $message,
+            $email_config['from_email'],
+            $email_config['from_name']
+        );
 
         if (!$result) {
             Logger::emailError('Failed to send partial failure notification to admin: ' . $admin_email, $form_id);
