@@ -257,27 +257,6 @@ add_filter('lexo-forms/cr/email/admin-notification/field-label', function($label
 
 ### CleverReach Access Control Filters
 
-#### `lexo-forms/cr/access/allowed-users`
-
-Filter usernames with CleverReach API access.
-
-```php
-apply_filters('lexo-forms/cr/access/allowed-users', array $usernames);
-```
-
-**Default:** `['lexo']`
-
-**Example**
-
-```php
-add_filter('lexo-forms/cr/access/allowed-users', function($usernames) {
-    $usernames[] = 'admin_user';
-    return $usernames;
-});
-```
-
----
-
 #### `lexo-forms/cr/access/activation/roles`
 
 Filter roles receiving `manage_cleverreach_api` capability on plugin activation.
@@ -664,12 +643,12 @@ apply_filters('lexo-forms/cr/errors/group-id-failed', string $message);
 
 ### Core Filters
 
-#### `lexo-forms/core/styles/load`
+#### `lexoforms/load_styles`
 
 Filter whether to load plugin styles.
 
 ```php
-apply_filters('lexo-forms/core/styles/load', bool $load);
+apply_filters('lexoforms/load_styles', bool $load);
 ```
 
 **Default:** `true`
@@ -677,7 +656,7 @@ apply_filters('lexo-forms/core/styles/load', bool $load);
 **Example**
 
 ```php
-add_filter('lexo-forms/core/styles/load', function($load) {
+add_filter('lexoforms/load_styles', function($load) {
     // Don't load on specific pages
     if (is_page('custom-page')) {
         return false;
@@ -688,19 +667,19 @@ add_filter('lexo-forms/core/styles/load', function($load) {
 
 ---
 
-#### `lexo-forms/core/styles/enqueue/{basename}`
+#### `lexoforms/enqueue/{basename}`
 
 Filter whether to enqueue specific stylesheet.
 
 ```php
-apply_filters('lexo-forms/core/styles/enqueue/{basename}', bool $enqueue);
+apply_filters('lexoforms/enqueue/{basename}', bool $enqueue);
 ```
 
 **Example**
 
 ```php
 // Don't load admin-lf.css on dashboard
-add_filter('lexo-forms/core/styles/enqueue/admin-lf.css', function($enqueue) {
+add_filter('lexoforms/enqueue/admin-lf.css', function($enqueue) {
     if (is_admin() && get_current_screen()->id === 'dashboard') {
         return false;
     }
@@ -710,31 +689,31 @@ add_filter('lexo-forms/core/styles/enqueue/admin-lf.css', function($enqueue) {
 
 ---
 
-#### `lexo-forms/core/scripts/load`
+#### `lexoforms/load_scripts`
 
 Filter whether to load plugin scripts.
 
 ```php
-apply_filters('lexo-forms/core/scripts/load', bool $load);
+apply_filters('lexoforms/load_scripts', bool $load);
 ```
 
 **Default:** `true`
 
 ---
 
-#### `lexo-forms/core/scripts/enqueue/{basename}`
+#### `lexoforms/enqueue/{basename}`
 
 Filter whether to enqueue specific script.
 
 ```php
-apply_filters('lexo-forms/core/scripts/enqueue/{basename}', bool $enqueue);
+apply_filters('lexoforms/enqueue/{basename}', bool $enqueue);
 ```
 
 **Example**
 
 ```php
 // Don't load admin-lf.js on specific pages
-add_filter('lexo-forms/core/scripts/enqueue/admin-lf.js', function($enqueue) {
+add_filter('lexoforms/enqueue/admin-lf.js', function($enqueue) {
     if (is_admin() && get_current_screen()->id === 'plugins') {
         return false;
     }
@@ -744,36 +723,36 @@ add_filter('lexo-forms/core/scripts/enqueue/admin-lf.js', function($enqueue) {
 
 ---
 
-#### `lexo-forms/core/editor/styles/load`
+#### `lexoforms/load_editor_styles`
 
 Filter whether to load editor styles.
 
 ```php
-apply_filters('lexo-forms/core/editor/styles/load', bool $load);
+apply_filters('lexoforms/load_editor_styles', bool $load);
 ```
 
 **Default:** `true`
 
 ---
 
-#### `lexo-forms/core/editor/styles/add/{basename}`
+#### `lexoforms/add_editor_style/{basename}`
 
 Filter whether to add specific editor style.
 
 ```php
-apply_filters('lexo-forms/core/editor/styles/add/{basename}', bool $add);
+apply_filters('lexoforms/add_editor_style/{basename}', bool $add);
 ```
 
 **Default:** `true`
 
 ---
 
-#### `lexo-forms/core/updater/sections`
+#### `lexo-forms/plugin_sections`
 
 Filter plugin update information sections.
 
 ```php
-apply_filters('lexo-forms/core/updater/sections', array $sections);
+apply_filters('lexo-forms/plugin_sections', array $sections);
 ```
 
 **Parameters**
@@ -782,12 +761,12 @@ apply_filters('lexo-forms/core/updater/sections', array $sections);
 
 ---
 
-#### `lexo-forms/core/admin/localized-script`
+#### `lexoforms/admin_localized_script`
 
 Filter admin localized script variables.
 
 ```php
-apply_filters('lexo-forms/core/admin/localized-script', array $vars);
+apply_filters('lexoforms/admin_localized_script', array $vars);
 ```
 
 **Parameters**
@@ -805,7 +784,7 @@ apply_filters('lexo-forms/core/admin/localized-script', array $vars);
 **Example**
 
 ```php
-add_filter('lexo-forms/core/admin/localized-script', function($vars) {
+add_filter('lexoforms/admin_localized_script', function($vars) {
     $vars['custom_data'] = 'My custom value';
     return $vars;
 });
@@ -813,12 +792,12 @@ add_filter('lexo-forms/core/admin/localized-script', function($vars) {
 
 ---
 
-#### `lexo-forms/core/settings/parent-slug`
+#### `lexoforms/options-page/parent-slug`
 
 Filter the parent slug for the settings page in admin menu.
 
 ```php
-apply_filters('lexo-forms/core/settings/parent-slug', string $slug);
+apply_filters('lexoforms/options-page/parent-slug', string $slug);
 ```
 
 **Default:** `'options-general.php'`
@@ -826,19 +805,19 @@ apply_filters('lexo-forms/core/settings/parent-slug', string $slug);
 **Example**
 
 ```php
-add_filter('lexo-forms/core/settings/parent-slug', function($slug) {
+add_filter('lexoforms/options-page/parent-slug', function($slug) {
     return 'admin.php'; // Move to main admin menu
 });
 ```
 
 ---
 
-#### `lexo-forms/core/settings/capability`
+#### `lexoforms/options-page/capability`
 
 Filter the capability required to access plugin settings.
 
 ```php
-apply_filters('lexo-forms/core/settings/capability', string $capability);
+apply_filters('lexoforms/options-page/capability', string $capability);
 ```
 
 **Default:** `'manage_cleverreach_api'`
@@ -846,7 +825,7 @@ apply_filters('lexo-forms/core/settings/capability', string $capability);
 **Example**
 
 ```php
-add_filter('lexo-forms/core/settings/capability', function($capability) {
+add_filter('lexoforms/options-page/capability', function($capability) {
     return 'manage_options'; // Allow all admins
 });
 ```
@@ -855,37 +834,37 @@ add_filter('lexo-forms/core/settings/capability', function($capability) {
 
 ## Actions
 
-### `lf/init`
+### `lexoforms/init`
 
 Fires during plugin initialization.
 
 ```php
-do_action('lf/init');
+do_action('lexoforms/init');
 ```
 
 **Usage**
 
 ```php
-add_action('lf/init', function() {
+add_action('lexoforms/init', function() {
     // Custom initialization code
 });
 ```
 
 ---
 
-### `lf/localize/{script-basename}`
+### `lexoforms/localize/{script-basename}`
 
 Fires when localizing scripts for specific script file.
 
 ```php
-do_action('lf/localize/{script-basename}');
+do_action('lexoforms/localize/{script-basename}');
 ```
 
 **Example**
 
 ```php
-add_action('lf/localize/admin-lf.js', function() {
-    wp_localize_script('lf/admin-lf.js', 'customData', [
+add_action('lexoforms/localize/admin-lf.js', function() {
+    wp_localize_script('lexoforms/admin-lf.js', 'customData', [
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('custom_nonce'),
     ]);
