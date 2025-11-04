@@ -695,6 +695,25 @@ class FormMessages
     }
 
     /**
+     * Get user language code from user locale.
+     *
+     * Uses the current WordPress user's locale preference if available.
+     * Falls back to site locale when user locale is not set.
+     *
+     * @return string Language code (e.g., 'de', 'en', 'fr', 'it') - defaults to 'de'
+     */
+    public static function getUserLanguage(): string
+    {
+        $locale = function_exists('get_user_locale') ? get_user_locale() : null;
+
+        if (empty($locale)) {
+            return self::getSiteLanguage();
+        }
+
+        return self::normalizeLocaleToLanguage($locale);
+    }
+
+    /**
      * Get site language code from site locale.
      *
      * Converts WordPress locale (e.g., 'de_CH', 'en_US') to a simple language code
@@ -710,7 +729,17 @@ class FormMessages
             return 'de';
         }
 
-        // Extract base language code from locale (e.g., 'de' from 'de_CH')
+        return self::normalizeLocaleToLanguage($locale);
+    }
+
+    /**
+     * Normalize a WordPress locale string to a base language code.
+     *
+     * @param string $locale Locale string such as 'de_CH' or 'en_US'.
+     * @return string Lowercase language code.
+     */
+    protected static function normalizeLocaleToLanguage(string $locale): string
+    {
         $parts = explode('_', $locale);
         return strtolower($parts[0]);
     }

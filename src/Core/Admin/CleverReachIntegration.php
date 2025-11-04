@@ -63,14 +63,14 @@ class CleverReachIntegration extends Singleton
         $templates = $templateLoader->getAvailableTemplates() ?: [];
 
         $choices = [];
-        $site_language = FormMessages::getSiteLanguage();
+        $user_language = FormMessages::getUserLanguage();
 
         foreach ($templates as $template_id => $template) {
             $template_name = $template['name'];
 
-            // If template name is multilingual array, use site language
+            // If template name is multilingual array, use current user language
             if (is_array($template_name)) {
-                $template_name = $template_name[$site_language] ?? $template_name['de'] ?? reset($template_name);
+                $template_name = $template_name[$user_language] ?? $template_name['de'] ?? reset($template_name);
             }
 
             $choices[$template_id] = $template_name;

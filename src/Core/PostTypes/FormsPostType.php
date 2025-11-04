@@ -234,10 +234,10 @@ class FormsPostType extends Singleton
                         $template = $templates[$template_id];
                         $template_name = $template['name'];
 
-                        // If template name is multilingual array, use site language
+                        // If template name is multilingual array, use current user language
                         if (is_array($template_name)) {
-                            $site_language = FormMessages::getSiteLanguage();
-                            $template_name = $template_name[$site_language] ?? $template_name['de'] ?? reset($template_name);
+                            $user_language = FormMessages::getUserLanguage();
+                            $template_name = $template_name[$user_language] ?? $template_name['de'] ?? reset($template_name);
                         }
 
                         echo esc_html($template_name);
