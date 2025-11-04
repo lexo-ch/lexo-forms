@@ -79,7 +79,7 @@ class PluginService extends Singleton
 
         add_action('admin_post_' . self::CHECK_UPDATE, [$this, 'checkForUpdateManually']);
         add_action('save_post', [$this, 'validateFormOnSave'], 10, 3);
-        add_action('admin_notices', [$this, 'showValidationNotices']);
+        add_action('admin_notices', [$this, 'displayNotices']);
 
     }
     
@@ -242,6 +242,27 @@ class PluginService extends Singleton
     }
 
     /**
+     * Display all admin notices
+     *
+     * @return void
+     */
+    public function displayNotices(): void
+    {
+        $this->settingsSavedNotice();
+        $this->authSuccessNotice();
+        $this->authErrorNotice();
+        $this->crConnectionNotice();
+        $this->noUpdatesNotice();
+        $this->updateSuccessNotice();
+        $this->showValidationNotices();
+
+        // Display CleverReach integration notices
+        $cr_integration = \LEXO\LF\Core\Admin\CleverReachIntegration::getInstance();
+        $cr_integration->displaySuccessNotice();
+        $cr_integration->displayErrorNotice();
+    }
+
+    /**
      * Display settings saved notice
      *
      * @return void
@@ -255,9 +276,10 @@ class PluginService extends Singleton
             return;
         }
 
-        $this->notices->add(
-            $this->notice->message($message)->type('success')
-        );
+        wp_admin_notice($message, [
+            'type' => 'success',
+            'dismissible' => true
+        ]);
     }
 
     /**
@@ -274,9 +296,10 @@ class PluginService extends Singleton
             return;
         }
 
-        $this->notices->add(
-            $this->notice->message($message)->type('success')
-        );
+        wp_admin_notice($message, [
+            'type' => 'success',
+            'dismissible' => true
+        ]);
     }
 
     /**
@@ -293,9 +316,10 @@ class PluginService extends Singleton
             return;
         }
 
-        $this->notices->add(
-            $this->notice->message($message)->type('error')
-        );
+        wp_admin_notice($message, [
+            'type' => 'error',
+            'dismissible' => true
+        ]);
     }
 
     /**
@@ -336,9 +360,10 @@ class PluginService extends Singleton
                 __('This form is not connected to CleverReach. Please click the "Connect to CleverReach" button below and complete the setup before using this form.', 'lexoforms')
             );
 
-            $this->notices->add(
-                $this->notice->message($message)->type('error')->dismissible(false)
-            );
+            wp_admin_notice($message, [
+                'type' => 'error',
+                'dismissible' => false
+            ]);
         }
     }
 
@@ -484,9 +509,10 @@ class PluginService extends Singleton
             return false;
         }
 
-        $this->notices->add(
-            $this->notice->message($message)->type('success')
-        );
+        wp_admin_notice($message, [
+            'type' => 'success',
+            'dismissible' => true
+        ]);
     }
 
     public function updateSuccessNotice()
@@ -498,9 +524,10 @@ class PluginService extends Singleton
             return false;
         }
 
-        $this->notices->add(
-            $this->notice->message($message)->type('success')
-        );
+        wp_admin_notice($message, [
+            'type' => 'success',
+            'dismissible' => true
+        ]);
     }
 
     public static function getManualUpdateCheckLink(): string
@@ -640,11 +667,16 @@ class PluginService extends Singleton
 
         // Display errors
         foreach ($errors as $error) {
-            printf(
-                '<div class="notice notice-error is-dismissible"><p><strong>%s:</strong> %s</p></div>',
+            $message = sprintf(
+                '<strong>%s:</strong> %s',
                 __('CleverReach Form Error', 'lexoforms'),
                 esc_html($error)
             );
+
+            wp_admin_notice($message, [
+                'type' => 'error',
+                'dismissible' => true
+            ]);
         }
     }
 

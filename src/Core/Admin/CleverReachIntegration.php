@@ -7,8 +7,6 @@ use LEXO\LF\Core\Handlers\CRSyncHandler;
 use LEXO\LF\Core\Services\FormsService;
 use LEXO\LF\Core\Services\GroupsService;
 use LEXO\LF\Core\Templates\TemplateLoader;
-use LEXO\LF\Core\Notices\Notice;
-use LEXO\LF\Core\Notices\Notices;
 use LEXO\LF\Core\Utils\Logger;
 use LEXO\LF\Core\Utils\FormHelpers;
 use LEXO\LF\Core\Utils\FormMessages;
@@ -27,15 +25,12 @@ use const LEXO\LF\{
 class CleverReachIntegration extends Singleton
 {
     protected static $instance = null;
-    private Notices $notices;
 
     /**
      * Register hooks
      */
     public function register(): void
     {
-        // Initialize notices
-        $this->notices = new Notices();
 
         // Load field choices dynamically
         add_filter('acf/load_field/name=lexoform_html_template', [$this, 'loadTemplateChoices']);
@@ -169,15 +164,16 @@ class CleverReachIntegration extends Singleton
                 // Refresh cr_settings to get updated form_id after sync
                 $cr_settings = get_field(FIELD_PREFIX . 'cr_integration', $post_id) ?: [];
 
-                // Add success notice
+                // Add success notice via transient
                 $form_id = $cr_settings[FIELD_PREFIX . 'form_id'] ?? '';
-                $notice = (new Notice())
-                    ->message('<strong>' . __('CleverReach Connection Successful!', 'lexoforms') . '</strong><br>' .
-                             sprintf(__('Form has been connected to CleverReach (Form ID: %s).', 'lexoforms'), esc_html($form_id)))
-                    ->type('success')
-                    ->dismissible(true);
+                $message = '<strong>' . __('CleverReach Connection Successful!', 'lexoforms') . '</strong><br>' .
+                           sprintf(__('Form has been connected to CleverReach (Form ID: %s).', 'lexoforms'), esc_html($form_id));
 
-                $this->notices->add($notice);
+                set_transient(
+                    DOMAIN . '_cr_success_notice',
+                    $message,
+                    HOUR_IN_SECONDS
+                );
             }
 
         } catch (\Exception $e) {
@@ -187,18 +183,59 @@ class CleverReachIntegration extends Singleton
             $cr_settings[FIELD_PREFIX . 'cr_status'] = 'ERROR: ' . $e->getMessage();
             update_field(FIELD_PREFIX . 'cr_integration', $cr_settings, $post_id);
 
-            // Add error notice
-            $notice = (new Notice())
-                ->message('<strong>' . __('CleverReach Connection Error:', 'lexoforms') . '</strong><br>' .
-                         esc_html($e->getMessage()) . '<br><em>' .
-                         __('Please check your form configuration and try saving again.', 'lexoforms') . '</em>')
-                ->type('error')
-                ->dismissible(true);
+            // Add error notice via transient
+            $message = '<strong>' . __('CleverReach Connection Error:', 'lexoforms') . '</strong><br>' .
+                       esc_html($e->getMessage()) . '<br><em>' .
+                       __('Please check your form configuration and try saving again.', 'lexoforms') . '</em>';
 
-            $this->notices->add($notice);
+            set_transient(
+                DOMAIN . '_cr_error_notice',
+                $message,
+                HOUR_IN_SECONDS
+            );
 
             Logger::error('CleverReach connection exception for post ID ' . $post_id . ': ' . $e->getMessage(), Logger::CATEGORY_GENERAL);
         }
+    }
+
+    /**
+     * Display CleverReach success notice
+     *
+     * @return void
+     */
+    public function displaySuccessNotice(): void
+    {
+        $message = get_transient(DOMAIN . '_cr_success_notice');
+        delete_transient(DOMAIN . '_cr_success_notice');
+
+        if (!$message) {
+            return;
+        }
+
+        wp_admin_notice($message, [
+            'type' => 'success',
+            'dismissible' => true
+        ]);
+    }
+
+    /**
+     * Display CleverReach error notice
+     *
+     * @return void
+     */
+    public function displayErrorNotice(): void
+    {
+        $message = get_transient(DOMAIN . '_cr_error_notice');
+        delete_transient(DOMAIN . '_cr_error_notice');
+
+        if (!$message) {
+            return;
+        }
+
+        wp_admin_notice($message, [
+            'type' => 'error',
+            'dismissible' => true
+        ]);
     }
 
     /**

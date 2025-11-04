@@ -2,19 +2,8 @@
 
 namespace LEXO\LF\Core\Traits;
 
-use LEXO\LF\Core\Notices\Notice;
-use LEXO\LF\Core\Notices\Notices;
-
 trait Helpers
 {
-    public $notice;
-    public $notices;
-
-    public function __construct()
-    {
-        $this->notice = new Notice();
-        $this->notices = new Notices();
-    }
 
     public static function getClassName($classname)
     {

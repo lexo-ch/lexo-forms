@@ -11,7 +11,6 @@ use LEXO\LF\Core\Editor\FormsToolbar;
 use LEXO\LF\Core\Editor\AdditionalEmailToolbar;
 use LEXO\LF\Core\Services\FormSubmissionHandler;
 use LEXO\LF\Core\Admin\CleverReachIntegration;
-use LEXO\LF\Core\Notices\Notices;
 
 use const LEXO\LF\{
     DOMAIN,
@@ -64,15 +63,7 @@ class Bootloader extends Singleton
         $plugin_settings->setNamespace(DOMAIN);
         $plugin_settings->registerNamespace();
         $plugin_settings->importFields(); // Register ACF fields (LEXO standard)
-        $plugin_settings->settingsSavedNotice();
-        $plugin_settings->authSuccessNotice();
-        $plugin_settings->authErrorNotice();
-        $plugin_settings->crConnectionNotice();
         $plugin_settings->addPluginLinks();
-        $plugin_settings->noUpdatesNotice();
-        $plugin_settings->updateSuccessNotice();
-
-        (new Notices())->run();
     }
 
     public static function onAdminInit(): void
