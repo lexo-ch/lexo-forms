@@ -40,6 +40,8 @@ class CleverReachIntegration extends Singleton
         // Handle form submission via ACF save
         add_action('acf/save_post', [$this, 'handleFormSave'], 20);
 
+        // Clear cache when post is saved
+        add_action('save_post', [$this, 'clearCacheOnSave'], 10, 3);
 
         // Add meta boxes
         add_action('add_meta_boxes', [$this, 'addMetaBoxes']);
@@ -199,6 +201,35 @@ class CleverReachIntegration extends Singleton
     }
 
     /**
+     * Clear cache when post is saved
+     *
+     * @param int $post_id Post ID
+     * @param \WP_Post $post Post object
+     * @param bool $update Whether this is an update or new post
+     * @return void
+     */
+    public function clearCacheOnSave($post_id, $post, $update): void
+    {
+        // Skip autosaves and revisions
+        if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) {
+            return;
+        }
+
+        // Only clear cache for our custom post type
+        if ($post->post_type !== 'cpt-lexoforms') {
+            return;
+        }
+
+        // Skip auto-drafts (new posts that haven't been saved yet)
+        if ($post->post_status === 'auto-draft') {
+            return;
+        }
+
+        // Clear all cache when form is saved
+        $this->clearAllCache();
+    }
+
+    /**
      * Display CleverReach success notice
      *
      * @return void
@@ -314,9 +345,10 @@ class CleverReachIntegration extends Singleton
      */
     public function autoRefreshCacheOnEdit(): void
     {
-        global $post;
+        // Check if we have a post ID in the query string
+        $post_id = isset($_GET['post']) ? absint($_GET['post']) : 0;
 
-        if ($post && $post->post_type === 'cpt-lexoforms') {
+        if ($post_id && get_post_type($post_id) === 'cpt-lexoforms') {
             $this->clearAllCache();
         }
     }
@@ -341,8 +373,9 @@ class CleverReachIntegration extends Singleton
         $formsService = FormsService::getInstance();
         $groupsService = GroupsService::getInstance();
 
-        $formsService->clearCache();
-        $groupsService->clearCache();
+        // Clear ALL caches (list + individual items)
+        $formsService->clearAllCache();
+        $groupsService->clearAllCache();
     }
 
 
