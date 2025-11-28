@@ -125,7 +125,7 @@ class FormsToolbar extends Singleton
         jQuery(document).ready(function($) {
             // Add forms data for TinyMCE
             window.lexoFormsData = {
-                forms: <?php echo json_encode($forms_data); ?>,
+                forms: <?php echo wp_json_encode($forms_data); ?>,
                 labels: {
                     title: '<?php echo esc_js(__('Forms', 'lexoforms')); ?>',
                     selectForm: '<?php echo esc_js(__('Select a form:', 'lexoforms')); ?>',

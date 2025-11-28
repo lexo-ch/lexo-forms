@@ -44,58 +44,43 @@ class CleverReachAPI {
     private function makeRequest(string $method, string $endpoint, array $data = []): array
     {
         $url = $this->apiUrl . $endpoint;
+        $method = strtoupper($method);
 
-        $curl = curl_init();
+        // Convert headers array to associative array for wp_remote_request
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . $this->token
+        ];
 
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => API_TIMEOUT,
-            CURLOPT_HTTPHEADER => $this->headers,
-            CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_SSL_VERIFYHOST => 2
-        ]);
+        // Prepare request arguments
+        $args = [
+            'method' => $method,
+            'timeout' => API_TIMEOUT,
+            'headers' => $headers,
+            'sslverify' => true,
+        ];
 
-        switch (strtoupper($method)) {
-            case 'POST':
-                curl_setopt($curl, CURLOPT_POST, true);
-                if (!empty($data)) {
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
-                }
-                break;
-
-            case 'PUT':
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
-                if (!empty($data)) {
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
-                }
-                break;
-
-            case 'DELETE':
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-                break;
-
-            case 'GET':
-            default:
-                if (!empty($data)) {
-                    $url .= '?' . http_build_query($data);
-                    curl_setopt($curl, CURLOPT_URL, $url);
-                }
-                break;
+        // Handle different HTTP methods
+        if (in_array($method, ['POST', 'PUT']) && !empty($data)) {
+            $args['body'] = json_encode($data);
+        } elseif ($method === 'GET' && !empty($data)) {
+            $url = add_query_arg($data, $url);
         }
 
-        $response = curl_exec($curl);
-        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        $error = curl_error($curl);
+        // Make the request using WordPress HTTP API
+        $response = wp_remote_request($url, $args);
 
-        curl_close($curl);
-
-        if ($error) {
-            $this->logError("cURL Error", $error, $method, $url);
-            throw new \Exception("cURL Error: " . $error);
+        // Check for WordPress errors
+        if (is_wp_error($response)) {
+            $errorMessage = $response->get_error_message();
+            $this->logError("HTTP Error", $errorMessage, $method, $url);
+            throw new \Exception("HTTP Error: " . $errorMessage);
         }
 
-        $decodedResponse = json_decode($response, true);
+        // Get response code and body
+        $httpCode = wp_remote_retrieve_response_code($response);
+        $body = wp_remote_retrieve_body($response);
+        $decodedResponse = json_decode($body, true);
 
         if ($httpCode >= 400) {
             $errorMessage = $decodedResponse['error']['message'] ?? "HTTP Error {$httpCode}";
@@ -222,9 +207,9 @@ class CleverReachAPI {
             'email' => $email,
             'groups_id' => $groupId,
             'doidata' => [
-                'user_ip' => $_SERVER['REMOTE_ADDR'] ?? '',
-                'referer' => $_SERVER['HTTP_REFERER'] ?? '',
-                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? ''
+                'user_ip' => isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '',
+                'referer' => isset($_SERVER['HTTP_REFERER']) ? esc_url_raw(wp_unslash($_SERVER['HTTP_REFERER'])) : '',
+                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : ''
             ]
         ];
 
