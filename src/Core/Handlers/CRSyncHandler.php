@@ -286,7 +286,7 @@ class CRSyncHandler extends Singleton
             // Create new attribute
             // CleverReach requires alphanumeric description, so sanitize it
             $description = $field['cr_description'] ?? $field_name;
-            $sanitized_description = $this->sanitizeDescription($description);
+            $sanitized_description = CleverReachHelper::sanitizeDescription($description);
 
             $attr_data = [
                 'name' => $field_name,
@@ -306,18 +306,5 @@ class CRSyncHandler extends Singleton
         }
 
         return $synced_count;
-    }
-
-    /**
-     * Sanitize description to be alphanumeric only
-     * CleverReach API requires alphanumeric descriptions
-     *
-     * @deprecated Use CleverReachHelper::sanitizeDescription() instead
-     * @param string $description Original description
-     * @return string Sanitized alphanumeric description
-     */
-    private function sanitizeDescription(string $description): string
-    {
-        return CleverReachHelper::sanitizeDescription($description);
     }
 }

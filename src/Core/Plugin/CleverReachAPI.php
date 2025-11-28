@@ -128,9 +128,9 @@ class CleverReachAPI {
     {
         // Ensure description is sanitized if provided, or use name
         if (!isset($groupData['description']) && isset($groupData['name'])) {
-            $groupData['description'] = $this->sanitizeDescription($groupData['name']);
+            $groupData['description'] = CleverReachHelper::sanitizeDescription($groupData['name']);
         } elseif (isset($groupData['description'])) {
-            $groupData['description'] = $this->sanitizeDescription($groupData['description']);
+            $groupData['description'] = CleverReachHelper::sanitizeDescription($groupData['description']);
         }
 
         return $this->makeRequest('POST', '/groups', $groupData);
@@ -208,9 +208,9 @@ class CleverReachAPI {
 
         // Add sanitized description if provided, otherwise use sanitized name
         if ($description !== null) {
-            $data['description'] = $this->sanitizeDescription($description);
+            $data['description'] = CleverReachHelper::sanitizeDescription($description);
         } else {
-            $data['description'] = $this->sanitizeDescription($name);
+            $data['description'] = CleverReachHelper::sanitizeDescription($name);
         }
 
         return $this->makeRequest('POST', "/forms.json/{$groupId}/createfromtemplate/{$type}", $data);
@@ -285,7 +285,7 @@ class CleverReachAPI {
                     }
                 }
 
-                $sanitizedDescription = $this->sanitizeDescription($description ?: ucfirst($name));
+                $sanitizedDescription = CleverReachHelper::sanitizeDescription($description ?: ucfirst($name));
                 $attributeData = [
                     'name' => $name,
                     'type' => $type,
@@ -304,7 +304,7 @@ class CleverReachAPI {
                     }
                 }
 
-                $sanitizedDescription = $this->sanitizeDescription($description ?: ucfirst($name));
+                $sanitizedDescription = CleverReachHelper::sanitizeDescription($description ?: ucfirst($name));
                 $attributeData = [
                     'name' => $name,
                     'type' => $type,
@@ -347,18 +347,5 @@ class CleverReachAPI {
     {
         $endpoint = basename(parse_url($url, PHP_URL_PATH));
         Logger::apiError("{$errorType}: {$message}", $endpoint, $method);
-    }
-
-    /**
-     * Sanitize description to be alphanumeric only
-     * CleverReach API requires alphanumeric descriptions
-     *
-     * @deprecated Use CleverReachHelper::sanitizeDescription() instead
-     * @param string $description Original description
-     * @return string Sanitized alphanumeric description
-     */
-    private function sanitizeDescription(string $description): string
-    {
-        return CleverReachHelper::sanitizeDescription($description);
     }
 }
