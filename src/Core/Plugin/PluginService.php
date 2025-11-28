@@ -222,8 +222,9 @@ class PluginService extends Singleton
         check_admin_referer(FIELD_NAME);
 
         // Save fallback email
-        if (isset($_POST['cleverreach_fallback_admin_email'])) {
-            update_option('cleverreach_fallback_admin_email', sanitize_email($_POST['cleverreach_fallback_admin_email']));
+        $fallback_email_key = FIELD_PREFIX . 'fallback_admin_email';
+        if (isset($_POST[$fallback_email_key])) {
+            update_option($fallback_email_key, sanitize_email($_POST[$fallback_email_key]));
         }
 
         // Success notice

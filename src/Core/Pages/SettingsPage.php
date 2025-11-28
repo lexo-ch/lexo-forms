@@ -124,8 +124,8 @@ class SettingsPage
                         <tr>
                             <th scope="row"><?php echo __('Fallback Admin Email', 'lexoforms'); ?></th>
                             <td>
-                                <input type="email" name="cleverreach_fallback_admin_email"
-                                       value="<?php echo esc_attr(get_option('cleverreach_fallback_admin_email', '')); ?>"
+                                <input type="email" name="<?php echo esc_attr(\LEXO\LF\FIELD_PREFIX . 'fallback_admin_email'); ?>"
+                                       value="<?php echo esc_attr(get_option(\LEXO\LF\FIELD_PREFIX . 'fallback_admin_email', '')); ?>"
                                        class="regular-text" />
                                 <p class="description">
                                     <?php echo __('When CleverReach submission fails, form data will be sent to this email address. If empty, it will use the site admin email:', 'lexoforms'); ?>

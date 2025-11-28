@@ -22,6 +22,21 @@ use LEXO\LF\Core\Utils\FormMessages;
 abstract class EmailHandler
 {
     /**
+     * Get fallback admin email
+     * Priority: lexoform_fallback_admin_email option -> admin_email
+     *
+     * @return string
+     */
+    private function getFallbackAdminEmail(): string
+    {
+        $fallback = get_option(FIELD_PREFIX . 'fallback_admin_email', '');
+        if (!empty($fallback) && is_email($fallback)) {
+            return $fallback;
+        }
+        return EMAIL_FROM_EMAIL;
+    }
+
+    /**
      * Get email configuration from form ACF fields and theme filters
      *
      * @param int $form_id
@@ -35,7 +50,7 @@ abstract class EmailHandler
         $default_config = [
             'recipients' => [],
             'subject' => 'New Form Submission',
-            'from_email' => EMAIL_FROM_EMAIL,
+            'from_email' => '',
             'from_name' => EMAIL_FROM_NAME,
             'reply_to_email' => '',
             'reply_to_name' => ''
@@ -49,7 +64,7 @@ abstract class EmailHandler
             // Validate and normalize recipients
             if (empty($config['recipients'])) {
                 Logger::emailError('No email recipients configured', $form_id);
-                $config['recipients'] = [EMAIL_FROM_EMAIL];
+                $config['recipients'] = [$this->getFallbackAdminEmail()];
             }
 
             // Ensure recipients is array and filter out empty values
@@ -63,7 +78,7 @@ abstract class EmailHandler
 
             if (empty($config['recipients'])) {
                 Logger::emailError('No valid email recipients after filtering', $form_id);
-                $config['recipients'] = [EMAIL_FROM_EMAIL];
+                $config['recipients'] = [$this->getFallbackAdminEmail()];
             }
 
             return $config;
@@ -105,7 +120,7 @@ abstract class EmailHandler
         // Validate and normalize recipients
         if (empty($config['recipients'])) {
             Logger::emailError('No email recipients configured', $form_id);
-            $config['recipients'] = [EMAIL_FROM_EMAIL];
+            $config['recipients'] = [$this->getFallbackAdminEmail()];
         }
 
         // Ensure recipients is array and filter out empty values
@@ -119,7 +134,7 @@ abstract class EmailHandler
 
         if (empty($config['recipients'])) {
             Logger::emailError('No valid email recipients after filtering', $form_id);
-            $config['recipients'] = [EMAIL_FROM_EMAIL];
+            $config['recipients'] = [$this->getFallbackAdminEmail()];
         }
 
         return $config;
@@ -147,7 +162,10 @@ abstract class EmailHandler
         try {
             // Set From address
             if (!empty($config['from_email'])) {
-                $phpmailer->setFrom($config['from_email'], $config['from_name'] ?: '');
+                $phpmailer->setFrom($config['from_email'], $config['from_name'] ?: EMAIL_FROM_NAME);
+            } else {
+                // If no from_email configured, at least set FromName (WordPress will use default email)
+                $phpmailer->FromName = !empty($config['from_name']) ? $config['from_name'] : EMAIL_FROM_NAME;
             }
 
             // Set Reply-To address
@@ -240,8 +258,8 @@ abstract class EmailHandler
 
             // Build config for PHPMailer
             $config = [
-                'from_email' => $from_email ?: EMAIL_FROM_EMAIL,
-                'from_name' => $from_name ?: EMAIL_FROM_NAME,
+                'from_email' => $from_email,
+                'from_name' => $from_name,
                 'reply_to_email' => $reply_to_email,
                 'reply_to_name' => $reply_to_name
             ];

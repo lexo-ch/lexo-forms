@@ -476,7 +476,7 @@ class FormSubmissionHandler extends Singleton
         }
 
         // Priority 3: Filter fallback
-        return apply_filters('lexo-forms/cr/email/confirmation/sender', EMAIL_FROM_EMAIL, $form_id);
+        return apply_filters('lexo-forms/cr/email/confirmation/sender', '', $form_id);
     }
 
     /**

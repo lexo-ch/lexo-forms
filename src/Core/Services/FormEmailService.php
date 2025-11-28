@@ -333,7 +333,7 @@ class FormEmailService extends EmailHandler
      */
     public function sendFailureNotification(int $form_id, array $form_data, array $template, string $error_message, string $handler_type = ''): bool
     {
-        $admin_email = get_option('cleverreach_fallback_admin_email', '');
+        $admin_email = get_option(\LEXO\LF\FIELD_PREFIX . 'fallback_admin_email', '');
         if (empty($admin_email)) {
             $admin_email = get_option('admin_email');
         }
@@ -438,7 +438,7 @@ class FormEmailService extends EmailHandler
         string $error_message,
         string $handler_type = ''
     ): bool {
-        $admin_email = get_option('cleverreach_fallback_admin_email', '');
+        $admin_email = get_option(\LEXO\LF\FIELD_PREFIX . 'fallback_admin_email', '');
         if (empty($admin_email)) {
             $admin_email = get_option('admin_email');
         }

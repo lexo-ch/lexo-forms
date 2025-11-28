@@ -40,7 +40,7 @@ class SettingsRegistration
             'default' => ''
         ]);
 
-        register_setting(\LEXO\LF\FIELD_NAME, 'cleverreach_fallback_admin_email', [
+        register_setting(\LEXO\LF\FIELD_NAME, \LEXO\LF\FIELD_PREFIX . 'fallback_admin_email', [
             'type' => 'string',
             'sanitize_callback' => 'sanitize_email',
             'default' => ''
