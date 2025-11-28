@@ -254,56 +254,6 @@ add_filter('lexo-forms/cr/email/admin-notification/field-label', function($label
 
 ---
 
-### CleverReach Access Control Filters
-
-#### `lexo-forms/cr/access/activation/roles`
-
-Filter roles receiving `manage_cleverreach_api` capability on plugin activation.
-
-```php
-apply_filters('lexo-forms/cr/access/activation/roles', array $roles);
-```
-
-**Default:** `['administrator']`
-
----
-
-#### `lexo-forms/cr/access/activation/usernames`
-
-Filter usernames receiving `manage_cleverreach_api` capability on plugin activation.
-
-```php
-apply_filters('lexo-forms/cr/access/activation/usernames', array $usernames);
-```
-
-**Default:** `['lexo']`
-
----
-
-#### `lexo-forms/cr/access/deactivation/roles`
-
-Filter roles losing `manage_cleverreach_api` capability on plugin deactivation.
-
-```php
-apply_filters('lexo-forms/cr/access/deactivation/roles', array $roles);
-```
-
-**Default:** `['administrator']`
-
----
-
-#### `lexo-forms/cr/access/deactivation/usernames`
-
-Filter usernames losing `manage_cleverreach_api` capability on plugin deactivation.
-
-```php
-apply_filters('lexo-forms/cr/access/deactivation/usernames', array $usernames);
-```
-
-**Default:** `['lexo']`
-
----
-
 ### Forms Filters
 
 #### `lexo-forms/forms/grid/columns`
@@ -819,13 +769,13 @@ Filter the capability required to access plugin settings.
 apply_filters('lexoforms/options-page/capability', string $capability);
 ```
 
-**Default:** `'manage_cleverreach_api'`
+**Default:** `'manage_options'`
 
 **Example**
 
 ```php
 add_filter('lexoforms/options-page/capability', function($capability) {
-    return 'manage_options'; // Allow all admins
+    return 'edit_posts'; // Allow editors and above
 });
 ```
 

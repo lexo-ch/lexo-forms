@@ -34,7 +34,7 @@ class PluginService extends Singleton
     protected static $instance          = null;
 
     private const CHECK_UPDATE              = 'check-update-' . PLUGIN_SLUG;
-    private const MANAGE_PLUGIN_CAP         = 'administrator';
+    private const MANAGE_PLUGIN_CAP         = 'manage_options';
     private const SETTINGS_PARENT_SLUG      = 'options-general.php';
     private const SETTINGS_PAGE_SLUG        = 'settings-' . PLUGIN_SLUG;
     private const ACF_DIR                   = ASSETS . '/acf';
@@ -142,32 +142,30 @@ class PluginService extends Singleton
      */
     public function addSettingsPage(): void
     {
-        if (current_user_can('edit_posts')) {
-            // Add main menu page
-            add_menu_page(
-                __('CleverReach Settings', 'lexoforms'),
-                __('LEXO Forms', 'lexoforms'),
-                'edit_posts',                      // Editor and above can see main menu
-                'cleverreach-settings',
-                [$this->settingsPage, 'getSettingsPageContent'],
-                'dashicons-email-alt2',
-                65
-            );
+        // Add main menu page
+        add_menu_page(
+            __('CleverReach Settings', 'lexoforms'),
+            __('LEXO Forms', 'lexoforms'),
+            'edit_posts',                      // Editor and above can see main menu
+            'cleverreach-settings',
+            [$this->settingsPage, 'getSettingsPageContent'],
+            'dashicons-email-alt2',
+            65
+        );
 
-            // Rename first submenu item to "Settings"
-            // WordPress automatically creates it with same slug as parent
-            // Only administrators can access settings
-            add_submenu_page(
-                'cleverreach-settings',
-                __('CleverReach Settings', 'lexoforms'),
-                __('Settings', 'lexoforms'),
-                self::getManagePluginCap(),               // Only Administrator can see Settings
-                'cleverreach-settings',
-                [$this->settingsPage, 'getSettingsPageContent']
-            );
+        // Rename first submenu item to "Settings"
+        // WordPress automatically creates it with same slug as parent
+        // Only administrators can access settings
+        add_submenu_page(
+            'cleverreach-settings',
+            __('CleverReach Settings', 'lexoforms'),
+            __('Settings', 'lexoforms'),
+            self::getManagePluginCap(),               // Only Administrator can see Settings
+            'cleverreach-settings',
+            [$this->settingsPage, 'getSettingsPageContent']
+        );
 
-            // Note: Forms CPT submenu is added in FormsPostType::addSubmenuPage()
-        }
+        // Note: Forms CPT submenu is added in FormsPostType::addSubmenuPage()
     }
 
     /**
