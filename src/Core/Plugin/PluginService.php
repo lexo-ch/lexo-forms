@@ -157,16 +157,14 @@ class PluginService extends Singleton
             // Rename first submenu item to "Settings"
             // WordPress automatically creates it with same slug as parent
             // Only administrators can access settings
-            if (current_user_can('manage_options')) {
-                add_submenu_page(
-                    'cleverreach-settings',
-                    __('CleverReach Settings', 'lexoforms'),
-                    __('Settings', 'lexoforms'),
-                    'manage_options',               // Only Administrator can see Settings
-                    'cleverreach-settings',
-                    [$this->settingsPage, 'getSettingsPageContent']
-                );
-            }
+            add_submenu_page(
+                'cleverreach-settings',
+                __('CleverReach Settings', 'lexoforms'),
+                __('Settings', 'lexoforms'),
+                self::getManagePluginCap(),               // Only Administrator can see Settings
+                'cleverreach-settings',
+                [$this->settingsPage, 'getSettingsPageContent']
+            );
 
             // Note: Forms CPT submenu is added in FormsPostType::addSubmenuPage()
         }
@@ -179,7 +177,7 @@ class PluginService extends Singleton
      */
     public function saveSettings(): void
     {
-        if (!current_user_can('manage_options')) {
+        if (!current_user_can(self::getManagePluginCap())) {
             wp_die(__('You do not have permission for this action', 'lexoforms'));
         }
 
@@ -219,7 +217,7 @@ class PluginService extends Singleton
      */
     public function saveFallbackEmail(): void
     {
-        if (!current_user_can('manage_options')) {
+        if (!current_user_can(self::getManagePluginCap())) {
             wp_die(__('You do not have permission for this action', 'lexoforms'));
         }
 
@@ -381,7 +379,7 @@ class PluginService extends Singleton
     {
         check_ajax_referer('cleverreach_nonce', 'nonce');
 
-        if (!current_user_can('manage_options')) {
+        if (!current_user_can(self::getManagePluginCap())) {
             wp_die(__('You do not have permission for this action', 'lexoforms'));
         }
 
@@ -430,7 +428,7 @@ class PluginService extends Singleton
     {
         check_ajax_referer('cleverreach_nonce', 'nonce');
 
-        if (!current_user_can('manage_options')) {
+        if (!current_user_can(self::getManagePluginCap())) {
             wp_die(__('You do not have permission for this action', 'lexoforms'));
         }
 
