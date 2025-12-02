@@ -394,6 +394,15 @@ $fields[] = [
             'message' => '
                 <div style="margin-top: -10px; padding: 15px; background: #e7f3ff; border-left: 4px solid #2271b1;"><p style="margin: 0; font-size: 13px; color: #135e96;"><span class="dashicons dashicons-info" style="margin-top: 1px;"></span> ' . __('Connection to CleverReach will be established automatically when you save this form.', 'lexoforms') . '</p></div>
             ',
+            'conditional_logic' => [
+                [
+                    [
+                        'field' => 'field_cr_status',
+                        'operator' => '!=',
+                        'value' => 'OK',
+                    ],
+                ],
+            ],
         ],
         // CR Form Action (radio)
         [
