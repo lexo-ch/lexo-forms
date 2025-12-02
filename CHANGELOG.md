@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/lexo-ch/lexo-forms/compare/v1.0.0...v1.0.1) (2025-12-02)
+
+
+### Bug Fixes
+
+* **core:** Enable updater class ([4256709](https://github.com/lexo-ch/lexo-forms/commit/42567099faf7b20630f8070a24a91d7ea05c7e3d))
+
 # 1.0.0 (2025-12-02)
 
 
