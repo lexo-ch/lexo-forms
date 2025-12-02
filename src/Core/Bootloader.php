@@ -89,7 +89,7 @@ class Bootloader extends Singleton
     public static function onAfterSetupTheme(): void
     {
         self::loadPluginTextdomain();
-        // PluginService::getInstance()->updater()->run();
+        PluginService::getInstance()->updater()->run();
     }
 
     public static function loadPluginTextdomain(): void
