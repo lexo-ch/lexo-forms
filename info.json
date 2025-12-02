@@ -1,0 +1,20 @@
+{
+    "name": "LEXO Forms",
+    "slug": "lexo-forms",
+    "author": "<a href='https://www.lexo.ch/'>LEXO GmbH</a>",
+    "author_profile": "https://github.com/lexo-ch/",
+    "donate_link": "https://www.lexo.ch/",
+    "version": "1.0.0",
+    "download_url": "https://github.com/lexo-ch/lexo-forms/releases/download/v1.0.0/lexo-forms-1.0.0.zip",
+    "requires": "6.4",
+    "tested": "6.8.3",
+    "requires_php": "7.4.1",
+    "sections": {
+        "description": "LEXO forms plugin with CleverReach integration.<br><a href='https://github.com/lexo-ch/lexo-forms/' target='_blank'>More about plugin</a>",
+        "changelog": "Click <a href='https://github.com/lexo-ch/lexo-forms/releases/latest/' target='_blank'>here</a> to see changelog."
+    },
+    "banners": {
+        "low": "https://raw.githubusercontent.com/lexo-ch/lexo-forms/master/banners/banner-1544x500.webp",
+        "high": "https://raw.githubusercontent.com/lexo-ch/lexo-forms/master/banners/banner-1544x500.webp"
+    }
+}
