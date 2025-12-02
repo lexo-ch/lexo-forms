@@ -4,6 +4,7 @@ namespace LEXO\LF\Core\Admin;
 
 use LEXO\LF\Core\Abstracts\Singleton;
 use LEXO\LF\Core\Handlers\CRSyncHandler;
+use LEXO\LF\Core\Plugin\CleverReachAuth;
 use LEXO\LF\Core\Services\FormsService;
 use LEXO\LF\Core\Services\GroupsService;
 use LEXO\LF\Core\Templates\TemplateLoader;
@@ -36,6 +37,8 @@ class CleverReachIntegration extends Singleton
         add_filter('acf/load_field/name=lexoform_html_template', [$this, 'loadTemplateChoices']);
         add_filter('acf/load_field/name=lexoform_existing_form', [$this, 'loadFormChoices']);
         add_filter('acf/load_field/name=lexoform_existing_group', [$this, 'loadGroupChoices']);
+        add_filter('acf/load_field/name=lexoform_handler_type', [$this, 'loadHandlerTypeChoices']);
+        add_filter('acf/load_field/name=lexoform_cr_connection_available', [$this, 'loadCRConnectionStatus']);
 
         // Handle form submission via ACF save
         add_action('acf/save_post', [$this, 'handleFormSave'], 20);
@@ -108,6 +111,43 @@ class CleverReachIntegration extends Singleton
         }
 
         $field['choices'] = $choices;
+        return $field;
+    }
+
+    /**
+     * Load handler type choices based on CR connection status
+     */
+    public function loadHandlerTypeChoices($field): array
+    {
+        $auth = CleverReachAuth::getInstance();
+        $isConnected = $auth->isConnected();
+
+        if ($isConnected) {
+            $field['choices'] = [
+                'email_only' => __('Email Notification Only', 'lexoforms'),
+                'cr_only' => __('CleverReach Only', 'lexoforms'),
+                'email_and_cr' => __('Email + CleverReach', 'lexoforms'),
+            ];
+        } else {
+            $field['choices'] = [
+                'email_only' => __('Email Notification Only', 'lexoforms'),
+            ];
+        }
+
+        return $field;
+    }
+
+    /**
+     * Load CR connection status field value
+     */
+    public function loadCRConnectionStatus($field): array
+    {
+        $auth = CleverReachAuth::getInstance();
+        $isConnected = $auth->isConnected();
+
+        $field['value'] = $isConnected ? 1 : 0;
+        $field['default_value'] = $isConnected ? 1 : 0;
+
         return $field;
     }
 

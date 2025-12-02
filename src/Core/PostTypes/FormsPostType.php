@@ -3,6 +3,7 @@
 namespace LEXO\LF\Core\PostTypes;
 
 use LEXO\LF\Core\Abstracts\Singleton;
+use LEXO\LF\Core\Plugin\CleverReachAuth;
 use LEXO\LF\Core\Utils\FormHelpers;
 use LEXO\LF\Core\Utils\FormMessages;
 
@@ -184,14 +185,23 @@ class FormsPostType extends Singleton
      */
     public function addAdminColumns(array $columns): array
     {
+        // Check if CR is connected
+        $auth = CleverReachAuth::getInstance();
+        $isConnected = $auth->isConnected();
+
         // Remove date column
         unset($columns['date']);
 
         // Add custom columns
         $columns['template'] = __('HTML Template', 'lexoforms');
         $columns['cr_status'] = __('CR Status', 'lexoforms');
-        $columns[FIELD_PREFIX . 'cr_id'] = __('CR Form', 'lexoforms');
-        $columns[FIELD_PREFIX . 'group'] = __('CR Group', 'lexoforms');
+
+        // Only show CR Form and CR Group columns if connected to CR API
+        if ($isConnected) {
+            $columns[FIELD_PREFIX . 'cr_id'] = __('CR Form', 'lexoforms');
+            $columns[FIELD_PREFIX . 'group'] = __('CR Group', 'lexoforms');
+        }
+
         $columns['shortcode'] = __('Shortcode', 'lexoforms');
         $columns['date'] = __('Date', 'lexoforms'); // Re-add date at the end
 
@@ -250,6 +260,15 @@ class FormsPostType extends Singleton
                 break;
 
             case 'cr_status':
+                // Check if CR API is connected
+                $auth = CleverReachAuth::getInstance();
+                $isConnected = $auth->isConnected();
+
+                if (!$isConnected) {
+                    echo '<span style="color: #999;">' . __('No API Connection', 'lexoforms') . '</span>';
+                    break;
+                }
+
                 // Load general settings if not already loaded
                 if (!isset($general_cache[$post_id])) {
                     $general_cache[$post_id] = get_field(FIELD_PREFIX . 'general_settings', $post_id) ?: [];
@@ -271,27 +290,49 @@ class FormsPostType extends Singleton
                         echo '<span style="color: #dba617;">⚠ ' . __('Pending Setup', 'lexoforms') . '</span>';
                     }
                 } else {
-                    echo '<span style="color: #999;">—</span>';
+                    echo '<span style="color: #999;">' . __('Email Only', 'lexoforms') . '</span>';
                 }
                 break;
 
             case FIELD_PREFIX . 'cr_id':
-                $form_id = $cr_settings[FIELD_PREFIX . 'form_id'] ?? '';
+                // Load general settings if not already loaded
+                if (!isset($general_cache[$post_id])) {
+                    $general_cache[$post_id] = get_field(FIELD_PREFIX . 'general_settings', $post_id) ?: [];
+                }
+                $general_settings = $general_cache[$post_id];
+                $handler_type = $general_settings[FIELD_PREFIX . 'handler_type'] ?? '';
+                $cr_enabled = ($handler_type === 'email_and_cr' || $handler_type === 'cr_only');
 
-                if ($form_id) {
-                    echo '<code>#' . esc_html($form_id) . '</code>';
+                if (!$cr_enabled) {
+                    echo '<span style="color: #999;">—</span>';
                 } else {
-                    echo '—';
+                    $form_id = $cr_settings[FIELD_PREFIX . 'form_id'] ?? '';
+                    if ($form_id) {
+                        echo '<code>#' . esc_html($form_id) . '</code>';
+                    } else {
+                        echo '—';
+                    }
                 }
                 break;
 
             case FIELD_PREFIX . 'group':
-                $group_id = $cr_settings[FIELD_PREFIX . 'group_id'] ?? '';
+                // Load general settings if not already loaded
+                if (!isset($general_cache[$post_id])) {
+                    $general_cache[$post_id] = get_field(FIELD_PREFIX . 'general_settings', $post_id) ?: [];
+                }
+                $general_settings = $general_cache[$post_id];
+                $handler_type = $general_settings[FIELD_PREFIX . 'handler_type'] ?? '';
+                $cr_enabled = ($handler_type === 'email_and_cr' || $handler_type === 'cr_only');
 
-                if ($group_id) {
-                    echo '<code>#' . esc_html($group_id) . '</code>';
+                if (!$cr_enabled) {
+                    echo '<span style="color: #999;">—</span>';
                 } else {
-                    echo '—';
+                    $group_id = $cr_settings[FIELD_PREFIX . 'group_id'] ?? '';
+                    if ($group_id) {
+                        echo '<code>#' . esc_html($group_id) . '</code>';
+                    } else {
+                        echo '—';
+                    }
                 }
                 break;
 

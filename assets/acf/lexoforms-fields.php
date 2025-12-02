@@ -61,6 +61,18 @@ $fields[] = [
             'ajax' => 0,
             'return_format' => 'value',
         ],
+        // Hidden field to track CR connection status
+        [
+            'key' => FIELD_PREFIX . 'cr_connection_available',
+            'label' => '',
+            'name' => FIELD_PREFIX . 'cr_connection_available',
+            'type' => 'true_false',
+            'wrapper' => [
+                'class' => 'hidden',
+            ],
+            'default_value' => 0,
+            'ui' => 0,
+        ],
         // Email & Integration Method (Button Group)
         [
             'key' => FIELD_PREFIX . 'handler_type',
@@ -69,11 +81,7 @@ $fields[] = [
             'type' => 'button_group',
             'instructions' => __('Choose how to handle form submissions - email notifications and/or CleverReach sync.', 'lexoforms'),
             'required' => 1,
-            'choices' => [
-                'email_only' => __('Email Notification Only', 'lexoforms'),
-                'cr_only' => __('CleverReach Only', 'lexoforms'),
-                'email_and_cr' => __('Email + CleverReach', 'lexoforms'),
-            ],
+            'choices' => [], // Will be populated dynamically via acf/load_field hook
             'default_value' => 'email_only',
             'return_format' => 'value',
             'layout' => 'horizontal',
@@ -360,12 +368,22 @@ $fields[] = [
     'conditional_logic' => [
         [
             [
+                'field' => FIELD_PREFIX . 'cr_connection_available',
+                'operator' => '==',
+                'value' => '1',
+            ],
+            [
                 'field' => FIELD_PREFIX . 'handler_type',
                 'operator' => '==',
                 'value' => 'email_and_cr',
             ],
         ],
         [
+            [
+                'field' => FIELD_PREFIX . 'cr_connection_available',
+                'operator' => '==',
+                'value' => '1',
+            ],
             [
                 'field' => FIELD_PREFIX . 'handler_type',
                 'operator' => '==',
@@ -384,6 +402,15 @@ $fields[] = [
     'instructions' => '',
     'required' => 0,
     'layout' => 'block',
+    'conditional_logic' => [
+        [
+            [
+                'field' => FIELD_PREFIX . 'cr_connection_available',
+                'operator' => '==',
+                'value' => '1',
+            ],
+        ],
+    ],
     'sub_fields' => [
         // Auto-sync message
         [
