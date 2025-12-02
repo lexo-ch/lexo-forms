@@ -308,7 +308,8 @@ class FormsPostType extends Singleton
                 } else {
                     $form_id = $cr_settings[FIELD_PREFIX . 'form_id'] ?? '';
                     if ($form_id) {
-                        echo '<code>#' . esc_html($form_id) . '</code>';
+                        $cr_form_url = 'https://eu1.cleverreach.com/admin/forms_layout_create.php?id=' . esc_attr($form_id);
+                        echo '<a href="' . esc_url($cr_form_url) . '" target="_blank" rel="noopener" title="' . esc_attr(__('Open in CleverReach', 'lexoforms')) . '"><code style="color: #2271b1; cursor: pointer;">#' . esc_html($form_id) . '</code></a>';
                     } else {
                         echo '—';
                     }
@@ -329,7 +330,8 @@ class FormsPostType extends Singleton
                 } else {
                     $group_id = $cr_settings[FIELD_PREFIX . 'group_id'] ?? '';
                     if ($group_id) {
-                        echo '<code>#' . esc_html($group_id) . '</code>';
+                        $cr_group_url = 'https://eu1.cleverreach.com/admin/customer_view.php?id=' . esc_attr($group_id);
+                        echo '<a href="' . esc_url($cr_group_url) . '" target="_blank" rel="noopener" title="' . esc_attr(__('Open in CleverReach', 'lexoforms')) . '"><code style="color: #2271b1; cursor: pointer;">#' . esc_html($group_id) . '</code></a>';
                     } else {
                         echo '—';
                     }
