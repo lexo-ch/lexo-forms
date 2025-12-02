@@ -69,6 +69,11 @@ class FormsToolbar extends Singleton
             return '<p style="color: red;">' . FormMessages::getFormNotFoundError() . '</p>';
         }
 
+        // Only render published forms
+        if ($form->post_status !== 'publish') {
+            return '';
+        }
+
         // Get template ID from general_settings group
         $general_settings = get_field(FIELD_PREFIX . 'general_settings', $form_id) ?: [];
         $template_id = $general_settings[FIELD_PREFIX . 'html_template'] ?? '';
