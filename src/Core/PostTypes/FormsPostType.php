@@ -47,12 +47,19 @@ class FormsPostType extends Singleton
         // Clear usage cache on any post save (content might have changed)
         add_action('save_post', [$this, 'clearUsageCache'], 10, 2);
 
-        // Hide Trash view completely
-        add_filter('views_edit-' . self::POST_TYPE, [$this, 'removeTrashView']);
-        add_action('load-edit.php', [$this, 'redirectFromTrash']);
+        // Hide Trash and Draft views, redirect if accessed directly
+        add_filter('views_edit-' . self::POST_TYPE, [$this, 'removeUnusedViews']);
+        add_action('load-edit.php', [$this, 'redirectFromUnusedViews']);
 
         // Custom publish metabox (hide native via CSS, add custom with Save/Clone/Delete)
         add_action('add_meta_boxes_' . self::POST_TYPE, [$this, 'setupCustomMetaboxes']);
+
+        // Disable autosave for this CPT
+        add_action('admin_enqueue_scripts', [$this, 'disableAutosave']);
+
+        // Force publish status (no drafts)
+        add_filter('wp_insert_post_data', [$this, 'forcePublishStatus'], 10, 2);
+
     }
 
     /**
@@ -579,14 +586,16 @@ class FormsPostType extends Singleton
         // Remove trash and quick edit actions
         unset($actions['trash'], $actions['inline hide-if-no-js']);
 
-        // Add clone action
-        $clone_url = admin_url("admin.php?action=lexoforms_clone&post={$post->ID}&_wpnonce=" . wp_create_nonce('lexoforms_clone_' . $post->ID));
-        $actions['clone'] = sprintf(
-            '<a href="%s" aria-label="%s">%s</a>',
-            esc_url($clone_url),
-            esc_attr(sprintf(__('Clone "%s"', 'lexoforms'), get_the_title($post->ID))),
-            __('Clone', 'lexoforms')
-        );
+        // Add clone action only for published forms
+        if ($post->post_status === 'publish') {
+            $clone_url = admin_url("admin.php?action=lexoforms_clone&post={$post->ID}&_wpnonce=" . wp_create_nonce('lexoforms_clone_' . $post->ID));
+            $actions['clone'] = sprintf(
+                '<a href="%s" aria-label="%s">%s</a>',
+                esc_url($clone_url),
+                esc_attr(sprintf(__('Clone "%s"', 'lexoforms'), get_the_title($post->ID))),
+                __('Clone', 'lexoforms')
+            );
+        }
 
         // Add permanent delete with confirmation
         $actions['delete'] = sprintf(
@@ -618,23 +627,23 @@ class FormsPostType extends Singleton
     }
 
     /**
-     * Remove Trash view from post list views
+     * Remove Trash and Draft views from post list
      *
      * @param array $views Available views
      * @return array
      */
-    public function removeTrashView(array $views): array
+    public function removeUnusedViews(array $views): array
     {
-        unset($views['trash']);
+        unset($views['trash'], $views['draft']);
         return $views;
     }
 
     /**
-     * Redirect from Trash view to main list
+     * Redirect from Trash or Draft view to main list
      *
      * @return void
      */
-    public function redirectFromTrash(): void
+    public function redirectFromUnusedViews(): void
     {
         global $typenow;
 
@@ -643,10 +652,52 @@ class FormsPostType extends Singleton
         }
 
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        if (isset($_GET['post_status']) && $_GET['post_status'] === 'trash') {
+        $status = $_GET['post_status'] ?? '';
+        if ($status === 'trash' || $status === 'draft') {
             wp_safe_redirect(admin_url('edit.php?post_type=' . self::POST_TYPE));
             exit;
         }
+    }
+
+    /**
+     * Disable autosave for this CPT
+     *
+     * @return void
+     */
+    public function disableAutosave(): void
+    {
+        global $post_type;
+
+        if ($post_type === self::POST_TYPE) {
+            wp_dequeue_script('autosave');
+        }
+    }
+
+    /**
+     * Force publish status - prevent draft status for this CPT
+     *
+     * @param array $data Post data
+     * @param array $postarr Post array with additional data
+     * @return array
+     */
+    public function forcePublishStatus(array $data, array $postarr): array
+    {
+        // Only apply to our CPT
+        if ($data['post_type'] !== self::POST_TYPE) {
+            return $data;
+        }
+
+        // Skip auto-draft (new post creation)
+        if ($data['post_status'] === 'auto-draft') {
+            return $data;
+        }
+
+        // Force publish status instead of draft
+        if ($data['post_status'] === 'draft') {
+            $data['post_status'] = 'publish';
+        }
+
+        return $data;
     }
 
     /**
@@ -730,10 +781,15 @@ class FormsPostType extends Singleton
             wp_die(__('Invalid form.', 'lexoforms'));
         }
 
-        // Create new post
+        // Prevent cloning draft forms - only published forms can be cloned
+        if ($original->post_status !== 'publish') {
+            wp_die(__('Only published forms can be cloned. Please save this form first.', 'lexoforms'));
+        }
+
+        // Create new post as publish (clone is complete copy, ready to use)
         $new_post_id = wp_insert_post([
             'post_title' => sprintf(__('%s (Copy)', 'lexoforms'), $original->post_title),
-            'post_status' => 'draft',
+            'post_status' => 'publish',
             'post_type' => self::POST_TYPE,
             'post_author' => get_current_user_id(),
         ]);
@@ -750,13 +806,12 @@ class FormsPostType extends Singleton
             }
         }
 
-        // Keep CR settings but clear status - will be validated on first publish
+        // Keep CR settings - cloned form uses existing CR form connection
         $cr_integration = get_field(FIELD_PREFIX . 'cr_integration', $new_post_id) ?: [];
-        $cr_integration[FIELD_PREFIX . 'cr_status'] = '';
         if (!empty($cr_integration[FIELD_PREFIX . 'form_id'])) {
             $cr_integration[FIELD_PREFIX . 'form_action'] = 'use_existing';
+            update_field(FIELD_PREFIX . 'cr_integration', $cr_integration, $new_post_id);
         }
-        update_field(FIELD_PREFIX . 'cr_integration', $cr_integration, $new_post_id);
 
         // Redirect to edit the new form
         wp_safe_redirect(admin_url("post.php?post={$new_post_id}&action=edit&cloned=1"));
