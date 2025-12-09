@@ -203,6 +203,7 @@ class FormsPostType extends Singleton
         }
 
         $columns['shortcode'] = __('Shortcode', 'lexoforms');
+        $columns['used_on'] = __('Used on', 'lexoforms');
         $columns['date'] = __('Date', 'lexoforms'); // Re-add date at the end
 
         return $columns;
@@ -342,7 +343,123 @@ class FormsPostType extends Singleton
                 $shortcode = '[lexo_form id="' . $post_id . '"]';
                 echo '<code style="background: #f0f0f1; padding: 2px 6px; border-radius: 3px; font-size: 12px; cursor: pointer;" onclick="navigator.clipboard.writeText(\'' . esc_js($shortcode) . '\'); this.style.background=\'#00a32a\'; this.style.color=\'white\'; setTimeout(() => { this.style.background=\'#f0f0f1\'; this.style.color=\'inherit\'; }, 1000);" title="' . esc_attr(__('Click to copy', 'lexoforms')) . '">' . esc_html($shortcode) . '</code>';
                 break;
+
+            case 'used_on':
+                $locations = $this->findShortcodeLocations($post_id);
+                if (!empty($locations)) {
+                    $links = [];
+                    foreach ($locations as $location) {
+                        $links[] = '<a href="' . esc_url($location['edit_url']) . '" title="' . esc_attr($location['post_type']) . '">' . esc_html($location['title']) . '</a>';
+                    }
+                    echo implode(', ', $links);
+                } else {
+                    echo '<span style="color: #999;">—</span>';
+                }
+                break;
         }
+    }
+
+    /**
+     * Search for shortcode in a value recursively
+     *
+     * @param mixed $value
+     * @param string $shortcode
+     * @return bool
+     */
+    private function searchShortcodeRecursive($value, string $shortcode): bool
+    {
+        if (is_string($value)) {
+            if (strpos($value, '[' . $shortcode) !== false) {
+                return true;
+            }
+        }
+
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                if ($this->searchShortcodeRecursive($item, $shortcode)) {
+                    return true;
+                }
+            }
+        }
+
+        if (is_object($value)) {
+            $value = (array) $value;
+            foreach ($value as $item) {
+                if ($this->searchShortcodeRecursive($item, $shortcode)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Find all locations where a form shortcode is used
+     *
+     * @param int $form_id
+     * @return array
+     */
+    private function findShortcodeLocations(int $form_id): array
+    {
+        // Use transient cache to avoid repeated searches
+        $cache_key = 'lexoforms_used_on_' . $form_id;
+        $cached = get_transient($cache_key);
+
+        if ($cached !== false) {
+            return $cached;
+        }
+
+        $shortcode_name = 'lexo_form id="' . $form_id . '"';
+        $locations = [];
+
+        $post_types = get_post_types(['public' => true], 'names');
+        $args = [
+            'post_type' => $post_types,
+            'posts_per_page' => -1,
+            'post_status' => ['publish', 'draft', 'private'],
+            'fields' => 'ids',
+        ];
+
+        $post_ids = get_posts($args);
+
+        foreach ($post_ids as $pid) {
+            $post = get_post($pid);
+            $found = false;
+
+            // Check post content
+            if (strpos($post->post_content, '[' . $shortcode_name) !== false) {
+                $found = true;
+            }
+
+            // Check post meta (ACF fields, page builders, etc.)
+            if (!$found) {
+                $meta = get_post_meta($pid);
+                foreach ($meta as $meta_key => $meta_values) {
+                    foreach ($meta_values as $meta_value) {
+                        $value = maybe_unserialize($meta_value);
+                        if ($this->searchShortcodeRecursive($value, $shortcode_name)) {
+                            $found = true;
+                            break 2;
+                        }
+                    }
+                }
+            }
+
+            if ($found) {
+                $locations[] = [
+                    'post_id' => $pid,
+                    'title' => get_the_title($pid) ?: __('(no title)', 'lexoforms'),
+                    'post_type' => $post->post_type,
+                    'edit_url' => admin_url('post.php?post=' . $pid . '&action=edit'),
+                ];
+            }
+        }
+
+        // Cache for 5 minutes
+        set_transient($cache_key, $locations, 5 * MINUTE_IN_SECONDS);
+
+        return $locations;
     }
 
     /**
