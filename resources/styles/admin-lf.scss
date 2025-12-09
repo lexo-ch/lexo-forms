@@ -43,15 +43,52 @@
 
     .usage-list {
         background: #f6f7f7;
+        border: 1px solid #dcdcde;
         border-radius: 4px;
-        padding: 12px;
+        padding: 8px 8px 8px 32px;
         margin: 16px 0;
-        max-height: 150px;
+        max-height: 180px;
         overflow-y: auto;
 
+        ol {
+            margin: 0;
+            padding: 0;
+            list-style-position: outside;
+        }
+
+        li {
+            padding: 8px 10px;
+            margin: 4px 0;
+            border-radius: 4px;
+            transition: background-color 0.15s ease;
+
+            &:hover {
+                background-color: #e9ecef;
+            }
+
+            &:first-child {
+                margin-top: 0;
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
         a {
+            text-decoration: none;
+            color: #2271b1;
             display: block;
-            padding: 4px 0;
+
+            &:hover {
+                color: #135e96;
+            }
+        }
+
+        .post-type-label {
+            color: #646970;
+            font-size: 12px;
+            margin-left: 4px;
         }
     }
 
@@ -60,6 +97,10 @@
         gap: 12px;
         justify-content: flex-end;
         margin-top: 20px;
+
+        .button {
+            border-radius: 4px !important;
+        }
     }
 
     .button-delete {

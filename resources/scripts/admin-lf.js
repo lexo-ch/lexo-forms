@@ -371,18 +371,6 @@
                 self.showModal(postId);
             });
 
-            // Cancel button
-            $('#lexoforms-cancel-delete').on('click', function() {
-                self.hideModal();
-            });
-
-            // Confirm delete
-            $('#lexoforms-confirm-delete').on('click', function() {
-                if (self.deleteUrl) {
-                    window.location.href = self.deleteUrl;
-                }
-            });
-
             // Close on overlay click
             this.$modal.on('click', function(e) {
                 if (e.target === this) {
@@ -413,61 +401,46 @@
 
         showModal: function(postId) {
             const self = this;
-            const $loading = this.$modal.find('.loading');
-            const $content = this.$modal.find('.modal-content');
-            const $warning = $content.find('.warning-text');
-            const $usageList = $content.find('.usage-list');
+            const $modalInner = this.$modal.find('.lexoforms-modal');
 
             this.$modal.addClass('active');
-            $loading.show();
-            $content.hide();
+            $modalInner.html('<div class="loading"><span class="spinner is-active" style="float: none;"></span> ' + (lexoformsAdmin?.i18n?.loading || 'Loading...') + '</div>');
 
             // Check if lexoformsAdmin is defined (localized data)
             if (typeof lexoformsAdmin === 'undefined') {
-                $loading.hide();
-                $warning.text('');
-                $usageList.hide();
-                $content.show();
+                $modalInner.html('<p>Error: Configuration not found.</p>');
                 return;
             }
 
-            // Use lexoformsAdmin.ajaxUrl or fallback to global ajaxurl
             const ajaxEndpoint = lexoformsAdmin.ajaxUrl || ajaxurl;
 
-            // Fetch usage data
             $.post(ajaxEndpoint, {
                 action: 'lexoforms_get_usage',
                 post_id: postId,
                 nonce: lexoformsAdmin.deleteNonce
             }, function(response) {
-                $loading.hide();
-                $content.show();
-
-                if (response.success) {
-                    const data = response.data;
-
-                    if (data.count > 0) {
-                        $warning.html(
-                            lexoformsAdmin.i18n.usedOn + ' <strong>' + data.count + '</strong> ' + lexoformsAdmin.i18n.pages
-                        );
-                        let listHtml = '';
-                        $.each(data.locations, function(i, loc) {
-                            listHtml += '<a href="' + loc.edit_url + '" target="_blank">' + loc.title + ' (' + loc.post_type + ')</a>';
-                        });
-                        $usageList.html(listHtml).show();
-                    } else {
-                        $warning.text(lexoformsAdmin.i18n.notUsed);
-                        $usageList.hide();
-                    }
+                if (response.success && response.data.html) {
+                    $modalInner.html(response.data.html);
+                    self.rebindModalButtons();
                 } else {
-                    $warning.text('');
-                    $usageList.hide();
+                    $modalInner.html('<p>Error loading data.</p>');
                 }
             }).fail(function() {
-                $loading.hide();
-                $warning.text('');
-                $usageList.hide();
-                $content.show();
+                $modalInner.html('<p>Error loading data.</p>');
+            });
+        },
+
+        rebindModalButtons: function() {
+            const self = this;
+
+            this.$modal.find('#lexoforms-cancel-delete').on('click', function() {
+                self.hideModal();
+            });
+
+            this.$modal.find('#lexoforms-confirm-delete').on('click', function() {
+                if (self.deleteUrl) {
+                    window.location.href = self.deleteUrl;
+                }
             });
         },
 

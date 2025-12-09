@@ -369,9 +369,7 @@ class FormsPostType extends Singleton
                 if (!empty($locations)) {
                     $links = [];
                     foreach ($locations as $location) {
-                        $post_type_obj = get_post_type_object($location['post_type']);
-                        $post_type_label = $post_type_obj ? $post_type_obj->labels->singular_name : $location['post_type'];
-                        $links[] = '<a href="' . esc_url($location['edit_url']) . '" title="' . esc_attr($post_type_label) . '">' . esc_html($location['title']) . '</a>';
+                        $links[] = '<a href="' . esc_url($location['edit_url']) . '" title="' . esc_attr($location['post_type_label']) . '">' . esc_html($location['title']) . '</a>';
                     }
                     echo implode(', ', $links);
                 } else {
@@ -475,6 +473,7 @@ class FormsPostType extends Singleton
                     'post_id' => $pid,
                     'title' => get_the_title($pid) ?: __('(no title)', 'lexoforms'),
                     'post_type' => $post->post_type,
+                    'post_type_label' => $this->getPostTypeLabel($post->post_type),
                     'edit_url' => admin_url("post.php?post={$pid}&action=edit"),
                 ];
             }
@@ -484,6 +483,23 @@ class FormsPostType extends Singleton
         set_transient($cache_key, $locations, 0);
 
         return $locations;
+    }
+
+    /**
+     * Get human-readable post type label
+     *
+     * @param string $post_type Post type slug
+     * @return string
+     */
+    private function getPostTypeLabel(string $post_type): string
+    {
+        $post_type_obj = get_post_type_object($post_type);
+
+        if ($post_type_obj) {
+            return $post_type_obj->labels->singular_name;
+        }
+
+        return $post_type;
     }
 
     /**
@@ -776,12 +792,65 @@ class FormsPostType extends Singleton
         }
 
         $locations = $this->findShortcodeLocations($post_id);
+        $count = count($locations);
 
         wp_send_json_success([
-            'count' => count($locations),
-            'locations' => $locations,
-            'form_title' => get_the_title($post_id),
+            'count' => $count,
+            'html' => $this->renderUsageModalContent($locations, $count),
         ]);
+    }
+
+    /**
+     * Render the modal content HTML for form usage
+     *
+     * @param array $locations Array of locations where form is used
+     * @param int $count Number of locations
+     * @return string
+     */
+    private function renderUsageModalContent(array $locations, int $count): string
+    {
+        ob_start();
+        ?>
+        <h2><?php esc_html_e('Delete Form?', 'lexoforms'); ?></h2>
+
+        <?php if ($count > 0) { ?>
+            <p class="warning-text">
+                <?php
+                printf(
+                    /* translators: %d: number of pages */
+                    esc_html__('This form is used on %d page(s):', 'lexoforms'),
+                    $count
+                );
+                ?>
+            </p>
+            <div class="usage-list">
+                <ol>
+                    <?php foreach ($locations as $location) { ?>
+                        <li>
+                            <a href="<?php echo esc_url($location['edit_url']); ?>" target="_blank">
+                                <?php echo esc_html($location['title']); ?>
+                            </a>
+                            <span class="post-type-label">(<?php echo esc_html($location['post_type_label']); ?>)</span>
+                        </li>
+                    <?php } ?>
+                </ol>
+            </div>
+        <?php } else { ?>
+            <p class="warning-text"><?php esc_html_e('This form is not used anywhere.', 'lexoforms'); ?></p>
+        <?php } ?>
+
+        <p class="confirm-text"><?php esc_html_e('This action cannot be undone.', 'lexoforms'); ?></p>
+
+        <div class="button-group">
+            <button type="button" class="button button-secondary" id="lexoforms-cancel-delete">
+                <?php esc_html_e('Cancel', 'lexoforms'); ?>
+            </button>
+            <button type="button" class="button button-delete" id="lexoforms-confirm-delete">
+                <?php esc_html_e('Delete Permanently', 'lexoforms'); ?>
+            </button>
+        </div>
+        <?php
+        return ob_get_clean();
     }
 
     /**
@@ -805,9 +874,7 @@ class FormsPostType extends Singleton
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'deleteNonce' => wp_create_nonce('lexoforms_delete_nonce'),
                 'i18n' => [
-                    'usedOn' => __('This form is used on', 'lexoforms'),
-                    'pages' => __('page(s):', 'lexoforms'),
-                    'notUsed' => __('This form is not used anywhere.', 'lexoforms'),
+                    'loading' => __('Checking usage...', 'lexoforms'),
                 ],
             ]
         );
@@ -832,20 +899,6 @@ class FormsPostType extends Singleton
                 <div class="loading">
                     <span class="spinner is-active" style="float: none;"></span>
                     <?php esc_html_e('Checking usage...', 'lexoforms'); ?>
-                </div>
-                <div class="modal-content" style="display: none;">
-                    <h2><?php esc_html_e('Delete Form?', 'lexoforms'); ?></h2>
-                    <p class="warning-text"></p>
-                    <div class="usage-list" style="display: none;"></div>
-                    <p class="confirm-text"><?php esc_html_e('This action cannot be undone.', 'lexoforms'); ?></p>
-                    <div class="button-group">
-                        <button type="button" class="button button-secondary" id="lexoforms-cancel-delete">
-                            <?php esc_html_e('Cancel', 'lexoforms'); ?>
-                        </button>
-                        <button type="button" class="button button-delete" id="lexoforms-confirm-delete">
-                            <?php esc_html_e('Delete Permanently', 'lexoforms'); ?>
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
