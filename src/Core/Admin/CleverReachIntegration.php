@@ -377,15 +377,11 @@ class CleverReachIntegration extends Singleton
         <div id="lexoform-shortcode-container">
             <p><strong><?php echo __('Use this shortcode to display the form:', 'lexoforms'); ?></strong></p>
 
-            <input type="text" value="<?php echo esc_attr($shortcode); ?>" readonly
-                   style="width: 100%; font-family: monospace; background: #f9f9f9;"
-                   onclick="this.select();" />
-
-            <p style="margin-top: 10px;">
-                <button type="button" onclick="copyShortcode()" class="button button-secondary" style="width: 100%;">
-                    <?php echo __('Copy Shortcode', 'lexoforms'); ?>
-                </button>
-            </p>
+            <code class="lexoforms-shortcode-copy lexoforms-shortcode-copy--block" 
+                  data-shortcode="<?php echo esc_attr($shortcode); ?>" 
+                  title="<?php echo esc_attr(__('Click to copy', 'lexoforms')); ?>">
+                <?php echo esc_html($shortcode); ?>
+            </code>
 
             <?php if ($isConnected && $cr_enabled && ($form_id || $group_id)) : ?>
                 <hr style="margin: 15px 0;" />

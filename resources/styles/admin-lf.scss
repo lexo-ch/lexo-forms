@@ -181,3 +181,36 @@
         visibility: hidden !important;
     }
 }
+
+// ==========================================================================
+// Shortcode Copy Button
+// ==========================================================================
+
+.lexoforms-shortcode-copy {
+    background: #f0f0f1;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: monospace;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+        background: #e0e0e1;
+    }
+
+    &.copied {
+        background: #00a32a;
+        color: #fff;
+    }
+
+    // Block variant for metabox/sidebar
+    &--block {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        text-align: center;
+        box-sizing: border-box;
+        margin-top: 8px;
+    }
+}

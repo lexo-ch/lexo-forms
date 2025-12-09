@@ -360,8 +360,7 @@ class FormsPostType extends Singleton
 
             case 'shortcode':
                 $shortcode = '[lexo_form id="' . $post_id . '"]';
-                $copied_text = __('✅ Copied!', 'lexoforms');
-                echo '<code style="background: #f0f0f1; padding: 2px 6px; border-radius: 3px; font-size: 12px; cursor: pointer;" onclick="navigator.clipboard.writeText(\'' . esc_js($shortcode) . '\'); var orig=this.innerHTML; this.innerHTML=\'' . esc_js($copied_text) . '\'; this.style.background=\'#00a32a\'; this.style.color=\'white\'; setTimeout(() => { this.innerHTML=orig; this.style.background=\'#f0f0f1\'; this.style.color=\'inherit\'; }, 1500);" title="' . esc_attr(__('Click to copy', 'lexoforms')) . '">' . esc_html($shortcode) . '</code>';
+                echo '<code class="lexoforms-shortcode-copy" data-shortcode="' . esc_attr($shortcode) . '" title="' . esc_attr(__('Click to copy', 'lexoforms')) . '">' . esc_html($shortcode) . '</code>';
                 break;
 
             case 'used_on':
@@ -875,6 +874,7 @@ class FormsPostType extends Singleton
                 'deleteNonce' => wp_create_nonce('lexoforms_delete_nonce'),
                 'i18n' => [
                     'loading' => __('Checking usage...', 'lexoforms'),
+                    'copied' => __('✅ Copied!', 'lexoforms'),
                 ],
             ]
         );

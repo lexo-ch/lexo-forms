@@ -181,24 +181,6 @@
                 return true;
             });
         });
-
-        window.copyShortcode = function() {
-            const shortcodeInput = $('#lexoform-shortcode-container input[type="text"]');
-            if (!shortcodeInput.length) {
-                return;
-            }
-
-            shortcodeInput.select();
-            document.execCommand('copy');
-
-            const button = $('#lexoform-shortcode-container button');
-            const originalText = button.text();
-            button.text('✅ Copied!');
-
-            setTimeout(function() {
-                button.text(originalText);
-            }, 2000);
-        };
     }
 
     // ============================================================
@@ -452,6 +434,26 @@
 
     $(function() {
         LexoFormsActions.init();
+    });
+
+    // ============================================================
+    // MODULE 5: Shortcode Copy (Forms list table)
+    // ============================================================
+    $(document).on('click', '.lexoforms-shortcode-copy', function() {
+        const $code = $(this);
+        const shortcode = $code.data('shortcode');
+        const originalText = $code.text();
+        const copiedText = (typeof lexoformsAdmin !== 'undefined' && lexoformsAdmin.i18n?.copied) 
+            ? lexoformsAdmin.i18n.copied 
+            : '✅ Copied!';
+
+        navigator.clipboard.writeText(shortcode).then(function() {
+            $code.text(copiedText).addClass('copied');
+
+            setTimeout(function() {
+                $code.text(originalText).removeClass('copied');
+            }, 1500);
+        });
     });
 
 })(window, jQuery, window.tinymce || null);
