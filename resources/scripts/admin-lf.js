@@ -332,4 +332,153 @@
             }
         });
     }
+    // ============================================================
+    // MODULE 4: Forms CPT Actions (Delete modal, Save button)
+    // ============================================================
+    const LexoFormsActions = {
+        deleteUrl: '',
+        $modal: null,
+
+        init: function() {
+            this.$modal = $('#lexoforms-delete-modal');
+            
+            if (!this.$modal.length) {
+                return;
+            }
+
+            this.bindEvents();
+            this.initSaveButton();
+        },
+
+        bindEvents: function() {
+            const self = this;
+
+            // Handle delete link clicks
+            $(document).on('click', '.lexoforms-delete-link, .row-actions .delete a, #delete-action a', function(e) {
+                const $link = $(this);
+                let postId = $link.data('post-id');
+
+                // For edit screen delete button
+                if (!postId && $link.closest('#delete-action').length) {
+                    const match = $link.attr('href').match(/post=(\d+)/);
+                    if (match) postId = match[1];
+                }
+
+                if (!postId) return true;
+
+                e.preventDefault();
+                self.deleteUrl = $link.attr('href');
+                self.showModal(postId);
+            });
+
+            // Cancel button
+            $('#lexoforms-cancel-delete').on('click', function() {
+                self.hideModal();
+            });
+
+            // Confirm delete
+            $('#lexoforms-confirm-delete').on('click', function() {
+                if (self.deleteUrl) {
+                    window.location.href = self.deleteUrl;
+                }
+            });
+
+            // Close on overlay click
+            this.$modal.on('click', function(e) {
+                if (e.target === this) {
+                    self.hideModal();
+                }
+            });
+
+            // Close on Escape
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && self.$modal.hasClass('active')) {
+                    self.hideModal();
+                }
+            });
+        },
+
+        initSaveButton: function() {
+            const $saveBtn = $('#lexoforms-save-btn');
+            if ($saveBtn.length) {
+                $saveBtn.on('click', function(e) {
+                    e.preventDefault();
+                    const $publishBtn = $('#publish');
+                    if ($publishBtn.length) {
+                        $publishBtn.click();
+                    }
+                });
+            }
+        },
+
+        showModal: function(postId) {
+            const self = this;
+            const $loading = this.$modal.find('.loading');
+            const $content = this.$modal.find('.modal-content');
+            const $warning = $content.find('.warning-text');
+            const $usageList = $content.find('.usage-list');
+
+            this.$modal.addClass('active');
+            $loading.show();
+            $content.hide();
+
+            // Check if lexoformsAdmin is defined (localized data)
+            if (typeof lexoformsAdmin === 'undefined') {
+                $loading.hide();
+                $warning.text('');
+                $usageList.hide();
+                $content.show();
+                return;
+            }
+
+            // Use lexoformsAdmin.ajaxUrl or fallback to global ajaxurl
+            const ajaxEndpoint = lexoformsAdmin.ajaxUrl || ajaxurl;
+
+            // Fetch usage data
+            $.post(ajaxEndpoint, {
+                action: 'lexoforms_get_usage',
+                post_id: postId,
+                nonce: lexoformsAdmin.deleteNonce
+            }, function(response) {
+                $loading.hide();
+                $content.show();
+
+                if (response.success) {
+                    const data = response.data;
+
+                    if (data.count > 0) {
+                        $warning.html(
+                            lexoformsAdmin.i18n.usedOn + ' <strong>' + data.count + '</strong> ' + lexoformsAdmin.i18n.pages
+                        );
+                        let listHtml = '';
+                        $.each(data.locations, function(i, loc) {
+                            listHtml += '<a href="' + loc.edit_url + '" target="_blank">' + loc.title + ' (' + loc.post_type + ')</a>';
+                        });
+                        $usageList.html(listHtml).show();
+                    } else {
+                        $warning.text(lexoformsAdmin.i18n.notUsed);
+                        $usageList.hide();
+                    }
+                } else {
+                    $warning.text('');
+                    $usageList.hide();
+                }
+            }).fail(function() {
+                $loading.hide();
+                $warning.text('');
+                $usageList.hide();
+                $content.show();
+            });
+        },
+
+        hideModal: function() {
+            this.$modal.removeClass('active');
+            this.deleteUrl = '';
+        }
+    };
+
+    $(function() {
+        LexoFormsActions.init();
+    });
+
 })(window, jQuery, window.tinymce || null);

@@ -1,3 +1,142 @@
 /**
  * LEXO Forms Plugin - Admin Styles
  */
+
+// ==========================================================================
+// Delete Confirmation Modal
+// ==========================================================================
+
+.lexoforms-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 100000;
+    align-items: center;
+    justify-content: center;
+
+    &.active {
+        display: flex;
+    }
+}
+
+.lexoforms-modal {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+    h2 {
+        margin: 0 0 16px;
+        color: #d63638;
+    }
+
+    p {
+        margin: 0 0 16px;
+        color: #50575e;
+    }
+
+    .usage-list {
+        background: #f6f7f7;
+        border-radius: 4px;
+        padding: 12px;
+        margin: 16px 0;
+        max-height: 150px;
+        overflow-y: auto;
+
+        a {
+            display: block;
+            padding: 4px 0;
+        }
+    }
+
+    .button-group {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .button-delete {
+        background: #d63638;
+        border-color: #d63638;
+        color: #fff;
+
+        &:hover {
+            background: #b32d2e;
+            border-color: #b32d2e;
+            color: #fff;
+        }
+    }
+
+    .loading {
+        text-align: center;
+        padding: 20px;
+    }
+}
+
+// ==========================================================================
+// Form Actions Metabox
+// ==========================================================================
+
+.lexoforms-actions-metabox {
+    padding: 10px 0;
+
+    .button {
+        display: block;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .button-primary {
+        height: 36px;
+        line-height: 34px;
+        font-size: 14px;
+    }
+
+    .button-delete {
+        color: #b32d2e;
+        border-color: #b32d2e;
+
+        &:hover {
+            background: #b32d2e;
+            color: #fff;
+            border-color: #b32d2e;
+        }
+    }
+
+    .status-info {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #dcdcde;
+        color: #646970;
+        font-size: 12px;
+
+        p {
+            margin: 5px 0;
+        }
+    }
+}
+
+// ==========================================================================
+// Hide native publish box (keep functional)
+// ==========================================================================
+
+.post-type-cpt-lexoforms {
+    #submitdiv {
+        position: absolute !important;
+        left: -9999px !important;
+        visibility: hidden !important;
+    }
+}
