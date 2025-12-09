@@ -363,6 +363,16 @@ class CleverReachIntegration extends Singleton
         $cr_settings = get_field(FIELD_PREFIX . 'cr_integration', $post_id) ?: [];
         $form_status = $cr_settings[FIELD_PREFIX . 'cr_status'] ?? '';
         $form_id = $cr_settings[FIELD_PREFIX . 'form_id'] ?? '';
+        $group_id = $cr_settings[FIELD_PREFIX . 'group_id'] ?? '';
+
+        // Check CR connection status
+        $auth = CleverReachAuth::getInstance();
+        $isConnected = $auth->isConnected();
+
+        // Check if CR is enabled for this form
+        $general_settings = get_field(FIELD_PREFIX . 'general_settings', $post_id) ?: [];
+        $handler_type = $general_settings[FIELD_PREFIX . 'handler_type'] ?? '';
+        $cr_enabled = ($handler_type === 'email_and_cr' || $handler_type === 'cr_only');
         ?>
         <div id="lexoform-shortcode-container">
             <p><strong><?php echo __('Use this shortcode to display the form:', 'lexoforms'); ?></strong></p>
@@ -376,6 +386,35 @@ class CleverReachIntegration extends Singleton
                     <?php echo __('Copy Shortcode', 'lexoforms'); ?>
                 </button>
             </p>
+
+            <?php if ($isConnected && $cr_enabled && ($form_id || $group_id)) : ?>
+                <hr style="margin: 15px 0;" />
+                <p><strong><?php echo __('CleverReach Links', 'lexoforms'); ?></strong></p>
+
+                <?php if ($form_id) : ?>
+                    <p style="margin: 8px 0;">
+                        <span><?php echo __('Form:', 'lexoforms'); ?></span>
+                        <a href="<?php echo esc_url('https://eu1.cleverreach.com/admin/forms_layout_create.php?id=' . $form_id); ?>"
+                           target="_blank"
+                           rel="noopener"
+                           title="<?php echo esc_attr(__('Open in CleverReach', 'lexoforms')); ?>">
+                            <code style="color: #2271b1; cursor: pointer;">#<?php echo esc_html($form_id); ?></code>
+                        </a>
+                    </p>
+                <?php endif; ?>
+
+                <?php if ($group_id) : ?>
+                    <p style="margin: 8px 0;">
+                        <span><?php echo __('Group:', 'lexoforms'); ?></span>
+                        <a href="<?php echo esc_url('https://eu1.cleverreach.com/admin/customer_view.php?id=' . $group_id); ?>"
+                           target="_blank"
+                           rel="noopener"
+                           title="<?php echo esc_attr(__('Open in CleverReach', 'lexoforms')); ?>">
+                            <code style="color: #2271b1; cursor: pointer;">#<?php echo esc_html($group_id); ?></code>
+                        </a>
+                    </p>
+                <?php endif; ?>
+            <?php endif; ?>
         </div>
         <?php
     }
