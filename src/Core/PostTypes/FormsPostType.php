@@ -369,7 +369,9 @@ class FormsPostType extends Singleton
                 if (!empty($locations)) {
                     $links = [];
                     foreach ($locations as $location) {
-                        $links[] = '<a href="' . esc_url($location['edit_url']) . '" title="' . esc_attr($location['post_type']) . '">' . esc_html($location['title']) . '</a>';
+                        $post_type_obj = get_post_type_object($location['post_type']);
+                        $post_type_label = $post_type_obj ? $post_type_obj->labels->singular_name : $location['post_type'];
+                        $links[] = '<a href="' . esc_url($location['edit_url']) . '" title="' . esc_attr($post_type_label) . '">' . esc_html($location['title']) . '</a>';
                     }
                     echo implode(', ', $links);
                 } else {
