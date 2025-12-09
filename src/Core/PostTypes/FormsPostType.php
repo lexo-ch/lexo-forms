@@ -687,7 +687,7 @@ class FormsPostType extends Singleton
                 <?php echo $is_new ? esc_html__('Save Form', 'lexoforms') : esc_html__('Update Form', 'lexoforms'); ?>
             </button>
 
-            <?php if (!$is_new): ?>
+            <?php if (!$is_new) { ?>
                 <a href="<?php echo esc_url($clone_url); ?>" class="button button-secondary">
                     <?php esc_html_e('Clone Form', 'lexoforms'); ?>
                 </a>
@@ -695,15 +695,7 @@ class FormsPostType extends Singleton
                 <a href="<?php echo esc_url($delete_url); ?>" class="button button-secondary button-delete lexoforms-delete-link" data-post-id="<?php echo esc_attr($post->ID); ?>">
                     <?php esc_html_e('Delete Form', 'lexoforms'); ?>
                 </a>
-
-                <div class="status-info">
-                    <p><strong><?php esc_html_e('Status:', 'lexoforms'); ?></strong> <?php echo esc_html(ucfirst($post->post_status)); ?></p>
-                    <p><strong><?php esc_html_e('Created:', 'lexoforms'); ?></strong> <?php echo esc_html(get_the_date('', $post)); ?></p>
-                    <?php if ($post->post_modified !== $post->post_date): ?>
-                        <p><strong><?php esc_html_e('Modified:', 'lexoforms'); ?></strong> <?php echo esc_html(get_the_modified_date('', $post)); ?></p>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
+            <?php } ?>
         </div>
         <?php
     }

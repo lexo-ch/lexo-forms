@@ -156,18 +156,6 @@
             border-color: #b32d2e;
         }
     }
-
-    .status-info {
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px solid #dcdcde;
-        color: #646970;
-        font-size: 12px;
-
-        p {
-            margin: 5px 0;
-        }
-    }
 }
 
 // ==========================================================================
@@ -213,4 +201,79 @@
         box-sizing: border-box;
         margin-top: 8px;
     }
+}
+
+// ==========================================================================
+// CleverReach Connection Info (ACF Message Field)
+// ==========================================================================
+
+.lexoforms-cr-connection-info {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.lexoforms-cr-status,
+.lexoforms-cr-form,
+.lexoforms-cr-group {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 6px;
+
+    .label {
+        font-weight: 500;
+        color: #1d2327;
+    }
+}
+
+.lexoforms-cr-status {
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+
+        &--success {
+            background: #edfaef;
+            color: #00a32a;
+        }
+
+        &--error {
+            background: #fcf0f1;
+            color: #d63638;
+        }
+    }
+}
+
+.lexoforms-cr-form,
+.lexoforms-cr-group {
+    a {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: #2271b1;
+        text-decoration: none;
+
+        &:hover {
+            color: #135e96;
+            text-decoration: underline;
+        }
+
+        .dashicons {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+            margin-top: 2px;
+        }
+    }
+}
+
+.lexoforms-cr-not-connected {
+    color: #757575;
+    font-style: italic;
 }

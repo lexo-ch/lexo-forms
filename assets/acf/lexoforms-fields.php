@@ -568,38 +568,45 @@ $fields[] = [
                 ],
             ],
         ],
-        // CR Status (readonly)
+        // CR Connection Info Display (Message field with links)
+        [
+            'key' => 'field_cr_connection_info',
+            'label' => __('CleverReach Connection', 'lexoforms'),
+            'name' => '',
+            'type' => 'message',
+            'message' => '', // Will be populated dynamically via acf/load_field hook
+            'new_lines' => '',
+            'esc_html' => 0,
+        ],
+        // CR Status (hidden - for data storage)
         [
             'key' => 'field_cr_status',
-            'label' => __('Connection Status', 'lexoforms'),
+            'label' => '',
             'name' => FIELD_PREFIX . 'cr_status',
             'type' => 'text',
-            'instructions' => __('Current CleverReach connection status.', 'lexoforms'),
-            'readonly' => 1,
-            'disabled' => 1,
-            'placeholder' => __('Not connected', 'lexoforms'),
+            'wrapper' => [
+                'class' => 'hidden',
+            ],
         ],
-        // CR Form ID (readonly)
+        // CR Form ID (hidden - for data storage)
         [
             'key' => 'field_form_id',
-            'label' => __('CleverReach Form ID', 'lexoforms'),
+            'label' => '',
             'name' => FIELD_PREFIX . 'form_id',
             'type' => 'text',
-            'instructions' => __('The ID of the connected CleverReach form.', 'lexoforms'),
-            'readonly' => 1,
-            'disabled' => 1,
-            'placeholder' => __('—', 'lexoforms'),
+            'wrapper' => [
+                'class' => 'hidden',
+            ],
         ],
-        // CR Group ID (readonly)
+        // CR Group ID (hidden - for data storage)
         [
             'key' => 'field_group_id',
-            'label' => __('CleverReach Group ID', 'lexoforms'),
+            'label' => '',
             'name' => FIELD_PREFIX . 'group_id',
             'type' => 'text',
-            'instructions' => __('The ID of the connected CleverReach group.', 'lexoforms'),
-            'readonly' => 1,
-            'disabled' => 1,
-            'placeholder' => __('—', 'lexoforms'),
+            'wrapper' => [
+                'class' => 'hidden',
+            ],
         ],
     ],
 ];

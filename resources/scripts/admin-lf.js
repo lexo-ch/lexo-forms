@@ -323,13 +323,14 @@
 
         init: function() {
             this.$modal = $('#lexoforms-delete-modal');
-            
-            if (!this.$modal.length) {
-                return;
-            }
 
-            this.bindEvents();
+            // Always init save button (works on new posts too)
             this.initSaveButton();
+
+            // Only bind delete modal events if modal exists
+            if (this.$modal.length) {
+                this.bindEvents();
+            }
         },
 
         bindEvents: function() {

@@ -40,6 +40,9 @@ class CleverReachIntegration extends Singleton
         add_filter('acf/load_field/name=lexoform_handler_type', [$this, 'loadHandlerTypeChoices']);
         add_filter('acf/load_field/name=lexoform_cr_connection_available', [$this, 'loadCRConnectionStatus']);
 
+        // Render CR connection info message field dynamically (use prepare_field which runs after values are loaded)
+        add_filter('acf/prepare_field/key=field_cr_connection_info', [$this, 'prepareCRConnectionInfoMessage']);
+
         // Handle form submission via ACF save
         add_action('acf/save_post', [$this, 'handleFormSave'], 20);
 
@@ -147,6 +150,106 @@ class CleverReachIntegration extends Singleton
 
         $field['value'] = $isConnected ? 1 : 0;
         $field['default_value'] = $isConnected ? 1 : 0;
+
+        return $field;
+    }
+
+    /**
+     * Prepare CR connection info message field with dynamic content
+     * Uses acf/prepare_field which runs after field values are loaded
+     */
+    public function prepareCRConnectionInfoMessage($field)
+    {
+        global $post;
+
+        if (!$post || $post->post_type !== 'cpt-lexoforms') {
+            return $field;
+        }
+
+        $post_id = $post->ID;
+
+        // Get CR settings - use same approach as renderShortcodeMetaBox
+        $cr_settings = get_field(FIELD_PREFIX . 'cr_integration', $post_id) ?: [];
+        $cr_status = $cr_settings[FIELD_PREFIX . 'cr_status'] ?? '';
+        $form_id = $cr_settings[FIELD_PREFIX . 'form_id'] ?? '';
+        $group_id = $cr_settings[FIELD_PREFIX . 'group_id'] ?? '';
+
+        // Check CR connection status
+        $auth = CleverReachAuth::getInstance();
+        $isConnected = $auth->isConnected();
+
+        // Check if CR is enabled for this form
+        $general_settings = get_field(FIELD_PREFIX . 'general_settings', $post_id) ?: [];
+        $handler_type = $general_settings[FIELD_PREFIX . 'handler_type'] ?? '';
+        $cr_enabled = ($handler_type === 'email_and_cr' || $handler_type === 'cr_only');
+
+        // If CR not connected or not enabled, hide the field
+        if (!$isConnected || !$cr_enabled) {
+            return false; // Hide field
+        }
+
+        // If no data yet, show waiting message
+        if (!$cr_status && !$form_id && !$group_id) {
+            $field['message'] = '<p class="lexoforms-cr-not-connected">' . __('Not connected yet. Save the form to establish connection.', 'lexoforms') . '</p>';
+            return $field;
+        }
+
+        // Build the message HTML
+        $html = '<div class="lexoforms-cr-connection-info">';
+
+        // Status badge
+        if ($cr_status) {
+            $is_error = strpos($cr_status, 'ERROR:') === 0;
+            $badge_class = $is_error ? 'badge--error' : 'badge--success';
+            $status_icon = $is_error ? '✗' : '✓';
+            $status_text = $is_error ? __('Error', 'lexoforms') : __('Connected', 'lexoforms');
+
+            $html .= sprintf(
+                '<div class="lexoforms-cr-status">
+                    <span class="label">%s:</span>
+                    <span class="badge %s">%s %s</span>
+                </div>',
+                esc_html__('Status', 'lexoforms'),
+                esc_attr($badge_class),
+                esc_html($status_icon),
+                esc_html($status_text)
+            );
+        }
+
+        // Form ID link
+        if ($form_id) {
+            $form_url = 'https://eu1.cleverreach.com/admin/forms_layout_create.php?id=' . $form_id;
+            $html .= sprintf(
+                '<div class="lexoforms-cr-form">
+                    <span class="label">%s:</span>
+                    <a href="%s" target="_blank" rel="noopener">
+                        #%s <span class="dashicons dashicons-external"></span>
+                    </a>
+                </div>',
+                esc_html__('Form ID', 'lexoforms'),
+                esc_url($form_url),
+                esc_html($form_id)
+            );
+        }
+
+        // Group ID link
+        if ($group_id) {
+            $group_url = 'https://eu1.cleverreach.com/admin/customer_view.php?id=' . $group_id;
+            $html .= sprintf(
+                '<div class="lexoforms-cr-group">
+                    <span class="label">%s:</span>
+                    <a href="%s" target="_blank" rel="noopener">
+                        #%s <span class="dashicons dashicons-external"></span>
+                    </a>
+                </div>',
+                esc_html__('Group ID', 'lexoforms'),
+                esc_url($group_url),
+                esc_html($group_id)
+            );
+        }
+
+        $html .= '</div>';
+        $field['message'] = $html;
 
         return $field;
     }
@@ -360,57 +463,15 @@ class CleverReachIntegration extends Singleton
     {
         $post_id = $post->ID;
         $shortcode = "[lexo_form id=\"{$post_id}\"]";
-        $cr_settings = get_field(FIELD_PREFIX . 'cr_integration', $post_id) ?: [];
-        $form_status = $cr_settings[FIELD_PREFIX . 'cr_status'] ?? '';
-        $form_id = $cr_settings[FIELD_PREFIX . 'form_id'] ?? '';
-        $group_id = $cr_settings[FIELD_PREFIX . 'group_id'] ?? '';
-
-        // Check CR connection status
-        $auth = CleverReachAuth::getInstance();
-        $isConnected = $auth->isConnected();
-
-        // Check if CR is enabled for this form
-        $general_settings = get_field(FIELD_PREFIX . 'general_settings', $post_id) ?: [];
-        $handler_type = $general_settings[FIELD_PREFIX . 'handler_type'] ?? '';
-        $cr_enabled = ($handler_type === 'email_and_cr' || $handler_type === 'cr_only');
         ?>
         <div id="lexoform-shortcode-container">
             <p><strong><?php echo __('Use this shortcode to display the form:', 'lexoforms'); ?></strong></p>
 
-            <code class="lexoforms-shortcode-copy lexoforms-shortcode-copy--block" 
-                  data-shortcode="<?php echo esc_attr($shortcode); ?>" 
+            <code class="lexoforms-shortcode-copy lexoforms-shortcode-copy--block"
+                  data-shortcode="<?php echo esc_attr($shortcode); ?>"
                   title="<?php echo esc_attr(__('Click to copy', 'lexoforms')); ?>">
                 <?php echo esc_html($shortcode); ?>
             </code>
-
-            <?php if ($isConnected && $cr_enabled && ($form_id || $group_id)) : ?>
-                <hr style="margin: 15px 0;" />
-                <p><strong><?php echo __('CleverReach Links', 'lexoforms'); ?></strong></p>
-
-                <?php if ($form_id) : ?>
-                    <p style="margin: 8px 0;">
-                        <span><?php echo __('Form:', 'lexoforms'); ?></span>
-                        <a href="<?php echo esc_url('https://eu1.cleverreach.com/admin/forms_layout_create.php?id=' . $form_id); ?>"
-                           target="_blank"
-                           rel="noopener"
-                           title="<?php echo esc_attr(__('Open in CleverReach', 'lexoforms')); ?>">
-                            <code style="color: #2271b1; cursor: pointer;">#<?php echo esc_html($form_id); ?></code>
-                        </a>
-                    </p>
-                <?php endif; ?>
-
-                <?php if ($group_id) : ?>
-                    <p style="margin: 8px 0;">
-                        <span><?php echo __('Group:', 'lexoforms'); ?></span>
-                        <a href="<?php echo esc_url('https://eu1.cleverreach.com/admin/customer_view.php?id=' . $group_id); ?>"
-                           target="_blank"
-                           rel="noopener"
-                           title="<?php echo esc_attr(__('Open in CleverReach', 'lexoforms')); ?>">
-                            <code style="color: #2271b1; cursor: pointer;">#<?php echo esc_html($group_id); ?></code>
-                        </a>
-                    </p>
-                <?php endif; ?>
-            <?php endif; ?>
         </div>
         <?php
     }
