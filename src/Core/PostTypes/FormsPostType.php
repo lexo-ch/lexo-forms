@@ -788,7 +788,7 @@ class FormsPostType extends Singleton
 
         // Create new post as publish (clone is complete copy, ready to use)
         $new_post_id = wp_insert_post([
-            'post_title' => sprintf(__('%s (Copy)', 'lexoforms'), $original->post_title),
+            'post_title' => $original->post_title . ' - clone',
             'post_status' => 'publish',
             'post_type' => self::POST_TYPE,
             'post_author' => get_current_user_id(),
