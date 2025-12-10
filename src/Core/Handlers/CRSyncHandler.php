@@ -80,7 +80,6 @@ class CRSyncHandler extends Singleton
             update_field(FIELD_PREFIX . 'cr_integration', $cr_integration, $post_id);
 
             return true;
-
         } catch (\Exception $e) {
             Logger::syncError('CRSyncHandler error: ' . $e->getMessage());
 
@@ -94,7 +93,6 @@ class CRSyncHandler extends Singleton
             return false;
         }
     }
-
 
     /**
      * Determine Form ID
@@ -228,7 +226,7 @@ class CRSyncHandler extends Singleton
         $template_fields = $template['fields'];
 
         // Filter only fields with send_to_cr = true
-        $fields_to_sync = array_filter($template_fields, function($field) {
+        $fields_to_sync = array_filter($template_fields, function ($field) {
             return isset($field['send_to_cr']) && $field['send_to_cr'] === true;
         });
 
@@ -236,19 +234,32 @@ class CRSyncHandler extends Singleton
             return 0;
         }
 
-        // Get existing group attributes
         $groupsService = GroupsService::getInstance();
-        $existing_attributes = $groupsService->getGroupAttributes($group_id);
 
-        if (!is_array($existing_attributes)) {
-            $existing_attributes = [];
+        // Get existing group attributes (local)
+        $existing_group_attributes = $groupsService->getGroupAttributes($group_id);
+        if (!is_array($existing_group_attributes)) {
+            $existing_group_attributes = [];
+        }
+
+        // Get existing global attributes
+        $existing_global_attributes = $groupsService->getGlobalAttributes();
+        if (!is_array($existing_global_attributes)) {
+            $existing_global_attributes = [];
         }
 
         // Index existing attributes by name for faster lookup
-        $existing_by_name = [];
-        foreach ($existing_attributes as $attr) {
+        $existing_group_by_name = [];
+        foreach ($existing_group_attributes as $attr) {
             if (isset($attr['name'])) {
-                $existing_by_name[$attr['name']] = $attr;
+                $existing_group_by_name[$attr['name']] = $attr;
+            }
+        }
+
+        $existing_global_by_name = [];
+        foreach ($existing_global_attributes as $attr) {
+            if (isset($attr['name'])) {
+                $existing_global_by_name[$attr['name']] = $attr;
             }
         }
 
@@ -261,6 +272,7 @@ class CRSyncHandler extends Singleton
         foreach ($fields_to_sync as $field) {
             $field_name = $field['name'] ?? '';
             $field_type = $field['type'] ?? 'text';
+            $is_global = isset($field['global']) && $field['global'] === true;
 
             if (empty($field_name)) {
                 continue;
@@ -272,19 +284,25 @@ class CRSyncHandler extends Singleton
                 continue;
             }
 
-            // Check if field already exists (by name and type)
-            if (isset($existing_by_name[$field_name])) {
-                $existing_field = $existing_by_name[$field_name];
-
-                // If type matches, assume it's the same field
-                if (isset($existing_field['type']) && $existing_field['type'] === $field_type) {
+            // Check if field already exists based on global flag
+            if ($is_global) {
+                // For global fields, check global attributes
+                if (isset($existing_global_by_name[$field_name])) {
                     $synced_count++;
-                    continue; // Skip, field already exists
+                    continue; // Skip, global field already exists
+                }
+            } else {
+                // For local fields, check group attributes
+                if (isset($existing_group_by_name[$field_name])) {
+                    $existing_field = $existing_group_by_name[$field_name];
+                    if (isset($existing_field['type']) && $existing_field['type'] === $field_type) {
+                        $synced_count++;
+                        continue; // Skip, local field already exists
+                    }
                 }
             }
 
             // Create new attribute
-            // CleverReach requires alphanumeric description, so sanitize it
             $description = $field['cr_description'] ?? $field_name;
             $sanitized_description = CleverReachHelper::sanitizeDescription($description);
 
