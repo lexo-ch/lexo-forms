@@ -336,7 +336,7 @@ $fields[] = [
             'required' => 0,
             'return_format' => 'array',
             'library' => 'all',
-            'mime_types' => 'pdf,doc,docx,txt,csv,ics',
+            'mime_types' => '',
             'max_size' => '20',
             'conditional_logic' => [
                 [
