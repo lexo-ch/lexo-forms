@@ -76,6 +76,11 @@ class CleverReachIntegration extends Singleton
                 $template_name = $template_name[$user_language] ?? $template_name['de'] ?? reset($template_name);
             }
 
+            // Add "(default)" suffix for plugin templates
+            if (isset($template['source']) && $template['source'] === 'plugin') {
+                $template_name .= ' (default)';
+            }
+
             $choices[$template_id] = $template_name;
         }
 
