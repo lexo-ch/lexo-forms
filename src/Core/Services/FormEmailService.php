@@ -145,8 +145,8 @@ class FormEmailService extends EmailHandler
 
         foreach ($fields_config as $field_config) {
             $field_name = $field_config['name'];
-            // Check required fields (assuming required fields are those marked as 'global' in templates)
-            if (!empty($field_config['global']) || in_array($field_name, ['email', 'firstname', 'lastname'])) {
+            // Check fields marked as required in template definition
+            if (!empty($field_config['required'])) {
                 if (empty($form_data[$field_name])) {
                     $missing_fields[] = $this->getEmailLabel($field_config, $field_name);
                 }
