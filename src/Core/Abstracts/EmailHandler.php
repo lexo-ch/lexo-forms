@@ -49,7 +49,6 @@ abstract class EmailHandler
         // Start with system defaults
         $default_config = [
             'recipients' => [],
-            'bcc_recipients' => [],
             'subject' => 'New Form Submission',
             'from_email' => '',
             'from_name' => EMAIL_FROM_NAME,
@@ -82,17 +81,6 @@ abstract class EmailHandler
                 $config['recipients'] = [$this->getFallbackAdminEmail()];
             }
 
-            // Validate and normalize BCC recipients
-            if (!isset($config['bcc_recipients'])) {
-                $config['bcc_recipients'] = [];
-            }
-            if (!\is_array($config['bcc_recipients'])) {
-                $config['bcc_recipients'] = [$config['bcc_recipients']];
-            }
-            $config['bcc_recipients'] = array_filter($config['bcc_recipients'], function($email) {
-                return !empty($email) && is_email($email);
-            });
-
             return $config;
         }
 
@@ -115,21 +103,6 @@ abstract class EmailHandler
             }
             if (!empty($recipients)) {
                 $config['recipients'] = $recipients;
-            }
-        }
-
-        // Process BCC recipients (get from ACF repeater) - ACF takes priority
-        $form_bcc_recipients = $email_settings[FIELD_PREFIX . 'bcc_recipients'] ?? null;
-        if (!empty($form_bcc_recipients) && \is_array($form_bcc_recipients)) {
-            $bcc_recipients = [];
-            foreach ($form_bcc_recipients as $bcc_recipient) {
-                $bcc_email_key = FIELD_PREFIX . 'bcc_email';
-                if (!empty($bcc_recipient[$bcc_email_key]) && is_email($bcc_recipient[$bcc_email_key])) {
-                    $bcc_recipients[] = $bcc_recipient[$bcc_email_key];
-                }
-            }
-            if (!empty($bcc_recipients)) {
-                $config['bcc_recipients'] = $bcc_recipients;
             }
         }
 
@@ -164,18 +137,31 @@ abstract class EmailHandler
             $config['recipients'] = [$this->getFallbackAdminEmail()];
         }
 
-        // Validate and normalize BCC recipients
-        if (!isset($config['bcc_recipients'])) {
-            $config['bcc_recipients'] = [];
-        }
-        if (!\is_array($config['bcc_recipients'])) {
-            $config['bcc_recipients'] = [$config['bcc_recipients']];
-        }
-        $config['bcc_recipients'] = array_filter($config['bcc_recipients'], function($email) {
-            return !empty($email) && is_email($email);
-        });
-
         return $config;
+    }
+
+    /**
+     * Get visitor email BCC recipients from ACF fields
+     *
+     * @param int $form_id
+     * @return array
+     */
+    protected function getVisitorEmailBccRecipients(int $form_id): array
+    {
+        $email_settings = get_field(FIELD_PREFIX . 'email_settings', $form_id) ?: [];
+        $bcc_recipients = [];
+
+        $form_bcc = $email_settings[FIELD_PREFIX . 'additional_bcc_recipients'] ?? null;
+        if (!empty($form_bcc) && \is_array($form_bcc)) {
+            foreach ($form_bcc as $bcc_recipient) {
+                $bcc_email_key = FIELD_PREFIX . 'bcc_email';
+                if (!empty($bcc_recipient[$bcc_email_key]) && is_email($bcc_recipient[$bcc_email_key])) {
+                    $bcc_recipients[] = $bcc_recipient[$bcc_email_key];
+                }
+            }
+        }
+
+        return $bcc_recipients;
     }
 
     /**
@@ -240,7 +226,7 @@ abstract class EmailHandler
         try {
             $config = $this->getEmailConfig($form_id, $form_data);
 
-            // Use sendSimpleEmail internally
+            // Use sendSimpleEmail internally (no BCC for admin notifications)
             $result = $this->sendSimpleEmail(
                 $config['recipients'],
                 $config['subject'] ?: 'Form Submission',
@@ -249,8 +235,7 @@ abstract class EmailHandler
                 $config['from_name'],
                 [], // attachments
                 $config['reply_to_email'] ?? '',
-                $config['reply_to_name'] ?? '',
-                $config['bcc_recipients'] ?? []
+                $config['reply_to_name'] ?? ''
             );
 
             if (!$result) {

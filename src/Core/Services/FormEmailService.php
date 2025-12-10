@@ -549,6 +549,7 @@ class FormEmailService extends EmailHandler
      * @param string $sender_email
      * @param string $sender_name
      * @param array $attachments
+     * @param int $form_id Optional form ID to get BCC recipients
      * @return bool
      */
     public function sendConfirmationEmail(
@@ -557,10 +558,17 @@ class FormEmailService extends EmailHandler
         string $email_body,
         string $sender_email = '',
         string $sender_name = '',
-        array $attachments = []
+        array $attachments = [],
+        int $form_id = 0
     ): bool {
         if (empty($visitor_email) || !is_email($visitor_email)) {
             return false;
+        }
+
+        // Get BCC recipients for visitor email if form_id is provided
+        $bcc_recipients = [];
+        if ($form_id > 0) {
+            $bcc_recipients = $this->getVisitorEmailBccRecipients($form_id);
         }
 
         return $this->sendSimpleEmail(
@@ -569,7 +577,10 @@ class FormEmailService extends EmailHandler
             $email_body,
             $sender_email,
             $sender_name,
-            $attachments
+            $attachments,
+            '', // reply_to_email
+            '', // reply_to_name
+            $bcc_recipients
         );
     }
 }

@@ -202,39 +202,6 @@ $fields[] = [
                 ],
             ],
         ],
-        // BCC Recipients (Repeater)
-        [
-            'key' => 'field_bcc_recipients',
-            'label' => __('BCC Recipients', 'lexoforms'),
-            'name' => FIELD_PREFIX . 'bcc_recipients',
-            'type' => 'repeater',
-            'instructions' => __('Add email addresses to receive blind carbon copy (BCC) of form submissions. If empty, theme defaults will be used.', 'lexoforms'),
-            'required' => 0,
-            'collapsed' => '',
-            'min' => 0,
-            'max' => 0,
-            'layout' => 'table',
-            'button_label' => __('Add BCC Recipient', 'lexoforms'),
-            'sub_fields' => [
-                [
-                    'key' => 'field_bcc_recipient_email',
-                    'label' => __('Email', 'lexoforms'),
-                    'name' => FIELD_PREFIX . 'bcc_email',
-                    'type' => 'email',
-                    'instructions' => '',
-                    'required' => 1,
-                    'wrapper' => [
-                        'width' => '',
-                        'class' => '',
-                        'id' => '',
-                    ],
-                    'default_value' => '',
-                    'placeholder' => '',
-                    'prepend' => '',
-                    'append' => '',
-                ],
-            ],
-        ],
         // Email Subject
         [
             'key' => 'field_email_subject',
@@ -378,6 +345,48 @@ $fields[] = [
                         'operator' => '==',
                         'value' => '1',
                     ],
+                ],
+            ],
+        ],
+        // Visitor Email BCC Recipients (Repeater)
+        [
+            'key' => 'field_additional_bcc_recipients',
+            'label' => __('Visitor Email BCC', 'lexoforms'),
+            'name' => FIELD_PREFIX . 'additional_bcc_recipients',
+            'type' => 'repeater',
+            'instructions' => __('Add email addresses to receive blind carbon copy (BCC) of the visitor email.', 'lexoforms'),
+            'required' => 0,
+            'collapsed' => '',
+            'min' => 0,
+            'max' => 0,
+            'layout' => 'table',
+            'button_label' => __('Add BCC Recipient', 'lexoforms'),
+            'conditional_logic' => [
+                [
+                    [
+                        'field' => 'field_enable_additional_email',
+                        'operator' => '==',
+                        'value' => '1',
+                    ],
+                ],
+            ],
+            'sub_fields' => [
+                [
+                    'key' => 'field_additional_bcc_email',
+                    'label' => __('Email', 'lexoforms'),
+                    'name' => FIELD_PREFIX . 'bcc_email',
+                    'type' => 'email',
+                    'instructions' => '',
+                    'required' => 1,
+                    'wrapper' => [
+                        'width' => '',
+                        'class' => '',
+                        'id' => '',
+                    ],
+                    'default_value' => '',
+                    'placeholder' => '',
+                    'prepend' => '',
+                    'append' => '',
                 ],
             ],
         ],
