@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: LEXO Forms\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-31 22:45+0000\n"
-"PO-Revision-Date: 2025-12-09 22:37+0000\n"
+"PO-Revision-Date: 2025-12-10 14:37+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -19,7 +19,7 @@ msgstr ""
 msgid "(no title)"
 msgstr "(ohne Titel)"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:564
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:569
 msgid ""
 "A form with this name already exists. Do you want to use the existing form "
 "instead?"
@@ -27,7 +27,7 @@ msgstr ""
 "Ein Formular mit diesem Namen existiert bereits. Möchten Sie stattdessen das "
 "bestehende Formular verwenden?"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:565
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:570
 msgid ""
 "A group with this name already exists. Do you want to use the existing group "
 "instead?"
@@ -38,6 +38,19 @@ msgstr ""
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:37
 msgid "account"
 msgstr "Konto"
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:217
+msgid "Add BCC Recipient"
+msgstr "BCC-Empfänger hinzufügen"
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:211
+msgid ""
+"Add email addresses to receive blind carbon copy (BCC) of form submissions. "
+"If empty, theme defaults will be used."
+msgstr ""
+"Fügen Sie E-Mail-Adressen hinzu, die eine Blindkopie (BCC) der "
+"Formulareinsendungen erhalten sollen. Wenn das Feld leer bleibt, werden die "
+"Standardwerte des Themes verwendet."
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:178
 msgid ""
@@ -92,13 +105,17 @@ msgstr "API-Token ist aktiv und einsatzbereit."
 msgid "App Name"
 msgstr "App-Name"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:332
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:365
 msgid "Attachment"
 msgstr "Anhang"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:105
 msgid "Auto Generate"
 msgstr "Automatisch erzeugen"
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:208
+msgid "BCC Recipients"
+msgstr "BCC-Empfänger"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:892
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Editor/FormsToolbar.php:140
@@ -125,13 +142,13 @@ msgstr ""
 "Benachrichtigungen und/oder CleverReach-Sync. (Falls keine Verbindung zur "
 "CleverReach-API besteht, sind nur E-Mail-Benachrichtigungen verfügbar.)"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:440
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:473
 msgid "Choose whether to use an existing CleverReach form or create a new one."
 msgstr ""
 "Wählen Sie, ob ein bestehendes CleverReach-Formular verwendet oder ein neues "
 "erstellt werden soll."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:499
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:532
 msgid ""
 "Choose whether to use an existing CleverReach group or create a new one."
 msgstr ""
@@ -150,15 +167,15 @@ msgstr ""
 msgid "CleverReach API Settings"
 msgstr "CleverReach-API-Einstellungen"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:399
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:432
 msgid "CleverReach Configuration"
 msgstr "CleverReach-Konfiguration"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:574
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:607
 msgid "CleverReach Connection"
 msgstr "CleverReach-Verbindung"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:332
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:337
 msgid "CleverReach Connection Error:"
 msgstr "CleverReach-Verbindungsfehler:"
 
@@ -166,7 +183,7 @@ msgstr "CleverReach-Verbindungsfehler:"
 msgid "CleverReach Connection Required!"
 msgstr "CleverReach-Verbindung erforderlich!"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:314
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:319
 msgid "CleverReach Connection Successful!"
 msgstr "CleverReach-Verbindung erfolgreich!"
 
@@ -178,7 +195,7 @@ msgstr "CleverReach-Formularfehler"
 msgid "CleverReach Forms management"
 msgstr "CleverReach-Formularverwaltung"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:131
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:136
 msgid "CleverReach Only"
 msgstr "Nur CleverReach"
 
@@ -202,7 +219,7 @@ msgid "Click on"
 msgstr "Klicken Sie auf"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:370
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:472
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:477
 msgid "Click to copy"
 msgstr "Zum Kopieren klicken"
 
@@ -246,7 +263,7 @@ msgid "Connect to CleverReach"
 msgstr "Mit CleverReach verbinden"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:314
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:205
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:210
 msgid "Connected"
 msgstr "Verbunden"
 
@@ -262,7 +279,7 @@ msgstr "Verbindung wurde beendet"
 msgid "Connection is successful!"
 msgstr "Verbindung erfolgreich hergestellt!"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:422
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:455
 msgid ""
 "Connection to CleverReach will be established automatically when you save "
 "this form."
@@ -270,7 +287,7 @@ msgstr ""
 "Die Verbindung zu CleverReach wird automatisch hergestellt, sobald Sie "
 "dieses Formular speichern."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:312
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:345
 msgid "Content of the email sent to the visitor."
 msgstr "Inhalt der an den Besucher gesendeten E-Mail."
 
@@ -287,17 +304,17 @@ msgstr ""
 "„Automatisch erzeugen“ für die Standardkonfiguration oder geben Sie eine "
 "benutzerdefinierte URL ein."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:437
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:470
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:227
 msgid "CR Form"
 msgstr "CR-Formular"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:496
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:529
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:228
 msgid "CR Group"
 msgstr "CR-Gruppe"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:363
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:396
 msgid "CR Integration"
 msgstr "CR-Integration"
 
@@ -305,11 +322,11 @@ msgstr "CR-Integration"
 msgid "CR Status"
 msgstr "CR-Status"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:444
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:477
 msgid "Create New CR Form"
 msgstr "Neue CR-Formular erstellen"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:503
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:536
 msgid "Create New CR Group"
 msgstr "Neue CR-Gruppe erstellen"
 
@@ -347,7 +364,7 @@ msgstr "Dauerhaft löschen"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:247
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:280
 msgid "Disabled"
 msgstr "Deaktiviert"
 
@@ -360,6 +377,7 @@ msgid "Edit Form"
 msgstr "Formular bearbeiten"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:188
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:221
 msgid "Email"
 msgstr "E-Mail"
 
@@ -367,18 +385,18 @@ msgstr "E-Mail"
 msgid "Email & Integration Method"
 msgstr "E-Mail- & Integrationsmethode"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:132
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:137
 msgid "Email + CleverReach"
 msgstr "E-Mail + CleverReach"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:221
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:254
 msgid ""
 "Email address to send from. If empty, email from theme settings will be used."
 msgstr ""
 "Absender-E-Mail-Adresse. Wenn dieses Feld leer bleibt, wird die E-Mail-"
 "Adresse aus den Theme-Einstellungen verwendet."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:274
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:307
 msgid ""
 "Email address to send visitor email from. If empty, form sender email will "
 "be used."
@@ -394,8 +412,8 @@ msgstr "E-Mail-Backup-Einstellungen"
 msgid "Email Configuration"
 msgstr "E-Mail-Konfiguration"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:130
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:136
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:135
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:141
 msgid "Email Notification Only"
 msgstr "Nur E-Mail-Benachrichtigung"
 
@@ -411,19 +429,19 @@ msgstr "E-Mail-Empfänger"
 msgid "Email Settings"
 msgstr "E-Mail-Einstellungen"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:208
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:241
 msgid "Email Subject"
 msgstr "E-Mail-Betreff"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:246
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:279
 msgid "Enabled"
 msgstr "Aktiviert"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:480
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:513
 msgid "Enter a name for the new CleverReach form."
 msgstr "Geben Sie einen Namen für das neue CleverReach-Formular ein."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:553
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:586
 msgid "Enter a name for the new CleverReach group."
 msgstr "Geben Sie einen Namen für die neue CleverReach-Gruppe ein."
 
@@ -436,7 +454,7 @@ msgid "Enter your CleverReach Client Secret"
 msgstr "Geben Sie Ihr CleverReach-Client-Geheimnis ein"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:312
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:205
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:210
 msgid "Error"
 msgstr "Fehler"
 
@@ -514,20 +532,20 @@ msgstr "Formular"
 msgid "Form Actions"
 msgstr "Formularaktionen"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:622
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:655
 msgid "Form Configuration"
 msgstr "Formularkonfiguration"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:315
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:320
 #, php-format
 msgid "Form has been connected to CleverReach (Form ID: %s)."
 msgstr "Das Formular wurde mit CleverReach verbunden (Formular-ID: %s)."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:229
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:234
 msgid "Form ID"
 msgstr "Formular-ID"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:450
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:455
 msgid "Form Shortcode"
 msgstr "Formular-Shortcode"
 
@@ -554,7 +572,7 @@ msgstr "Allgemein"
 msgid "General Configuration"
 msgstr "Allgemeine Konfiguration"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:245
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:250
 msgid "Group ID"
 msgstr "Gruppen-ID"
 
@@ -642,11 +660,11 @@ msgstr "Post-ID fehlt"
 msgid "My Account"
 msgstr "Mein Konto"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:231
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:264
 msgid "Name to send from. If empty, site name will be used."
 msgstr "Absendername. Wenn leer, wird der Website-Name verwendet."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:293
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:326
 msgid ""
 "Name to send visitor email from. If empty, form sender name will be used."
 msgstr ""
@@ -661,11 +679,11 @@ msgstr "Navigieren zu"
 msgid "New Form"
 msgstr "Neues Formular"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:477
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:510
 msgid "New Form Name"
 msgstr "Name des neuen Formulars"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:550
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:583
 msgid "New Group Name"
 msgstr "Name des neuen Formulars"
 
@@ -697,11 +715,11 @@ msgstr "Keine Formulare im Papierkorb gefunden."
 msgid "No forms found."
 msgstr "Keine Formulare gefunden."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:567
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:572
 msgid "No, create new"
 msgstr "Nein, neu erstellen"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:193
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:198
 msgid "Not connected yet. Save the form to establish connection."
 msgstr ""
 "Noch nicht verbunden. Speichern Sie das Formular, um die Verbindung "
@@ -722,7 +740,7 @@ msgstr "In CleverReach öffnen"
 msgid "Optional description of your integration"
 msgstr "Optionale Beschreibung Ihrer Integration"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:335
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:368
 msgid ""
 "Optional document to attach to the visitor email. Maximum file size: 20MB."
 msgstr ""
@@ -753,7 +771,7 @@ msgstr "Zugriff verweigert."
 msgid "Permission denied."
 msgstr "Zugriff verweigert."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:334
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:339
 msgid "Please check your form configuration and try saving again."
 msgstr ""
 "Bitte überprüfen Sie Ihre Formularkonfiguration und versuchen Sie erneut zu "
@@ -813,7 +831,7 @@ msgstr "Sicherheitsprüfung fehlgeschlagen."
 msgid "Select a form:"
 msgstr "Wählen Sie ein Formular aus:"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:455
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:488
 msgid ""
 "Select an existing CleverReach form. The group connected to this form will "
 "be used automatically."
@@ -821,15 +839,15 @@ msgstr ""
 "Wählen Sie ein bestehendes CleverReach-Formular aus. Die mit diesem Formular "
 "verbundene Gruppe wird automatisch verwendet."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:523
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:556
 msgid "Select an existing CleverReach group."
 msgstr "Wählen Sie eine bestehende CleverReach-Gruppe aus."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:452
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:485
 msgid "Select Existing Form"
 msgstr "Bestehendes Formular auswählen"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:520
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:553
 msgid "Select Existing Group"
 msgstr "Bestehende Gruppe auswählen"
 
@@ -853,20 +871,20 @@ msgstr ""
 "Die ausgewählte CleverReach-Gruppe (ID: %d) existiert nicht. Bitte wählen "
 "Sie eine gültige Gruppe aus."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:241
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:274
 msgid "Send an email to the person who submitted the form."
 msgstr ""
 "Senden Sie eine E-Mail an die Person, die das Formular übermittelt hat."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:238
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:271
 msgid "Send Email to Visitor"
 msgstr "E-Mail an Besucher senden"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:218
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:251
 msgid "Sender Email"
 msgstr "Absender-E-Mail"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:228
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:261
 msgid "Sender Name"
 msgstr "Absendername"
 
@@ -882,7 +900,7 @@ msgstr "Einrichtungsanleitung"
 msgid "Shortcode"
 msgstr "Shortcode"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:212
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:217
 msgid "Status"
 msgstr "Status"
 
@@ -898,14 +916,14 @@ msgstr "Schritt 2: Die OAuth-App konfigurieren"
 msgid "Step 3: Connect WordPress to CleverReach"
 msgstr "Schritt 3: WordPress mit CleverReach verbinden"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:211
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:244
 msgid ""
 "Subject line for notification emails. If empty, default subject will be used."
 msgstr ""
 "Betreffzeile für Benachrichtigungs-E-Mails. Wenn leer, wird der "
 "Standardbetreff verwendet."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:255
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:288
 msgid "Subject line for the email sent to the visitor."
 msgstr "Betreffzeile für die an den Besucher gesendete E-Mail."
 
@@ -976,15 +994,15 @@ msgstr "Update Überprüfung"
 msgid "Update Form"
 msgstr "Formular aktualisieren"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:443
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:476
 msgid "Use Existing CR Form"
 msgstr "Bestehendes CR-Formular verwenden"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:502
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:535
 msgid "Use Existing CR Group"
 msgstr "Bestehende CR-Gruppe verwenden"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:468
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:473
 msgid "Use this shortcode to display the form:"
 msgstr "Verwenden Sie diesen Shortcode, um das Formular anzuzeigen:"
 
@@ -996,19 +1014,19 @@ msgstr "Verwendet am"
 msgid "View Form"
 msgstr "Formular anzeigen"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:309
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:342
 msgid "Visitor Email Content"
 msgstr "Besucher-E-Mail-Inhalt"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:271
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:304
 msgid "Visitor Email Sender"
 msgstr "Besucher-E-Mail-Absender"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:290
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:323
 msgid "Visitor Email Sender Name"
 msgstr "Besucher-E-Mail-Absendername"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:252
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:285
 msgid "Visitor Email Subject"
 msgstr "Besucher-E-Mail-Betreff"
 
@@ -1021,7 +1039,7 @@ msgstr ""
 "diese E-Mail-Adresse gesendet. Falls leer, wird die E-Mail-Adresse des "
 "Website-Administrators verwendet:"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:566
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:571
 msgid "Yes, use existing"
 msgstr "Ja, bestehende verwenden"
 

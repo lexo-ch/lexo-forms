@@ -49,6 +49,7 @@ abstract class EmailHandler
         // Start with system defaults
         $default_config = [
             'recipients' => [],
+            'bcc_recipients' => [],
             'subject' => 'New Form Submission',
             'from_email' => '',
             'from_name' => EMAIL_FROM_NAME,
@@ -68,7 +69,7 @@ abstract class EmailHandler
             }
 
             // Ensure recipients is array and filter out empty values
-            if (!is_array($config['recipients'])) {
+            if (!\is_array($config['recipients'])) {
                 $config['recipients'] = [$config['recipients']];
             }
 
@@ -80,6 +81,17 @@ abstract class EmailHandler
                 Logger::emailError('No valid email recipients after filtering', $form_id);
                 $config['recipients'] = [$this->getFallbackAdminEmail()];
             }
+
+            // Validate and normalize BCC recipients
+            if (!isset($config['bcc_recipients'])) {
+                $config['bcc_recipients'] = [];
+            }
+            if (!\is_array($config['bcc_recipients'])) {
+                $config['bcc_recipients'] = [$config['bcc_recipients']];
+            }
+            $config['bcc_recipients'] = array_filter($config['bcc_recipients'], function($email) {
+                return !empty($email) && is_email($email);
+            });
 
             return $config;
         }
@@ -94,7 +106,7 @@ abstract class EmailHandler
         $form_sender_name = $email_settings[FIELD_PREFIX . 'sender_name'] ?? null;
 
         // Process recipients (get from ACF repeater) - ACF takes priority
-        if (!empty($form_recipients) && is_array($form_recipients)) {
+        if (!empty($form_recipients) && \is_array($form_recipients)) {
             $recipients = [];
             foreach ($form_recipients as $recipient) {
                 if (!empty($recipient[FIELD_PREFIX . 'email']) && is_email($recipient[FIELD_PREFIX . 'email'])) {
@@ -103,6 +115,21 @@ abstract class EmailHandler
             }
             if (!empty($recipients)) {
                 $config['recipients'] = $recipients;
+            }
+        }
+
+        // Process BCC recipients (get from ACF repeater) - ACF takes priority
+        $form_bcc_recipients = $email_settings[FIELD_PREFIX . 'bcc_recipients'] ?? null;
+        if (!empty($form_bcc_recipients) && \is_array($form_bcc_recipients)) {
+            $bcc_recipients = [];
+            foreach ($form_bcc_recipients as $bcc_recipient) {
+                $bcc_email_key = FIELD_PREFIX . 'bcc_email';
+                if (!empty($bcc_recipient[$bcc_email_key]) && is_email($bcc_recipient[$bcc_email_key])) {
+                    $bcc_recipients[] = $bcc_recipient[$bcc_email_key];
+                }
+            }
+            if (!empty($bcc_recipients)) {
+                $config['bcc_recipients'] = $bcc_recipients;
             }
         }
 
@@ -136,6 +163,17 @@ abstract class EmailHandler
             Logger::emailError('No valid email recipients after filtering', $form_id);
             $config['recipients'] = [$this->getFallbackAdminEmail()];
         }
+
+        // Validate and normalize BCC recipients
+        if (!isset($config['bcc_recipients'])) {
+            $config['bcc_recipients'] = [];
+        }
+        if (!\is_array($config['bcc_recipients'])) {
+            $config['bcc_recipients'] = [$config['bcc_recipients']];
+        }
+        $config['bcc_recipients'] = array_filter($config['bcc_recipients'], function($email) {
+            return !empty($email) && is_email($email);
+        });
 
         return $config;
     }
@@ -173,10 +211,19 @@ abstract class EmailHandler
                 $phpmailer->addReplyTo($config['reply_to_email'], $config['reply_to_name'] ?? '');
             }
 
+            // Set BCC recipients
+            if (!empty($config['bcc_recipients']) && \is_array($config['bcc_recipients'])) {
+                foreach ($config['bcc_recipients'] as $bcc_email) {
+                    if (!empty($bcc_email) && is_email($bcc_email)) {
+                        $phpmailer->addBCC($bcc_email);
+                    }
+                }
+            }
+
             // Set charset
             $phpmailer->CharSet = 'UTF-8';
         } catch (Exception $e) {
-            Logger::emailError('Failed to configure PHPMailer: ' . $e->getMessage(), 0);
+            Logger::emailError("Failed to configure PHPMailer: {$e->getMessage()}", 0);
         }
     }
 
@@ -202,7 +249,8 @@ abstract class EmailHandler
                 $config['from_name'],
                 [], // attachments
                 $config['reply_to_email'] ?? '',
-                $config['reply_to_name'] ?? ''
+                $config['reply_to_name'] ?? '',
+                $config['bcc_recipients'] ?? []
             );
 
             if (!$result) {
@@ -228,6 +276,7 @@ abstract class EmailHandler
      * @param array $attachments Optional file attachments
      * @param string $reply_to_email Optional Reply-To email
      * @param string $reply_to_name Optional Reply-To name
+     * @param array $bcc_recipients Optional BCC recipients
      * @return bool
      */
     protected function sendSimpleEmail(
@@ -238,7 +287,8 @@ abstract class EmailHandler
         string $from_name = '',
         array $attachments = [],
         string $reply_to_email = '',
-        string $reply_to_name = ''
+        string $reply_to_name = '',
+        array $bcc_recipients = []
     ): bool {
         try {
             // Ensure recipients is an array
@@ -261,7 +311,8 @@ abstract class EmailHandler
                 'from_email' => $from_email,
                 'from_name' => $from_name,
                 'reply_to_email' => $reply_to_email,
-                'reply_to_name' => $reply_to_name
+                'reply_to_name' => $reply_to_name,
+                'bcc_recipients' => $bcc_recipients
             ];
 
             // Add HTML content type filter
