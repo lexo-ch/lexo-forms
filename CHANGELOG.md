@@ -1,3 +1,33 @@
+# [1.1.0](https://github.com/lexo-ch/lexo-forms/compare/v1.0.1...v1.1.0) (2025-12-11)
+
+
+### Bug Fixes
+
+* **admin:** Add "Copied!" text feedback to shortcode copy in Forms list ([7810464](https://github.com/lexo-ch/lexo-forms/commit/781046469ef250b9486115c40f95f494ec7ce922))
+* **core:** Attachment new format ([7e562c8](https://github.com/lexo-ch/lexo-forms/commit/7e562c8ae7904f3bcbf7d420e913dccfa0d4dc1c))
+* **core:** Default template ([bc85c53](https://github.com/lexo-ch/lexo-forms/commit/bc85c53ab70cbb7a722f9635d473d94e70e5eae0))
+* **core:** Delete modal redevelop ([3994105](https://github.com/lexo-ch/lexo-forms/commit/39941053f452af7e56714ade19bd72928086e16a))
+* **core:** Fix BCC recipients ([ff763be](https://github.com/lexo-ch/lexo-forms/commit/ff763be72696901141c006100bec34480943c144))
+* **core:** Fix form and group link on post ([044144f](https://github.com/lexo-ch/lexo-forms/commit/044144f811270bd336033fb7c2652ca5f9133984))
+* **core:** Fix form validation ([8e9f72d](https://github.com/lexo-ch/lexo-forms/commit/8e9f72de7be3b927677405f15b748ae32c5e45eb))
+* **core:** Fix problem with fields ([b874dbd](https://github.com/lexo-ch/lexo-forms/commit/b874dbd1e4ed469333b3bceee69f42a42b0a4f4c))
+* **core:** Fix shortcode copy button ([95fd349](https://github.com/lexo-ch/lexo-forms/commit/95fd349f33796f1718e0e919e0d0df966c7c641a))
+* **core:** Force post to publish ([fe7a359](https://github.com/lexo-ch/lexo-forms/commit/fe7a359a6ef8c08f9901ed8e73d6581fcab7b50f))
+* **core:** Mail Attachment mime type ([9babaca](https://github.com/lexo-ch/lexo-forms/commit/9babacaf46edf3b050da79e1baeae59fc7189a72))
+* **core:** Post clone - title ([97863fc](https://github.com/lexo-ch/lexo-forms/commit/97863fc37a447f22b988b68067745a24054ce559))
+* **core:** Print post type title instead of slug ([b0cb699](https://github.com/lexo-ch/lexo-forms/commit/b0cb6993873dac326130218115c69a15994b36e9))
+* **core:** Setup instruction update ([146dfad](https://github.com/lexo-ch/lexo-forms/commit/146dfad085a462f9e73303e614c2133a0be874d9))
+* **core:** Translate update ([bc0dbba](https://github.com/lexo-ch/lexo-forms/commit/bc0dbbaec73b9538cf3f3a8f47f974a8161b2514))
+* **core:** Translations update ([af77bfc](https://github.com/lexo-ch/lexo-forms/commit/af77bfcde5f754d6aaf609c66a6acf09a00fb049))
+
+
+### Features
+
+* **core:** Add BCC ([c7ca4b9](https://github.com/lexo-ch/lexo-forms/commit/c7ca4b9129be486b23d32f84ff4e5811614a7450))
+* **core:** add CR Form and CR Group links to form edit sidebar ([e6485a4](https://github.com/lexo-ch/lexo-forms/commit/e6485a47e0780a1a7f8400cecaaff361dc5446f6))
+* **core:** Added new column “Used on” ([6555ab0](https://github.com/lexo-ch/lexo-forms/commit/6555ab0d47fc0c7c6cac9282919afb5370654a57))
+* **core:** Custom delete modal with shortcode usage info ([fff0133](https://github.com/lexo-ch/lexo-forms/commit/fff0133aa63ea648510fa7f3f2b38170758679b3))
+
 ## [1.0.1](https://github.com/lexo-ch/lexo-forms/compare/v1.0.0...v1.0.1) (2025-12-02)
 
 
