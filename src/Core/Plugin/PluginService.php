@@ -333,8 +333,8 @@ class PluginService extends Singleton
             return;
         }
 
-        // Skip for new posts (auto-draft)
-        if ($post->post_status === 'auto-draft') {
+        // Skip for new posts (auto-draft) and drafts (e.g. cloned forms)
+        if ($post->post_status === 'auto-draft' || $post->post_status === 'draft') {
             return;
         }
 

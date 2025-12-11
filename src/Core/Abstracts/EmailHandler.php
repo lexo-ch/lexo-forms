@@ -68,7 +68,7 @@ abstract class EmailHandler
             }
 
             // Ensure recipients is array and filter out empty values
-            if (!is_array($config['recipients'])) {
+            if (!\is_array($config['recipients'])) {
                 $config['recipients'] = [$config['recipients']];
             }
 
@@ -94,7 +94,7 @@ abstract class EmailHandler
         $form_sender_name = $email_settings[FIELD_PREFIX . 'sender_name'] ?? null;
 
         // Process recipients (get from ACF repeater) - ACF takes priority
-        if (!empty($form_recipients) && is_array($form_recipients)) {
+        if (!empty($form_recipients) && \is_array($form_recipients)) {
             $recipients = [];
             foreach ($form_recipients as $recipient) {
                 if (!empty($recipient[FIELD_PREFIX . 'email']) && is_email($recipient[FIELD_PREFIX . 'email'])) {
@@ -141,6 +141,30 @@ abstract class EmailHandler
     }
 
     /**
+     * Get visitor email BCC recipients from ACF fields
+     *
+     * @param int $form_id
+     * @return array
+     */
+    protected function getVisitorEmailBccRecipients(int $form_id): array
+    {
+        $email_settings = get_field(FIELD_PREFIX . 'email_settings', $form_id) ?: [];
+        $bcc_recipients = [];
+
+        $form_bcc = $email_settings[FIELD_PREFIX . 'additional_bcc_recipients'] ?? null;
+        if (!empty($form_bcc) && \is_array($form_bcc)) {
+            foreach ($form_bcc as $bcc_recipient) {
+                $bcc_email_key = FIELD_PREFIX . 'bcc_email';
+                if (!empty($bcc_recipient[$bcc_email_key]) && is_email($bcc_recipient[$bcc_email_key])) {
+                    $bcc_recipients[] = $bcc_recipient[$bcc_email_key];
+                }
+            }
+        }
+
+        return $bcc_recipients;
+    }
+
+    /**
      * Set HTML content type for wp_mail
      *
      * @return string
@@ -173,10 +197,19 @@ abstract class EmailHandler
                 $phpmailer->addReplyTo($config['reply_to_email'], $config['reply_to_name'] ?? '');
             }
 
+            // Set BCC recipients
+            if (!empty($config['bcc_recipients']) && \is_array($config['bcc_recipients'])) {
+                foreach ($config['bcc_recipients'] as $bcc_email) {
+                    if (!empty($bcc_email) && is_email($bcc_email)) {
+                        $phpmailer->addBCC($bcc_email);
+                    }
+                }
+            }
+
             // Set charset
             $phpmailer->CharSet = 'UTF-8';
         } catch (Exception $e) {
-            Logger::emailError('Failed to configure PHPMailer: ' . $e->getMessage(), 0);
+            Logger::emailError("Failed to configure PHPMailer: {$e->getMessage()}", 0);
         }
     }
 
@@ -193,7 +226,7 @@ abstract class EmailHandler
         try {
             $config = $this->getEmailConfig($form_id, $form_data);
 
-            // Use sendSimpleEmail internally
+            // Use sendSimpleEmail internally (no BCC for admin notifications)
             $result = $this->sendSimpleEmail(
                 $config['recipients'],
                 $config['subject'] ?: 'Form Submission',
@@ -228,6 +261,7 @@ abstract class EmailHandler
      * @param array $attachments Optional file attachments
      * @param string $reply_to_email Optional Reply-To email
      * @param string $reply_to_name Optional Reply-To name
+     * @param array $bcc_recipients Optional BCC recipients
      * @return bool
      */
     protected function sendSimpleEmail(
@@ -238,7 +272,8 @@ abstract class EmailHandler
         string $from_name = '',
         array $attachments = [],
         string $reply_to_email = '',
-        string $reply_to_name = ''
+        string $reply_to_name = '',
+        array $bcc_recipients = []
     ): bool {
         try {
             // Ensure recipients is an array
@@ -261,7 +296,8 @@ abstract class EmailHandler
                 'from_email' => $from_email,
                 'from_name' => $from_name,
                 'reply_to_email' => $reply_to_email,
-                'reply_to_name' => $reply_to_name
+                'reply_to_name' => $reply_to_name,
+                'bcc_recipients' => $bcc_recipients
             ];
 
             // Add HTML content type filter

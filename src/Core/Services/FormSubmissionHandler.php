@@ -404,14 +404,15 @@ class FormSubmissionHandler extends Singleton
                 }
             }
 
-            // Send confirmation email using email service
+            // Send confirmation email using email service (with BCC support)
             $result = $this->email_service->sendConfirmationEmail(
                 $visitor_email,
                 $subject,
                 $email_body,
                 $sender_email,
                 $sender_name,
-                $attachments
+                $attachments,
+                $form_id
             );
 
             if (!$result) {

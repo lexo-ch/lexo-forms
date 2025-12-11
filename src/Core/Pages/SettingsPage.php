@@ -31,13 +31,40 @@ class SettingsPage
 
             <div class="card">
                 <h2><?php echo __('Setup Instructions', 'lexoforms'); ?></h2>
+
+                <h3><?php echo __('Step 1: Create a CleverReach OAuth App', 'lexoforms'); ?></h3>
                 <ol>
-                    <li><?php echo __('Go to', 'lexoforms'); ?> <a href="https://www.cleverreach.com/de/login/" target="_blank">CleverReach</a></li>
-                    <li><?php echo __('Create a new application or use an existing one', 'lexoforms'); ?></li>
-                    <li><?php echo __('In the application settings add Redirect URI:', 'lexoforms'); ?> <code><?php echo esc_html($auth->getDefaultRedirectUri()); ?></code></li>
-                    <li><?php echo __('Copy the Client ID and Client Secret into the fields above', 'lexoforms'); ?></li>
-                    <li><?php echo __('Save the settings and click "Connect to CleverReach"', 'lexoforms'); ?></li>
+                    <li><?php echo __('Log in to your', 'lexoforms'); ?> <a href="https://eu1.cleverreach.com/admin/login.php" target="_blank">CleverReach</a> <?php echo __('account', 'lexoforms'); ?></li>
+                    <li><?php echo __('Navigate to', 'lexoforms'); ?> <strong><?php echo __('My Account', 'lexoforms'); ?></strong> → <strong><?php echo __('Extras', 'lexoforms'); ?></strong> → <strong><a href="https://eu1.cleverreach.com/admin/account_rest.php" target="_blank"><?php echo __('REST API', 'lexoforms'); ?></a></strong></li>
+                    <li><?php echo __('Click on', 'lexoforms'); ?> <strong><?php echo __('Create new OAuth App', 'lexoforms'); ?></strong></li>
+                    <li><?php echo __('Fill in the required fields:', 'lexoforms'); ?>
+                        <ul style="margin-top: 8px; margin-left: 20px;">
+                            <li><strong><?php echo __('App Name', 'lexoforms'); ?>:</strong> <?php echo __('Choose a descriptive name (e.g., "LEXO Forms - yoursite.com")', 'lexoforms'); ?></li>
+                            <li><strong><?php echo __('Description', 'lexoforms'); ?>:</strong> <?php echo __('Optional description of your integration', 'lexoforms'); ?></li>
+                        </ul>
+                    </li>
+                    <li><?php echo __('Click', 'lexoforms'); ?> <strong><?php echo __('Save', 'lexoforms'); ?></strong> <?php echo __('to create the app', 'lexoforms'); ?></li>
                 </ol>
+
+                <h3><?php echo __('Step 2: Configure the OAuth App', 'lexoforms'); ?></h3>
+                <ol>
+                    <li><?php echo __('After creating the app, click on it to open the settings', 'lexoforms'); ?></li>
+                    <li><?php echo __('In the', 'lexoforms'); ?> <strong><?php echo __('Redirect URI', 'lexoforms'); ?></strong> <?php echo __('field, add the following URL:', 'lexoforms'); ?>
+                        <br><code style="display: inline-block; margin-top: 8px; padding: 8px 12px; background: #f0f0f1; border-radius: 4px;"><?php echo esc_html($auth->getDefaultRedirectUri()); ?></code>
+                    </li>
+                    <li><?php echo __('Copy the', 'lexoforms'); ?> <strong><?php echo __('Client ID', 'lexoforms'); ?></strong> <?php echo __('and', 'lexoforms'); ?> <strong><?php echo __('Client Secret', 'lexoforms'); ?></strong> <?php echo __('from the app details', 'lexoforms'); ?></li>
+                </ol>
+
+                <h3><?php echo __('Step 3: Connect WordPress to CleverReach', 'lexoforms'); ?></h3>
+                <ol>
+                    <li><?php echo __('Paste the Client ID and Client Secret into the fields below', 'lexoforms'); ?></li>
+                    <li><?php echo __('Click', 'lexoforms'); ?> <strong><?php echo __('Save Settings', 'lexoforms'); ?></strong></li>
+                    <li><?php echo __('Click', 'lexoforms'); ?> <strong><?php echo __('Connect to CleverReach', 'lexoforms'); ?></strong> <?php echo __('and authorize the connection', 'lexoforms'); ?></li>
+                </ol>
+
+                <p style="margin-top: 15px;">
+                    <em><?php echo __('For more details, see the', 'lexoforms'); ?> <a href="https://rest.cleverreach.com/howto/" target="_blank"><?php echo __('CleverReach REST API documentation', 'lexoforms'); ?></a>.</em>
+                </p>
             </div>
 
             <div class="card" style="margin-top: 20px;">

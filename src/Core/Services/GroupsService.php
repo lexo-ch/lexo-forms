@@ -252,10 +252,36 @@ class GroupsService extends Singleton
     }
 
     /**
+     * Get global attributes (account-wide)
+     *
+     * @return array|null Array of global attributes or null on failure
+     */
+    public function getGlobalAttributes(): ?array
+    {
+        try {
+            $api = $this->getAPI();
+            if (!$api) {
+                return null;
+            }
+
+            $response = $api->getAttributes();
+
+            if ($response['success'] && isset($response['data'])) {
+                return $response['data'];
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            Logger::apiError('GroupsService::getGlobalAttributes error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Create group attribute (field)
      *
      * @param int $groupId Group ID
-     * @param array $fieldData Field data (name, type, description, etc.)
+     * @param array $fieldData Field data (name, type, description, global, etc.)
      * @return array|null Created attribute or null on failure
      */
     public function createAttribute(int $groupId, array $fieldData): ?array
@@ -266,8 +292,18 @@ class GroupsService extends Singleton
                 return null;
             }
 
-            // Use the dedicated createGroupAttribute method
-            $response = $api->createGroupAttribute($groupId, $fieldData);
+            // Check if global attribute is requested
+            $isGlobal = isset($fieldData['global']) && $fieldData['global'] === true;
+
+            if ($isGlobal) {
+                // Create global attribute (account-wide)
+                $response = $api->createAttribute($fieldData);
+            } else {
+                // Create group-specific attribute (local)
+                // Remove 'global' key as it's not needed for group attributes
+                unset($fieldData['global']);
+                $response = $api->createGroupAttribute($groupId, $fieldData);
+            }
 
             if ($response['success'] && isset($response['data'])) {
                 return $response['data'];

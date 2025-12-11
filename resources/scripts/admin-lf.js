@@ -181,24 +181,6 @@
                 return true;
             });
         });
-
-        window.copyShortcode = function() {
-            const shortcodeInput = $('#lexoform-shortcode-container input[type="text"]');
-            if (!shortcodeInput.length) {
-                return;
-            }
-
-            shortcodeInput.select();
-            document.execCommand('copy');
-
-            const button = $('#lexoform-shortcode-container button');
-            const originalText = button.text();
-            button.text('✅ Copied!');
-
-            setTimeout(function() {
-                button.text(originalText);
-            }, 2000);
-        };
     }
 
     // ============================================================
@@ -332,4 +314,147 @@
             }
         });
     }
+    // ============================================================
+    // MODULE 4: Forms CPT Actions (Delete modal, Save button)
+    // ============================================================
+    const LexoFormsActions = {
+        deleteUrl: '',
+        $modal: null,
+
+        init: function() {
+            this.$modal = $('#lexoforms-delete-modal');
+
+            // Always init save button (works on new posts too)
+            this.initSaveButton();
+
+            // Only bind delete modal events if modal exists
+            if (this.$modal.length) {
+                this.bindEvents();
+            }
+        },
+
+        bindEvents: function() {
+            const self = this;
+
+            // Handle delete link clicks
+            $(document).on('click', '.lexoforms-delete-link, .row-actions .delete a, #delete-action a', function(e) {
+                const $link = $(this);
+                let postId = $link.data('post-id');
+
+                // For edit screen delete button
+                if (!postId && $link.closest('#delete-action').length) {
+                    const match = $link.attr('href').match(/post=(\d+)/);
+                    if (match) postId = match[1];
+                }
+
+                if (!postId) return true;
+
+                e.preventDefault();
+                self.deleteUrl = $link.attr('href');
+                self.showModal(postId);
+            });
+
+            // Close on overlay click
+            this.$modal.on('click', function(e) {
+                if (e.target === this) {
+                    self.hideModal();
+                }
+            });
+
+            // Close on Escape
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && self.$modal.hasClass('active')) {
+                    self.hideModal();
+                }
+            });
+        },
+
+        initSaveButton: function() {
+            const $saveBtn = $('#lexoforms-save-btn');
+            if ($saveBtn.length) {
+                $saveBtn.on('click', function(e) {
+                    e.preventDefault();
+                    const $publishBtn = $('#publish');
+                    if ($publishBtn.length) {
+                        $publishBtn.click();
+                    }
+                });
+            }
+        },
+
+        showModal: function(postId) {
+            const self = this;
+            const $modalInner = this.$modal.find('.lexoforms-modal');
+
+            this.$modal.addClass('active');
+            $modalInner.html('<div class="loading"><span class="spinner is-active" style="float: none;"></span> ' + (lexoformsAdmin?.i18n?.loading || 'Loading...') + '</div>');
+
+            // Check if lexoformsAdmin is defined (localized data)
+            if (typeof lexoformsAdmin === 'undefined') {
+                $modalInner.html('<p>Error: Configuration not found.</p>');
+                return;
+            }
+
+            const ajaxEndpoint = lexoformsAdmin.ajaxUrl || ajaxurl;
+
+            $.post(ajaxEndpoint, {
+                action: 'lexoforms_get_usage',
+                post_id: postId,
+                nonce: lexoformsAdmin.deleteNonce
+            }, function(response) {
+                if (response.success && response.data.html) {
+                    $modalInner.html(response.data.html);
+                    self.rebindModalButtons();
+                } else {
+                    $modalInner.html('<p>Error loading data.</p>');
+                }
+            }).fail(function() {
+                $modalInner.html('<p>Error loading data.</p>');
+            });
+        },
+
+        rebindModalButtons: function() {
+            const self = this;
+
+            this.$modal.find('#lexoforms-cancel-delete').on('click', function() {
+                self.hideModal();
+            });
+
+            this.$modal.find('#lexoforms-confirm-delete').on('click', function() {
+                if (self.deleteUrl) {
+                    window.location.href = self.deleteUrl;
+                }
+            });
+        },
+
+        hideModal: function() {
+            this.$modal.removeClass('active');
+            this.deleteUrl = '';
+        }
+    };
+
+    $(function() {
+        LexoFormsActions.init();
+    });
+
+    // ============================================================
+    // MODULE 5: Shortcode Copy (Forms list table)
+    // ============================================================
+    $(document).on('click', '.lexoforms-shortcode-copy', function() {
+        const $code = $(this);
+        const shortcode = $code.data('shortcode');
+        const originalText = $code.text();
+        const copiedText = (typeof lexoformsAdmin !== 'undefined' && lexoformsAdmin.i18n?.copied) 
+            ? lexoformsAdmin.i18n.copied 
+            : '✅ Copied!';
+
+        navigator.clipboard.writeText(shortcode).then(function() {
+            $code.text(copiedText).addClass('copied');
+
+            setTimeout(function() {
+                $code.text(originalText).removeClass('copied');
+            }, 1500);
+        });
+    });
+
 })(window, jQuery, window.tinymce || null);

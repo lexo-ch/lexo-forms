@@ -336,7 +336,7 @@ $fields[] = [
             'required' => 0,
             'return_format' => 'array',
             'library' => 'all',
-            'mime_types' => 'pdf,doc,docx,txt,csv',
+            'mime_types' => '',
             'max_size' => '20',
             'conditional_logic' => [
                 [
@@ -345,6 +345,48 @@ $fields[] = [
                         'operator' => '==',
                         'value' => '1',
                     ],
+                ],
+            ],
+        ],
+        // Visitor Email BCC Recipients (Repeater)
+        [
+            'key' => 'field_additional_bcc_recipients',
+            'label' => __('Visitor Email BCC', 'lexoforms'),
+            'name' => FIELD_PREFIX . 'additional_bcc_recipients',
+            'type' => 'repeater',
+            'instructions' => __('Add email addresses to receive blind carbon copy (BCC) of the visitor email.', 'lexoforms'),
+            'required' => 0,
+            'collapsed' => '',
+            'min' => 0,
+            'max' => 0,
+            'layout' => 'table',
+            'button_label' => __('Add BCC Recipient', 'lexoforms'),
+            'conditional_logic' => [
+                [
+                    [
+                        'field' => 'field_enable_additional_email',
+                        'operator' => '==',
+                        'value' => '1',
+                    ],
+                ],
+            ],
+            'sub_fields' => [
+                [
+                    'key' => 'field_additional_bcc_email',
+                    'label' => __('Email', 'lexoforms'),
+                    'name' => FIELD_PREFIX . 'bcc_email',
+                    'type' => 'email',
+                    'instructions' => '',
+                    'required' => 1,
+                    'wrapper' => [
+                        'width' => '',
+                        'class' => '',
+                        'id' => '',
+                    ],
+                    'default_value' => '',
+                    'placeholder' => '',
+                    'prepend' => '',
+                    'append' => '',
                 ],
             ],
         ],
@@ -568,38 +610,45 @@ $fields[] = [
                 ],
             ],
         ],
-        // CR Status (readonly)
+        // CR Connection Info Display (Message field with links)
+        [
+            'key' => 'field_cr_connection_info',
+            'label' => __('CleverReach Connection', 'lexoforms'),
+            'name' => '',
+            'type' => 'message',
+            'message' => '', // Will be populated dynamically via acf/load_field hook
+            'new_lines' => '',
+            'esc_html' => 0,
+        ],
+        // CR Status (hidden - for data storage)
         [
             'key' => 'field_cr_status',
-            'label' => __('Connection Status', 'lexoforms'),
+            'label' => '',
             'name' => FIELD_PREFIX . 'cr_status',
             'type' => 'text',
-            'instructions' => __('Current CleverReach connection status.', 'lexoforms'),
-            'readonly' => 1,
-            'disabled' => 1,
-            'placeholder' => __('Not connected', 'lexoforms'),
+            'wrapper' => [
+                'class' => 'hidden',
+            ],
         ],
-        // CR Form ID (readonly)
+        // CR Form ID (hidden - for data storage)
         [
             'key' => 'field_form_id',
-            'label' => __('CleverReach Form ID', 'lexoforms'),
+            'label' => '',
             'name' => FIELD_PREFIX . 'form_id',
             'type' => 'text',
-            'instructions' => __('The ID of the connected CleverReach form.', 'lexoforms'),
-            'readonly' => 1,
-            'disabled' => 1,
-            'placeholder' => __('—', 'lexoforms'),
+            'wrapper' => [
+                'class' => 'hidden',
+            ],
         ],
-        // CR Group ID (readonly)
+        // CR Group ID (hidden - for data storage)
         [
             'key' => 'field_group_id',
-            'label' => __('CleverReach Group ID', 'lexoforms'),
+            'label' => '',
             'name' => FIELD_PREFIX . 'group_id',
             'type' => 'text',
-            'instructions' => __('The ID of the connected CleverReach group.', 'lexoforms'),
-            'readonly' => 1,
-            'disabled' => 1,
-            'placeholder' => __('—', 'lexoforms'),
+            'wrapper' => [
+                'class' => 'hidden',
+            ],
         ],
     ],
 ];

@@ -1,3 +1,279 @@
 /**
  * LEXO Forms Plugin - Admin Styles
  */
+
+// ==========================================================================
+// Delete Confirmation Modal
+// ==========================================================================
+
+.lexoforms-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 100000;
+    align-items: center;
+    justify-content: center;
+
+    &.active {
+        display: flex;
+    }
+}
+
+.lexoforms-modal {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+    h2 {
+        margin: 0 0 16px;
+        color: #d63638;
+    }
+
+    p {
+        margin: 0 0 16px;
+        color: #50575e;
+    }
+
+    .usage-list {
+        background: #f6f7f7;
+        border: 1px solid #dcdcde;
+        border-radius: 4px;
+        padding: 8px 8px 8px 32px;
+        margin: 16px 0;
+        max-height: 180px;
+        overflow-y: auto;
+
+        ol {
+            margin: 0;
+            padding: 0;
+            list-style-position: outside;
+        }
+
+        li {
+            padding: 8px 10px;
+            margin: 4px 0;
+            border-radius: 4px;
+            transition: background-color 0.15s ease;
+
+            &:hover {
+                background-color: #e9ecef;
+            }
+
+            &:first-child {
+                margin-top: 0;
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        a {
+            text-decoration: none;
+            color: #2271b1;
+            display: block;
+
+            &:hover {
+                color: #135e96;
+            }
+        }
+
+        .post-type-label {
+            color: #646970;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+    }
+
+    .button-group {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 20px;
+
+        .button {
+            border-radius: 4px !important;
+        }
+    }
+
+    .button-delete {
+        background: #d63638;
+        border-color: #d63638;
+        color: #fff;
+
+        &:hover {
+            background: #b32d2e;
+            border-color: #b32d2e;
+            color: #fff;
+        }
+    }
+
+    .loading {
+        text-align: center;
+        padding: 20px;
+    }
+}
+
+// ==========================================================================
+// Form Actions Metabox
+// ==========================================================================
+
+.lexoforms-actions-metabox {
+    padding: 10px 0;
+
+    .button {
+        display: block;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .button-primary {
+        height: 36px;
+        line-height: 34px;
+        font-size: 14px;
+    }
+
+    .button-delete {
+        color: #b32d2e;
+        border-color: #b32d2e;
+
+        &:hover {
+            background: #b32d2e;
+            color: #fff;
+            border-color: #b32d2e;
+        }
+    }
+}
+
+// ==========================================================================
+// Hide native publish box (keep functional)
+// ==========================================================================
+
+.post-type-cpt-lexoforms {
+    #submitdiv {
+        position: absolute !important;
+        left: -9999px !important;
+        visibility: hidden !important;
+    }
+}
+
+// ==========================================================================
+// Shortcode Copy Button
+// ==========================================================================
+
+.lexoforms-shortcode-copy {
+    background: #f0f0f1;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: monospace;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+        background: #e0e0e1;
+    }
+
+    &.copied {
+        background: #00a32a;
+        color: #fff;
+    }
+
+    // Block variant for metabox/sidebar
+    &--block {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        text-align: center;
+        box-sizing: border-box;
+        margin-top: 8px;
+    }
+}
+
+// ==========================================================================
+// CleverReach Connection Info (ACF Message Field)
+// ==========================================================================
+
+.lexoforms-cr-connection-info {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.lexoforms-cr-status,
+.lexoforms-cr-form,
+.lexoforms-cr-group {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 6px;
+
+    .label {
+        font-weight: 500;
+        color: #1d2327;
+    }
+}
+
+.lexoforms-cr-status {
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+
+        &--success {
+            background: #edfaef;
+            color: #00a32a;
+        }
+
+        &--error {
+            background: #fcf0f1;
+            color: #d63638;
+        }
+    }
+}
+
+.lexoforms-cr-form,
+.lexoforms-cr-group {
+    a {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: #2271b1;
+        text-decoration: none;
+
+        &:hover {
+            color: #135e96;
+            text-decoration: underline;
+        }
+
+        .dashicons {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+            margin-top: 2px;
+        }
+    }
+}
+
+.lexoforms-cr-not-connected {
+    color: #757575;
+    font-style: italic;
+}

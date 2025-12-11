@@ -145,8 +145,8 @@ class FormEmailService extends EmailHandler
 
         foreach ($fields_config as $field_config) {
             $field_name = $field_config['name'];
-            // Check required fields (assuming required fields are those marked as 'global' in templates)
-            if (!empty($field_config['global']) || in_array($field_name, ['email', 'firstname', 'lastname'])) {
+            // Check fields marked as required in template definition
+            if (!empty($field_config['required'])) {
                 if (empty($form_data[$field_name])) {
                     $missing_fields[] = $this->getEmailLabel($field_config, $field_name);
                 }
@@ -549,6 +549,7 @@ class FormEmailService extends EmailHandler
      * @param string $sender_email
      * @param string $sender_name
      * @param array $attachments
+     * @param int $form_id Optional form ID to get BCC recipients
      * @return bool
      */
     public function sendConfirmationEmail(
@@ -557,10 +558,17 @@ class FormEmailService extends EmailHandler
         string $email_body,
         string $sender_email = '',
         string $sender_name = '',
-        array $attachments = []
+        array $attachments = [],
+        int $form_id = 0
     ): bool {
         if (empty($visitor_email) || !is_email($visitor_email)) {
             return false;
+        }
+
+        // Get BCC recipients for visitor email if form_id is provided
+        $bcc_recipients = [];
+        if ($form_id > 0) {
+            $bcc_recipients = $this->getVisitorEmailBccRecipients($form_id);
         }
 
         return $this->sendSimpleEmail(
@@ -569,7 +577,10 @@ class FormEmailService extends EmailHandler
             $email_body,
             $sender_email,
             $sender_name,
-            $attachments
+            $attachments,
+            '', // reply_to_email
+            '', // reply_to_name
+            $bcc_recipients
         );
     }
 }
