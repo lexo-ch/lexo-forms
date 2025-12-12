@@ -457,4 +457,62 @@
         });
     });
 
+    // ============================================================
+    // MODULE 6: Form Preview Lightbox
+    // ============================================================
+    const LexoFormsLightbox = {
+        $overlay: null,
+
+        init: function() {
+            this.$overlay = $('#lexoforms-lightbox-overlay');
+
+            if (!this.$overlay.length) {
+                return;
+            }
+
+            this.bindEvents();
+        },
+
+        bindEvents: function() {
+            const self = this;
+
+            // Open lightbox on preview click
+            $(document).on('click', '.lexoforms-preview-thumb, .lexoforms-preview-full', function(e) {
+                e.preventDefault();
+                const src = $(this).attr('src');
+                const alt = $(this).attr('alt');
+                self.open(src, alt);
+            });
+
+            // Close on overlay click
+            this.$overlay.on('click', function(e) {
+                if (e.target === this || $(e.target).hasClass('lexoforms-lightbox-close')) {
+                    self.close();
+                }
+            });
+
+            // Close on Escape
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && self.$overlay.hasClass('active')) {
+                    self.close();
+                }
+            });
+        },
+
+        open: function(src, alt) {
+            this.$overlay.find('.lexoforms-lightbox-image').attr('src', src).attr('alt', alt || '');
+            this.$overlay.addClass('active');
+            $('body').addClass('lexoforms-lightbox-open');
+        },
+
+        close: function() {
+            this.$overlay.removeClass('active');
+            $('body').removeClass('lexoforms-lightbox-open');
+        }
+    };
+
+    $(function() {
+        LexoFormsLightbox.init();
+    });
+
 })(window, jQuery, window.tinymce || null);

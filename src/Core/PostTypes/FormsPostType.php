@@ -1049,6 +1049,13 @@ class FormsPostType extends Singleton
                 </div>
             </div>
         </div>
+
+        <div id="lexoforms-lightbox-overlay" class="lexoforms-lightbox-overlay">
+            <div class="lexoforms-lightbox-content">
+                <button type="button" class="lexoforms-lightbox-close">&#10005;</button>
+                <img src="" alt="" class="lexoforms-lightbox-image" />
+            </div>
+        </div>
         <?php
     }
 }
