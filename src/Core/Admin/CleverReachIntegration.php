@@ -33,7 +33,7 @@ class CleverReachIntegration extends Singleton
     public function register(): void
     {
 
-        // Load field choices dynamically
+        // Load field choices dynamically (by name and key for sub-fields in groups)
         add_filter('acf/load_field/name=lexoform_html_template', [$this, 'loadTemplateChoices']);
         add_filter('acf/load_field/name=lexoform_existing_form', [$this, 'loadFormChoices']);
         add_filter('acf/load_field/name=lexoform_existing_group', [$this, 'loadGroupChoices']);
@@ -58,12 +58,15 @@ class CleverReachIntegration extends Singleton
     }
 
     /**
-     * Load template choices for ACF field
+     * Load template choices for ACF button_group field with preview images
      */
-    public function loadTemplateChoices($field): array
+    public function loadTemplateChoices($field)
     {
         $templateLoader = TemplateLoader::getInstance();
         $templates = $templateLoader->getAvailableTemplates() ?: [];
+
+        // Check if we're in ACF editor (don't show HTML there)
+        $is_acf_editor = get_post_type() === 'acf-field-group' || get_post_type() === 'acf-field';
 
         $choices = [];
         $user_language = FormMessages::getUserLanguage();
@@ -81,7 +84,30 @@ class CleverReachIntegration extends Singleton
                 $template_name .= ' (default)';
             }
 
-            $choices[$template_id] = $template_name;
+            if ($is_acf_editor) {
+                $choices[$template_id] = $template_name;
+            } else {
+                $preview_url = $template['form_preview'] ?? '';
+
+                if ($preview_url) {
+                    $choices[$template_id] = '<div class="lexoforms-template-choice">'
+                        . '<div class="lexoforms-template-preview">'
+                        . '<img src="' . esc_url($preview_url) . '" alt="' . esc_attr($template_name) . '" />'
+                        . '<button type="button" class="lexoforms-template-zoom" title="' . esc_attr__('View larger', 'lexoforms') . '">'
+                        . '<span class="dashicons dashicons-search"></span>'
+                        . '</button>'
+                        . '</div>'
+                        . '<div class="lexoforms-template-name">' . esc_html($template_name) . '</div>'
+                        . '</div>';
+                } else {
+                    $choices[$template_id] = '<div class="lexoforms-template-choice">'
+                        . '<div class="lexoforms-template-preview lexoforms-template-no-preview">'
+                        . '<span class="dashicons dashicons-format-image"></span>'
+                        . '</div>'
+                        . '<div class="lexoforms-template-name">' . esc_html($template_name) . '</div>'
+                        . '</div>';
+                }
+            }
         }
 
         $field['choices'] = $choices;
@@ -518,7 +544,6 @@ class CleverReachIntegration extends Singleton
         $formsService->clearAllCache();
         $groupsService->clearAllCache();
     }
-
 
     /**
      * Provide localized data for lexoform integration section inside admin-lf.js bundle.

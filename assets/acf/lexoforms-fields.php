@@ -45,21 +45,21 @@ $fields[] = [
     'required' => 0,
     'layout' => 'block',
     'sub_fields' => [
-        // HTML Form Template (Select)
+        // HTML Form Template (Button Group with images)
         [
             'key' => FIELD_PREFIX . 'html_template',
             'label' => __('HTML Form Template', 'lexoforms'),
             'name' => FIELD_PREFIX . 'html_template',
-            'type' => 'select',
+            'type' => 'button_group',
             'instructions' => __('Select HTML form template.', 'lexoforms'),
             'required' => 1,
             'choices' => [], // Will be populated dynamically via acf/load_field hook
-            'default_value' => false,
-            'allow_null' => 0,
-            'multiple' => 0,
-            'ui' => 1,
-            'ajax' => 0,
+            'default_value' => '',
             'return_format' => 'value',
+            'layout' => 'horizontal',
+            'wrapper' => [
+                'class' => 'lexoforms-template-selector',
+            ],
         ],
         // Hidden field to track CR connection status
         [

@@ -283,7 +283,7 @@ class FormsPostType extends Singleton
                         echo '<span style="color: #d63638;">' . __('Template not found', 'lexoforms') . '</span>';
                     }
                 } else {
-                    echo '—';
+                    echo '<span style="color: #999;">' . __('No Template Selected', 'lexoforms') . '</span>';
                 }
                 break;
 
@@ -296,20 +296,11 @@ class FormsPostType extends Singleton
                     $tpl = $loader->getTemplateById($tpl_id);
 
                     if ($tpl && !empty($tpl['form_preview'])) {
-                        $preview = $tpl['form_preview'];
-
-                        // Determine image source format
-                        if (strpos($preview, 'http') === 0 || strpos($preview, '/') === 0) {
-                            $src = $preview;
-                        } elseif (strpos($preview, 'data:image') === 0) {
-                            $src = $preview;
-                        } else {
-                            $src = 'data:image/png;base64,' . $preview;
-                        }
+                        $src = $tpl['form_preview'];
 
                         printf(
-                            '<img src="%s" alt="%s" class="lexoforms-preview-thumb" />',
-                            esc_attr($src),
+                            '<span class="lexoforms-preview-wrap"><img src="%s" alt="%s" class="lexoforms-preview-thumb" /></span>',
+                            esc_url($src),
                             esc_attr__('Form Preview', 'lexoforms')
                         );
                     } else {
@@ -752,72 +743,6 @@ class FormsPostType extends Singleton
             self::POST_TYPE,
             'side',
             'high'
-        );
-
-        // Add Form Preview metabox only if template has preview
-        global $post;
-
-        if (!$post) {
-            return;
-        }
-
-        $settings = get_field(FIELD_PREFIX . 'general_settings', $post->ID) ?: [];
-        $tpl_id = $settings[FIELD_PREFIX . 'html_template'] ?? '';
-
-        if (!$tpl_id) {
-            return;
-        }
-
-        $loader = \LEXO\LF\Core\Templates\TemplateLoader::getInstance();
-        $tpl = $loader->getTemplateById($tpl_id);
-
-        if (!$tpl || empty($tpl['form_preview'])) {
-            return;
-        }
-
-        add_meta_box(
-            'lexoforms_preview',
-            __('Form Preview', 'lexoforms'),
-            [$this, 'renderPreviewMetabox'],
-            self::POST_TYPE,
-            'side',
-            'default'
-        );
-    }
-
-    /**
-     * Render Form Preview metabox
-     *
-     * @param \WP_Post $post
-     * @return void
-     */
-    public function renderPreviewMetabox($post): void
-    {
-        $settings = get_field(FIELD_PREFIX . 'general_settings', $post->ID) ?: [];
-        $tpl_id = $settings[FIELD_PREFIX . 'html_template'] ?? '';
-
-        $loader = \LEXO\LF\Core\Templates\TemplateLoader::getInstance();
-        $tpl = $loader->getTemplateById($tpl_id);
-
-        $preview = $tpl['form_preview'] ?? '';
-
-        if (empty($preview)) {
-            return;
-        }
-
-        // Determine image source format
-        if (strpos($preview, 'http') === 0 || strpos($preview, '/') === 0) {
-            $src = $preview;
-        } elseif (strpos($preview, 'data:image') === 0) {
-            $src = $preview;
-        } else {
-            $src = 'data:image/png;base64,' . $preview;
-        }
-
-        printf(
-            '<img src="%s" alt="%s" class="lexoforms-preview-full" />',
-            esc_attr($src),
-            esc_attr__('Form Preview', 'lexoforms')
         );
     }
 

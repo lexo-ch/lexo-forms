@@ -476,12 +476,18 @@
         bindEvents: function() {
             const self = this;
 
-            // Open lightbox on preview click
-            $(document).on('click', '.lexoforms-preview-thumb, .lexoforms-preview-full', function(e) {
+            // Open lightbox on preview click (for list table and template selector)
+            $(document).on('click', '.lexoforms-preview-wrap, .lexoforms-template-zoom', function(e) {
                 e.preventDefault();
-                const src = $(this).attr('src');
-                const alt = $(this).attr('alt');
-                self.open(src, alt);
+                e.stopPropagation();
+                // Find image in parent container (template choice, preview wrap, or ACF label)
+                const $container = $(this).closest('.lexoforms-template-choice, .lexoforms-preview-wrap, label');
+                const $img = $container.find('img').first();
+                const src = $img.attr('src');
+                const alt = $img.attr('alt');
+                if (src) {
+                    self.open(src, alt);
+                }
             });
 
             // Close on overlay click

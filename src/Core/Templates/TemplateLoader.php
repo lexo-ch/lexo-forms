@@ -17,6 +17,7 @@ class TemplateLoader extends Singleton
 
     private const PLUGIN_TEMPLATES_DIR = 'template-forms';
     private const THEME_TEMPLATES_DIR = 'template-forms';
+    private const PREVIEWS_SUBDIR = 'previews';
 
     private array $templates = [];
     private bool $scanned = false;
@@ -76,8 +77,11 @@ class TemplateLoader extends Singleton
             return $templates;
         }
 
+        $previewsDir = $dir . '/' . self::PREVIEWS_SUBDIR;
+        $previewsUrl = trailingslashit(\LEXO\LF\URL) . self::PLUGIN_TEMPLATES_DIR . '/' . self::PREVIEWS_SUBDIR;
+
         foreach ($files as $file) {
-            $template = $this->loadTemplateFile($file, 'plugin');
+            $template = $this->loadTemplateFile($file, 'plugin', $previewsDir, $previewsUrl);
 
             if ($template !== null) {
                 $templates[$template['id']] = $template;
@@ -107,8 +111,11 @@ class TemplateLoader extends Singleton
             return $templates;
         }
 
+        $previewsDir = $dir . '/' . self::PREVIEWS_SUBDIR;
+        $previewsUrl = trailingslashit(get_stylesheet_directory_uri()) . self::THEME_TEMPLATES_DIR . '/' . self::PREVIEWS_SUBDIR;
+
         foreach ($files as $file) {
-            $template = $this->loadTemplateFile($file, 'theme');
+            $template = $this->loadTemplateFile($file, 'theme', $previewsDir, $previewsUrl);
 
             if ($template !== null) {
                 $templates[$template['id']] = $template;
@@ -123,9 +130,11 @@ class TemplateLoader extends Singleton
      *
      * @param string $file Template file path
      * @param string $source 'plugin' or 'theme'
+     * @param string $previewsDir Path to previews directory
+     * @param string $previewsUrl URL to previews directory
      * @return array|null
      */
-    private function loadTemplateFile(string $file, string $source): ?array
+    private function loadTemplateFile(string $file, string $source, string $previewsDir = '', string $previewsUrl = ''): ?array
     {
         if (!file_exists($file)) {
             return null;
@@ -142,6 +151,10 @@ class TemplateLoader extends Singleton
 
         // Generate unique ID
         $id = $this->getTemplateHash($file);
+        $filename = basename($file, '.php');
+
+        // Find preview image (check for jpg, png, webp)
+        $previewUrl = $this->findPreviewImage($filename, $previewsDir, $previewsUrl);
 
         // Return template with metadata
         return [
@@ -149,11 +162,37 @@ class TemplateLoader extends Singleton
             'name' => $data['name'],
             'fields' => $data['fields'],
             'html' => $data['html'],
-            'form_preview' => $data['form_preview'] ?? null,
+            'form_preview' => $previewUrl,
             'source' => $source,
             'file' => $file,
-            'filename' => basename($file, '.php'),
+            'filename' => $filename,
         ];
+    }
+
+    /**
+     * Find preview image for template
+     *
+     * @param string $filename Template filename (without .php)
+     * @param string $previewsDir Path to previews directory
+     * @param string $previewsUrl URL to previews directory
+     * @return string|null Preview image URL or null if not found
+     */
+    private function findPreviewImage(string $filename, string $previewsDir, string $previewsUrl): ?string
+    {
+        if (empty($previewsDir) || !is_dir($previewsDir)) {
+            return null;
+        }
+
+        $extensions = ['webp', 'png', 'jpg', 'jpeg'];
+
+        foreach ($extensions as $ext) {
+            $imagePath = $previewsDir . '/' . $filename . '.' . $ext;
+            if (file_exists($imagePath)) {
+                return trailingslashit($previewsUrl) . $filename . '.' . $ext;
+            }
+        }
+
+        return null;
     }
 
     /**
