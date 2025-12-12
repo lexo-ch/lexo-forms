@@ -149,6 +149,7 @@ class TemplateLoader extends Singleton
             'name' => $data['name'],
             'fields' => $data['fields'],
             'html' => $data['html'],
+            'form_preview' => $data['form_preview'] ?? null,
             'source' => $source,
             'file' => $file,
             'filename' => basename($file, '.php'),

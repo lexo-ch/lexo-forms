@@ -220,6 +220,7 @@ class FormsPostType extends Singleton
 
         // Add custom columns
         $columns['template'] = __('HTML Template', 'lexoforms');
+        $columns['form_preview'] = __('Form Preview', 'lexoforms');
         $columns['cr_status'] = __('CleverReach Status', 'lexoforms');
 
         // Only show CR Form and CR Group columns if connected to CR API
@@ -253,7 +254,7 @@ class FormsPostType extends Singleton
 
         // OPTIMIZATION: Load general settings once per row (if needed)
         static $general_cache = [];
-        if (!isset($general_cache[$post_id]) && $column === 'template') {
+        if (!isset($general_cache[$post_id]) && in_array($column, ['template', 'form_preview'], true)) {
             $general_cache[$post_id] = get_field(FIELD_PREFIX . 'general_settings', $post_id) ?: [];
         }
 
@@ -283,6 +284,39 @@ class FormsPostType extends Singleton
                     }
                 } else {
                     echo '—';
+                }
+                break;
+
+            case 'form_preview':
+                $general_settings = $general_cache[$post_id] ?? [];
+                $tpl_id = $general_settings[FIELD_PREFIX . 'html_template'] ?? '';
+
+                if ($tpl_id) {
+                    $loader = \LEXO\LF\Core\Templates\TemplateLoader::getInstance();
+                    $tpl = $loader->getTemplateById($tpl_id);
+
+                    if ($tpl && !empty($tpl['form_preview'])) {
+                        $preview = $tpl['form_preview'];
+
+                        // Determine image source format
+                        if (strpos($preview, 'http') === 0 || strpos($preview, '/') === 0) {
+                            $src = $preview;
+                        } elseif (strpos($preview, 'data:image') === 0) {
+                            $src = $preview;
+                        } else {
+                            $src = 'data:image/png;base64,' . $preview;
+                        }
+
+                        printf(
+                            '<img src="%s" alt="%s" class="lexoforms-preview-thumb" />',
+                            esc_attr($src),
+                            esc_attr__('Form Preview', 'lexoforms')
+                        );
+                    } else {
+                        echo '<span class="lexoforms-preview-empty">—</span>';
+                    }
+                } else {
+                    echo '<span class="lexoforms-preview-empty">—</span>';
                 }
                 break;
 
@@ -718,6 +752,58 @@ class FormsPostType extends Singleton
             self::POST_TYPE,
             'side',
             'high'
+        );
+
+        // Add Form Preview metabox
+        add_meta_box(
+            'lexoforms_preview',
+            __('Form Preview', 'lexoforms'),
+            [$this, 'renderPreviewMetabox'],
+            self::POST_TYPE,
+            'side',
+            'default'
+        );
+    }
+
+    /**
+     * Render Form Preview metabox
+     *
+     * @param \WP_Post $post
+     * @return void
+     */
+    public function renderPreviewMetabox($post): void
+    {
+        $settings = get_field(FIELD_PREFIX . 'general_settings', $post->ID) ?: [];
+        $tpl_id = $settings[FIELD_PREFIX . 'html_template'] ?? '';
+
+        if (!$tpl_id) {
+            echo '<span class="lexoforms-preview-empty">—</span>';
+            return;
+        }
+
+        $loader = \LEXO\LF\Core\Templates\TemplateLoader::getInstance();
+        $tpl = $loader->getTemplateById($tpl_id);
+
+        if (!$tpl || empty($tpl['form_preview'])) {
+            echo '<span class="lexoforms-preview-empty">—</span>';
+            return;
+        }
+
+        $preview = $tpl['form_preview'];
+
+        // Determine image source format
+        if (strpos($preview, 'http') === 0 || strpos($preview, '/') === 0) {
+            $src = $preview;
+        } elseif (strpos($preview, 'data:image') === 0) {
+            $src = $preview;
+        } else {
+            $src = 'data:image/png;base64,' . $preview;
+        }
+
+        printf(
+            '<img src="%s" alt="%s" class="lexoforms-preview-full" />',
+            esc_attr($src),
+            esc_attr__('Form Preview', 'lexoforms')
         );
     }
 
