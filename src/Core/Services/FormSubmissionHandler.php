@@ -121,7 +121,7 @@ class FormSubmissionHandler extends Singleton
                 case 'email_and_cr':
                     // Both failed - error to user
                     if (!$cr_success && !$email_success) {
-                        $this->email_service->sendFailureNotification($form_id, $form_data, $template, "CR Error: $cr_error | Email Error: $email_error", $handler_type);
+                        $this->email_service->sendFailureNotification($form_id, $form_data, $template, "CleverReach Error: $cr_error | Email Error: $email_error", $handler_type);
                         throw new Exception(FormMessages::getEmailFailMessage());
                     }
 

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: LEXO Forms\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-31 22:45+0000\n"
-"PO-Revision-Date: 2025-12-10 15:18+0000\n"
+"PO-Revision-Date: 2025-12-12 10:23+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -181,13 +181,35 @@ msgstr "CleverReach-Verbindung erforderlich!"
 msgid "CleverReach Connection Successful!"
 msgstr "CleverReach-Verbindung erfolgreich!"
 
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:479
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:227
+msgid "CleverReach Form"
+msgstr "CleverReach Formular"
+
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:669
 msgid "CleverReach Form Error"
 msgstr "CleverReach-Formularfehler"
 
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:234
+msgid "CleverReach Form ID"
+msgstr "CleverReach Formular-ID"
+
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:113
 msgid "CleverReach Forms management"
 msgstr "CleverReach-Formularverwaltung"
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:538
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:228
+msgid "CleverReach Group"
+msgstr "CleverReach Gruppen"
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:250
+msgid "CleverReach Group ID"
+msgstr "CleverReach Gruppen-ID"
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:405
+msgid "CleverReach Integration"
+msgstr "CleverReach Integration"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:136
 msgid "CleverReach Only"
@@ -201,6 +223,10 @@ msgstr "CleverReach REST-API-Dokumentation"
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Plugin/PluginService.php:161
 msgid "CleverReach Settings"
 msgstr "CleverReach-Einstellungen"
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:223
+msgid "CleverReach Status"
+msgstr "CleverReach Status"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:46
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:61
@@ -298,31 +324,13 @@ msgstr ""
 "„Automatisch erzeugen“ für die Standardkonfiguration oder geben Sie eine "
 "benutzerdefinierte URL ein."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:479
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:227
-msgid "CR Form"
-msgstr "CR-Formular"
-
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:538
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:228
-msgid "CR Group"
-msgstr "CR-Gruppe"
-
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:405
-msgid "CR Integration"
-msgstr "CR-Integration"
-
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:223
-msgid "CR Status"
-msgstr "CR-Status"
-
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:486
-msgid "Create New CR Form"
-msgstr "Neue CR-Formular erstellen"
+msgid "Create New CleverReach Form"
+msgstr "Neues CleverReach-Formular erstellen"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:545
-msgid "Create New CR Group"
-msgstr "Neue CR-Gruppe erstellen"
+msgid "Create New CleverReach Group"
+msgstr "Neue CleverReach-Gruppe erstellen"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:39
 msgid "Create new OAuth App"
@@ -495,7 +503,7 @@ msgstr "Formular konnte nicht ermittelt oder erstellt werden"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Utils/FormMessages.php:454
 msgid "Failed to get group ID from form"
-msgstr "Gruppen-ID konnte nicht aus dem Formular abgerufen werden"
+msgstr "CleverReach Gruppen-ID konnte nicht aus dem Formular abgerufen werden"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Pages/SettingsPage.php:152
 msgid "Fallback Admin Email"
@@ -535,10 +543,6 @@ msgstr "Formularkonfiguration"
 msgid "Form has been connected to CleverReach (Form ID: %s)."
 msgstr "Das Formular wurde mit CleverReach verbunden (Formular-ID: %s)."
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:234
-msgid "Form ID"
-msgstr "Formular-ID"
-
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:455
 msgid "Form Shortcode"
 msgstr "Formular-Shortcode"
@@ -565,10 +569,6 @@ msgstr "Allgemein"
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:41
 msgid "General Configuration"
 msgstr "Allgemeine Konfiguration"
-
-#: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:250
-msgid "Group ID"
-msgstr "Gruppen-ID"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:51
 msgid "HTML Form Template"
@@ -601,7 +601,7 @@ msgstr "Ungültiges E-Mail-Format im Feld: %s"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:833
 msgid "Invalid form ID"
-msgstr "Ungültige Formular-ID"
+msgstr "Ungültige CleverReach Formular-ID"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/PostTypes/FormsPostType.php:781
 msgid "Invalid form."
@@ -839,7 +839,7 @@ msgstr "Wählen Sie eine bestehende CleverReach-Gruppe aus."
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:494
 msgid "Select Existing Form"
-msgstr "Bestehendes Formular auswählen"
+msgstr "Bestehendes CleverReach Formular auswählen"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:562
 msgid "Select Existing Group"
@@ -989,12 +989,12 @@ msgid "Update Form"
 msgstr "Formular aktualisieren"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:485
-msgid "Use Existing CR Form"
-msgstr "Bestehendes CR-Formular verwenden"
+msgid "Use Existing CleverReach Form"
+msgstr "Bestehendes CleverReach Formular verwenden"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:544
-msgid "Use Existing CR Group"
-msgstr "Bestehende CR-Gruppe verwenden"
+msgid "Use Existing CleverReach Group"
+msgstr "Bestehendes CleverReach Gruppe verwenden"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/src/Core/Admin/CleverReachIntegration.php:473
 msgid "Use this shortcode to display the form:"

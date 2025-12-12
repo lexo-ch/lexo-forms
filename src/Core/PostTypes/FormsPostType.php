@@ -220,12 +220,12 @@ class FormsPostType extends Singleton
 
         // Add custom columns
         $columns['template'] = __('HTML Template', 'lexoforms');
-        $columns['cr_status'] = __('CR Status', 'lexoforms');
+        $columns['cr_status'] = __('CleverReach Status', 'lexoforms');
 
         // Only show CR Form and CR Group columns if connected to CR API
         if ($isConnected) {
-            $columns[FIELD_PREFIX . 'cr_id'] = __('CR Form', 'lexoforms');
-            $columns[FIELD_PREFIX . 'group'] = __('CR Group', 'lexoforms');
+            $columns[FIELD_PREFIX . 'cr_id'] = __('CleverReach Form', 'lexoforms');
+            $columns[FIELD_PREFIX . 'group'] = __('CleverReach Group', 'lexoforms');
         }
 
         $columns['shortcode'] = __('Shortcode', 'lexoforms');

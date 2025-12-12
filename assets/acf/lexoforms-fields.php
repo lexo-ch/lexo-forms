@@ -402,7 +402,7 @@ $fields[] = [
 // Tab: CR Integration
 $fields[] = [
     'key' => FIELD_PREFIX . 'tab_integration',
-    'label' => __('CR Integration', 'lexoforms'),
+    'label' => __('CleverReach Integration', 'lexoforms'),
     'name' => '',
     'type' => 'tab',
     'placement' => 'left',
@@ -476,14 +476,14 @@ $fields[] = [
         // CR Form Action (radio)
         [
             'key' => 'field_form_action',
-            'label' => __('CR Form', 'lexoforms'),
+            'label' => __('CleverReach Form', 'lexoforms'),
             'name' => FIELD_PREFIX . 'form_action',
             'type' => 'radio',
             'instructions' => __('Choose whether to use an existing CleverReach form or create a new one.', 'lexoforms'),
             'required' => 1,
             'choices' => [
-                'use_existing' => __('Use Existing CR Form', 'lexoforms'),
-                'create_new' => __('Create New CR Form', 'lexoforms'),
+                'use_existing' => __('Use Existing CleverReach Form', 'lexoforms'),
+                'create_new' => __('Create New CleverReach Form', 'lexoforms'),
             ],
             'default_value' => 'use_existing',
             'layout' => 'vertical',
@@ -535,14 +535,14 @@ $fields[] = [
         // CR Group Action (radio) - Conditional B
         [
             'key' => 'field_group_action',
-            'label' => __('CR Group', 'lexoforms'),
+            'label' => __('CleverReach Group', 'lexoforms'),
             'name' => FIELD_PREFIX . 'group_action',
             'type' => 'radio',
             'instructions' => __('Choose whether to use an existing CleverReach group or create a new one.', 'lexoforms'),
             'required' => 1,
             'choices' => [
-                'use_existing_group' => __('Use Existing CR Group', 'lexoforms'),
-                'create_new_group' => __('Create New CR Group', 'lexoforms'),
+                'use_existing_group' => __('Use Existing CleverReach Group', 'lexoforms'),
+                'create_new_group' => __('Create New CleverReach Group', 'lexoforms'),
             ],
             'default_value' => 'use_existing_group',
             'layout' => 'vertical',

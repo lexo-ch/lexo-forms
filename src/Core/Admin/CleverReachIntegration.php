@@ -231,7 +231,7 @@ class CleverReachIntegration extends Singleton
                         #%s <span class="dashicons dashicons-external"></span>
                     </a>
                 </div>',
-                esc_html__('Form ID', 'lexoforms'),
+                esc_html__('CleverReach Form ID', 'lexoforms'),
                 esc_url($form_url),
                 esc_html($form_id)
             );
@@ -247,7 +247,7 @@ class CleverReachIntegration extends Singleton
                         #%s <span class="dashicons dashicons-external"></span>
                     </a>
                 </div>',
-                esc_html__('Group ID', 'lexoforms'),
+                esc_html__('CleverReach Group ID', 'lexoforms'),
                 esc_url($group_url),
                 esc_html($group_id)
             );
