@@ -509,15 +509,15 @@ body.lexoforms-lightbox-open {
     right: 8px;
     width: 40px;
     height: 40px;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid #dcdcde;
+    background-color: #2271b1;
+    border: 1px solid transparent;
     border-radius: 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
     z-index: 3;
 
     .dashicons {
@@ -525,16 +525,11 @@ body.lexoforms-lightbox-open {
         line-height: 40px;
         width: 40px;
         height: 40px;
-        color: #50575e;
+        color: #fff;
     }
 
     &:hover {
-        background: #fff;
-        border-color: #2271b1;
-
-        .dashicons {
-            color: #2271b1;
-        }
+        background-color: #2271b1d0;
     }
 
     label:hover & {
