@@ -310,6 +310,15 @@
     &:hover::after {
         opacity: 1;
     }
+
+    // Modifier to disable zoom overlay for plugin templates
+    &--no-zoom {
+        cursor: default;
+
+        &::after {
+            display: none;
+        }
+    }
 }
 
 // Thumbnail in admin list column
@@ -404,7 +413,6 @@ body.lexoforms-lightbox-open {
 }
 
 // Make preview images clickable
-.lexoforms-preview-thumb,
 .lexoforms-preview-full {
     cursor: pointer;
     transition: opacity 0.15s ease;
@@ -457,6 +465,10 @@ body.lexoforms-lightbox-open {
                 opacity: 0 !important;
                 pointer-events: none;
             }
+
+            &:hover img {
+                transform: scale(1.05);
+            }
         }
     }
 }
@@ -464,6 +476,7 @@ body.lexoforms-lightbox-open {
 .lexoforms-template-choice {
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .lexoforms-template-preview {
@@ -485,8 +498,8 @@ body.lexoforms-lightbox-open {
         transition: transform 0.2s ease;
     }
 
-    &:hover img {
-        transform: scale(1.05);
+    img[src*=".svg"] {
+        height: 100% !important;
     }
 }
 
@@ -494,8 +507,8 @@ body.lexoforms-lightbox-open {
     position: absolute;
     top: 8px;
     right: 8px;
-    width: 28px;
-    height: 28px;
+    width: 40px;
+    height: 40px;
     background: rgba(255, 255, 255, 0.9);
     border: 1px solid #dcdcde;
     border-radius: 4px;
@@ -508,9 +521,10 @@ body.lexoforms-lightbox-open {
     z-index: 3;
 
     .dashicons {
-        font-size: 16px;
-        width: 16px;
-        height: 16px;
+        font-size: 26px;
+        line-height: 40px;
+        width: 40px;
+        height: 40px;
         color: #50575e;
     }
 
@@ -523,7 +537,7 @@ body.lexoforms-lightbox-open {
         }
     }
 
-    .lexoforms-template-preview:hover & {
+    label:hover & {
         opacity: 1;
     }
 }
@@ -546,6 +560,7 @@ body.lexoforms-lightbox-open {
 }
 
 .lexoforms-template-name {
+    flex: 1;
     padding: 12px;
     text-align: center;
     font-size: 13px;

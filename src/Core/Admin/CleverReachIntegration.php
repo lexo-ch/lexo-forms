@@ -88,14 +88,21 @@ class CleverReachIntegration extends Singleton
                 $choices[$template_id] = $template_name;
             } else {
                 $preview_url = $template['form_preview'] ?? '';
+                $is_plugin_template = isset($template['source']) && $template['source'] === 'plugin';
 
                 if ($preview_url) {
+                    // Build zoom button only for theme templates (not plugin templates)
+                    $zoom_button = '';
+                    if (!$is_plugin_template) {
+                        $zoom_button = '<button type="button" class="lexoforms-template-zoom" title="' . esc_attr__('View larger', 'lexoforms') . '">'
+                            . '<span class="dashicons dashicons-search"></span>'
+                            . '</button>';
+                    }
+
                     $choices[$template_id] = '<div class="lexoforms-template-choice">'
                         . '<div class="lexoforms-template-preview">'
                         . '<img src="' . esc_url($preview_url) . '" alt="' . esc_attr($template_name) . '" />'
-                        . '<button type="button" class="lexoforms-template-zoom" title="' . esc_attr__('View larger', 'lexoforms') . '">'
-                        . '<span class="dashicons dashicons-search"></span>'
-                        . '</button>'
+                        . $zoom_button
                         . '</div>'
                         . '<div class="lexoforms-template-name">' . esc_html($template_name) . '</div>'
                         . '</div>';

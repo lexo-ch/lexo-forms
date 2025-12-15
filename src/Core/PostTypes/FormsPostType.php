@@ -297,9 +297,14 @@ class FormsPostType extends Singleton
 
                     if ($tpl && !empty($tpl['form_preview'])) {
                         $src = $tpl['form_preview'];
+                        $is_plugin_template = isset($tpl['source']) && $tpl['source'] === 'plugin';
+
+                        // Use wrapper class with zoom only for theme templates
+                        $wrapper_class = $is_plugin_template ? 'lexoforms-preview-wrap lexoforms-preview-wrap--no-zoom' : 'lexoforms-preview-wrap';
 
                         printf(
-                            '<span class="lexoforms-preview-wrap"><img src="%s" alt="%s" class="lexoforms-preview-thumb" /></span>',
+                            '<span class="%s"><img src="%s" alt="%s" class="lexoforms-preview-thumb" /></span>',
+                            esc_attr($wrapper_class),
                             esc_url($src),
                             esc_attr__('Form Preview', 'lexoforms')
                         );

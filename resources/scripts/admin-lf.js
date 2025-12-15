@@ -477,7 +477,8 @@
             const self = this;
 
             // Open lightbox on preview click (for list table and template selector)
-            $(document).on('click', '.lexoforms-preview-wrap, .lexoforms-template-zoom', function(e) {
+            // Exclude --no-zoom modifier (plugin templates)
+            $(document).on('click', '.lexoforms-preview-wrap:not(.lexoforms-preview-wrap--no-zoom), .lexoforms-template-zoom', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 // Find image in parent container (template choice, preview wrap, or ACF label)

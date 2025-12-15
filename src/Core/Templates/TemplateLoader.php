@@ -183,7 +183,7 @@ class TemplateLoader extends Singleton
             return null;
         }
 
-        $extensions = ['webp', 'png', 'jpg', 'jpeg'];
+        $extensions = ['webp', 'png', 'jpg', 'jpeg', 'svg'];
 
         foreach ($extensions as $ext) {
             $imagePath = $previewsDir . '/' . $filename . '.' . $ext;
