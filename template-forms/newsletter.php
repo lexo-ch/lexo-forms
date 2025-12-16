@@ -64,7 +64,7 @@ ob_start();
 ?>
     <div class="newsletter-form-wrapper">
         <form class="newsletter-form" data-action="lexo-form" data-form-type="newsletter">
-            <input type="hidden" name="form_id" value="{{FORM_ID}}" class="send_field" readonly>
+            <input type="hidden" name="form_id" value="{{FORM_ID}}" readonly>
             <div class="<?php echo esc_attr($grid_classes); ?>">
                 <?php foreach ($fields as $field) { ?>
                     <?php FormHelpers::renderField($field); ?>
