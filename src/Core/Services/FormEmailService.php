@@ -106,16 +106,21 @@ class FormEmailService extends EmailHandler
      */
     private function getDisplayValueForEmail(array $field_config, string $value): string
     {
-        // Check if field has options with label_key mapping
+        // Check if field has options mapping
         if (!empty($field_config['options']) && isset($field_config['options'][$value])) {
             $option = $field_config['options'][$value];
 
-            // Priority 1: Use 'label' if available (full text)
+            // Priority 1: Use 'email_label' if available (explicit email display text)
+            if (!empty($option['email_label'])) {
+                return $option['email_label'];
+            }
+
+            // Priority 2: Use 'label' if available (general display text)
             if (!empty($option['label'])) {
                 return $option['label'];
             }
 
-            // Priority 2: Try to translate label_key via filter (theme can hook into this)
+            // Priority 3: Try to translate label_key via filter (theme can hook into this)
             if (!empty($option['label_key'])) {
                 $language = FormMessages::getSiteLanguage();
                 $translated = apply_filters('lexo-forms/translate_label_key', '', $option['label_key'], $language);
@@ -124,10 +129,7 @@ class FormEmailService extends EmailHandler
                 }
             }
 
-            // Priority 3: Use 'cr_value' if available
-            if (!empty($option['cr_value'])) {
-                return $option['cr_value'];
-            }
+            // Do NOT use cr_value for email - that's for CleverReach only
         }
 
         return $value;
