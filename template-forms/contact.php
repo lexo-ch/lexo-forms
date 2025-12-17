@@ -197,13 +197,13 @@ ob_start();
                 <?php } ?>
             </div>
             <div class="form-submit">
-                <?php if (!empty($privacy_url) && filter_var($privacy_url, FILTER_VALIDATE_URL)) : ?>
+                <?php if (!empty($privacy_url) && filter_var($privacy_url, FILTER_VALIDATE_URL)) { ?>
                     <div class="privacy-notice">
                         <a href="<?php echo esc_url($privacy_url); ?>" target="_blank" rel="noopener noreferrer">
                             <?php echo esc_html(FormHelpers::getTranslatedText($privacy_text)); ?>
                         </a><?php echo esc_html(FormHelpers::getTranslatedText($privacy_message)); ?>
                     </div>
-                <?php endif; ?>
+                <?php } ?>
                 <button type="submit" class="btn btn-primary submitable">
                     <?php echo esc_html(FormHelpers::getTranslatedText($submit_button)); ?>
                 </button>
