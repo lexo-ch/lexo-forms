@@ -4,6 +4,7 @@ namespace LEXO\LF\Core\PostTypes;
 
 use LEXO\LF\Core\Abstracts\Singleton;
 use LEXO\LF\Core\Plugin\CleverReachAuth;
+use LEXO\LF\Core\Templates\TemplateLoader;
 use LEXO\LF\Core\Utils\FormMessages;
 
 use const LEXO\LF\FIELD_PREFIX;
@@ -47,6 +48,9 @@ class FormsPostType extends Singleton
         // Clear usage cache on any post save (content might have changed)
         add_action('save_post', [$this, 'clearUsageCache'], 10, 2);
 
+        // Also clear on ACF save (ACF saves fields AFTER save_post, so we need this too)
+        add_action('acf/save_post', [$this, 'clearUsageCacheOnAcfSave'], 20);
+
         // Hide Trash and Draft views, redirect if accessed directly
         add_filter('views_edit-' . self::POST_TYPE, [$this, 'removeUnusedViews']);
         add_action('load-edit.php', [$this, 'redirectFromUnusedViews']);
@@ -59,7 +63,6 @@ class FormsPostType extends Singleton
 
         // Force publish status (no drafts)
         add_filter('wp_insert_post_data', [$this, 'forcePublishStatus'], 10, 2);
-
     }
 
     /**
@@ -265,7 +268,7 @@ class FormsPostType extends Singleton
 
                 if ($template_id) {
                     // Get template name using TemplateLoader
-                    $template_loader = \LEXO\LF\Core\Templates\TemplateLoader::getInstance();
+                    $template_loader = TemplateLoader::getInstance();
                     $templates = $template_loader->getAvailableTemplates();
 
                     if (isset($templates[$template_id])) {
@@ -292,7 +295,7 @@ class FormsPostType extends Singleton
                 $tpl_id = $general_settings[FIELD_PREFIX . 'html_template'] ?? '';
 
                 if ($tpl_id) {
-                    $loader = \LEXO\LF\Core\Templates\TemplateLoader::getInstance();
+                    $loader = TemplateLoader::getInstance();
                     $tpl = $loader->getTemplateById($tpl_id);
 
                     if ($tpl && !empty($tpl['form_preview'])) {
@@ -422,17 +425,17 @@ class FormsPostType extends Singleton
      * @param string $shortcode
      * @return bool
      */
-    private function searchShortcodeRecursive($value, string $shortcode): bool
+    private function searchShortcodeRecursive($value, string $search_pattern): bool
     {
         if (is_string($value)) {
-            if (strpos($value, '[' . $shortcode) !== false) {
+            if (strpos($value, $search_pattern) !== false) {
                 return true;
             }
         }
 
         if (is_array($value)) {
             foreach ($value as $item) {
-                if ($this->searchShortcodeRecursive($item, $shortcode)) {
+                if ($this->searchShortcodeRecursive($item, $search_pattern)) {
                     return true;
                 }
             }
@@ -441,7 +444,7 @@ class FormsPostType extends Singleton
         if (is_object($value)) {
             $value = (array) $value;
             foreach ($value as $item) {
-                if ($this->searchShortcodeRecursive($item, $shortcode)) {
+                if ($this->searchShortcodeRecursive($item, $search_pattern)) {
                     return true;
                 }
             }
@@ -459,16 +462,18 @@ class FormsPostType extends Singleton
      */
     private function findShortcodeLocations(int $form_id): array
     {
-        // Use transient cache (no expiration - cleared on save_post)
+        // Use transient cache (no expiration - cleared on save_post and acf/save_post)
         $cache_key = "lexoforms_used_on_{$form_id}";
         $cached = get_transient($cache_key);
 
-        // Return cached data if available
         if ($cached !== false) {
             return $cached;
         }
 
-        $shortcode_name = "lexo_form id=\"{$form_id}\"";
+        // Search patterns - shortcode format AND rendered HTML format
+        $shortcode_pattern = "[lexo_form id=\"{$form_id}\"]";
+        $html_pattern = "name=\"form_id\" value=\"{$form_id}\"";
+
         $locations = [];
 
         $post_types = get_post_types(['public' => true], 'names');
@@ -485,18 +490,47 @@ class FormsPostType extends Singleton
             $post = get_post($pid);
             $found = false;
 
-            // Check post content
-            if (strpos($post->post_content, "[{$shortcode_name}") !== false) {
+            // Check post content for shortcode
+            if (strpos($post->post_content, $shortcode_pattern) !== false) {
                 $found = true;
             }
 
-            // Check post meta (ACF fields, page builders, etc.)
+            // Check ACF fields using get_fields() - this returns only ACTIVE field values
+            // Unlike get_post_meta() which returns orphaned/deleted ACF row data too
+            if (!$found && function_exists('get_fields')) {
+                $acf_fields = get_fields($pid);
+                if ($acf_fields) {
+                    // Search for shortcode pattern
+                    if ($this->searchShortcodeRecursive($acf_fields, $shortcode_pattern)) {
+                        $found = true;
+                    }
+                    // Search for rendered HTML pattern (form already rendered in WYSIWYG)
+                    if (!$found && $this->searchShortcodeRecursive($acf_fields, $html_pattern)) {
+                        $found = true;
+                    }
+                }
+            }
+
+            // Fallback: Check non-ACF meta (page builders, etc.) - skip ACF internal keys
             if (!$found) {
                 $meta = get_post_meta($pid);
-                foreach ($meta as $meta_values) { // phpcs:ignore -- $meta_key not needed
+                foreach ($meta as $meta_key => $meta_values) {
+                    // Skip ACF internal keys (start with _ or contain acf patterns)
+                    if (strpos($meta_key, '_') === 0) {
+                        continue;
+                    }
+                    // Skip keys that look like ACF flexible content (contain _0_, _1_, etc.)
+                    if (preg_match('/_\d+_/', $meta_key)) {
+                        continue;
+                    }
+
                     foreach ($meta_values as $meta_value) {
                         $value = maybe_unserialize($meta_value);
-                        if ($this->searchShortcodeRecursive($value, $shortcode_name)) {
+                        if ($this->searchShortcodeRecursive($value, $shortcode_pattern)) {
+                            $found = true;
+                            break 2;
+                        }
+                        if ($this->searchShortcodeRecursive($value, $html_pattern)) {
                             $found = true;
                             break 2;
                         }
@@ -515,7 +549,7 @@ class FormsPostType extends Singleton
             }
         }
 
-        // Cache without expiration (0 = no expiration)
+        // Cache without expiration (cleared on save_post and acf/save_post)
         set_transient($cache_key, $locations, 0);
 
         return $locations;
@@ -548,6 +582,41 @@ class FormsPostType extends Singleton
      */
     public function clearUsageCache(int $post_id, $post): void
     {
+        // Skip autosaves and revisions
+        if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) {
+            return;
+        }
+
+        // Get all lexoforms posts and clear their usage cache
+        $forms = get_posts([
+            'post_type' => self::POST_TYPE,
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'post_status' => 'any',
+        ]);
+
+        foreach ($forms as $form_id) {
+            delete_transient("lexoforms_used_on_{$form_id}");
+        }
+    }
+
+    /**
+     * Clear all form usage cache when ACF fields are saved
+     * ACF saves fields AFTER the standard save_post hook, so shortcodes in ACF fields
+     * (like flexible content) need this separate hook to properly invalidate cache
+     *
+     * @param int|string $post_id
+     * @return void
+     */
+    public function clearUsageCacheOnAcfSave($post_id): void
+    {
+        // Skip if not a valid post ID (ACF can pass 'options', 'user_1', etc.)
+        if (!is_numeric($post_id)) {
+            return;
+        }
+
+        $post_id = (int) $post_id;
+
         // Skip autosaves and revisions
         if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) {
             return;
