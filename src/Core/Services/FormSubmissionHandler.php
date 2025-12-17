@@ -388,21 +388,11 @@ class FormSubmissionHandler extends Singleton
             $variant_config = $this->getVisitorEmailVariantConfig($form_id, $form_data, $template);
 
             if ($variant_config) {
-                // Use variant-specific settings with fallback to default
+                // Use variant-specific settings - NO fallback to default fields
+                // When template has variants, only variant fields should be used
                 $subject = $variant_config['subject'];
                 $email_body = $variant_config['content'];
                 $attachment = $variant_config['attachment'];
-
-                // Fallback to default settings if variant fields are empty
-                if (empty($subject)) {
-                    $subject = $this->getEmailSubject($form_id, $email_settings);
-                }
-                if (empty($email_body)) {
-                    $email_body = $this->getEmailBody($form_id, $email_settings);
-                }
-                if (empty($attachment)) {
-                    $attachment = $email_settings[FIELD_PREFIX . 'additional_email_document'] ?? null;
-                }
             } else {
                 // Use default confirmation email settings
                 $subject = $this->getEmailSubject($form_id, $email_settings);
@@ -491,9 +481,17 @@ class FormSubmissionHandler extends Singleton
             return null;
         }
 
-        // ACF nested group fields - use full field name path
-        // Format: parent_group_name_child_group_name_field_name
-        $field_prefix = FIELD_PREFIX . 'email_settings_' . FIELD_PREFIX . 'visitor_email_variants_';
+        // Get template ID from form settings
+        $general_settings = get_field(FIELD_PREFIX . 'general_settings', $form_id) ?: [];
+        $template_id = $general_settings[FIELD_PREFIX . 'html_template'] ?? '';
+
+        if (empty($template_id)) {
+            return null;
+        }
+
+        // ACF nested group fields - new structure with per-template groups
+        // Format: email_settings_group > visitor_email_variants_group > template_variants_{template_id}_group > variant fields
+        $field_prefix = FIELD_PREFIX . 'email_settings_' . FIELD_PREFIX . 'visitor_email_variants_template_variants_' . $template_id . '_';
 
         $subject = get_field($field_prefix . 'variant_' . $selected_variant . '_subject', $form_id) ?: '';
         $content = get_field($field_prefix . 'variant_' . $selected_variant . '_content', $form_id) ?: '';
@@ -513,11 +511,8 @@ class FormSubmissionHandler extends Singleton
             }
         }
 
-        // Only return variant config if at least one field is set
-        if (empty($subject) && empty($content) && empty($attachment)) {
-            return null;
-        }
-
+        // Always return variant config when template has variants defined
+        // This prevents fallback to default visitor email fields
         return [
             'subject' => $subject,
             'content' => $content,

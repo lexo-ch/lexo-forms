@@ -116,7 +116,42 @@
     if (typeof lexoformIntegration !== 'undefined') {
         const LexoFormIntegration = {
             init: function() {
-                // Field visibility is handled by ACF conditional logic.
+                this.bindTemplateChange();
+                // Trigger on init to set initial state
+                this.updateVisitorEmailVariantsField();
+            },
+
+            bindTemplateChange: function() {
+                const self = this;
+                // Listen for template selection change (button_group field)
+                $(document).on('change', '[data-name="lexoform_html_template"] input[type="radio"]', function() {
+                    self.updateVisitorEmailVariantsField();
+                });
+            },
+
+            updateVisitorEmailVariantsField: function() {
+                // Get selected template - ACF nested fields use just the field name, not full path
+                const selectedTemplate = $('[data-name="lexoform_html_template"] input[type="radio"]:checked').val();
+                
+                if (!selectedTemplate || !lexoformIntegration.templates_with_variants) {
+                    return;
+                }
+
+                // Check if this template has visitor_email_variants
+                const hasVariants = lexoformIntegration.templates_with_variants[selectedTemplate] || false;
+                
+                // Get current state of the switch
+                const $switch = $('[data-name="lexoform_has_visitor_email_variants"] .acf-switch');
+                const isCurrentlyOn = $switch.hasClass('-on');
+                
+                // Only click if state needs to change
+                if (hasVariants && !isCurrentlyOn) {
+                    // Need to turn ON
+                    $switch.click();
+                } else if (!hasVariants && isCurrentlyOn) {
+                    // Need to turn OFF
+                    $switch.click();
+                }
             },
 
             checkDuplicates: function() {

@@ -61,6 +61,9 @@ class CleverReachIntegration extends Singleton
         // Auto-clear cache when editing/creating forms
         add_action('load-post.php', [$this, 'autoRefreshCacheOnEdit']);
         add_action('load-post-new.php', [$this, 'autoRefreshCacheOnNew']);
+
+        // AJAX endpoint for loading visitor email variant fields
+        add_action('wp_ajax_lexoforms_load_variant_fields', [$this, 'ajaxLoadVariantFields']);
     }
 
     /**
@@ -231,89 +234,126 @@ class CleverReachIntegration extends Singleton
     }
 
     /**
-     * Load visitor email variants fields dynamically based on template
+     * Load visitor email variants fields dynamically for ALL templates
+     *
+     * Pre-generates sub_fields for all templates that have visitor_email_variants,
+     * using conditional logic to show only the fields for the selected template.
+     * This allows ACF conditional logic to work without page reload.
      */
     public function loadVisitorEmailVariantsFields($field): array
     {
         global $post;
 
-        if (!$post || $post->post_type !== 'cpt-lexoforms') {
-            return $field;
-        }
+        // Allow loading on post-new.php as well (no $post yet)
+        $post_type = $post ? $post->post_type : ($_GET['post_type'] ?? '');
 
-        $general_settings = get_field(FIELD_PREFIX . 'general_settings', $post->ID) ?: [];
-        $template_id = $general_settings[FIELD_PREFIX . 'html_template'] ?? '';
-
-        if (empty($template_id)) {
+        if ($post_type !== 'cpt-lexoforms') {
             return $field;
         }
 
         $templateLoader = TemplateLoader::getInstance();
-        $template = $templateLoader->getTemplateById($template_id);
+        $templates = $templateLoader->getAvailableTemplates() ?: [];
 
-        if (empty($template['visitor_email_variants']['variants'])) {
-            return $field;
-        }
-
-        $variants = $template['visitor_email_variants']['variants'];
         $sub_fields = [];
 
-        foreach ($variants as $variant_key => $variant_config) {
-            $variant_label = $variant_config['label'] ?? ucfirst($variant_key);
+        foreach ($templates as $template_id => $template) {
+            // Skip templates without visitor_email_variants
+            if (empty($template['visitor_email_variants']['variants'])) {
+                continue;
+            }
 
-            // Tab for each variant
-            $sub_fields[] = [
-                'key' => 'field_variant_tab_' . $variant_key,
-                'label' => $variant_label,
-                'name' => 'variant_tab_' . $variant_key,
-                '_name' => 'variant_tab_' . $variant_key,
-                'type' => 'tab',
-                'placement' => 'left',
-                'endpoint' => 0,
-            ];
+            $variants = $template['visitor_email_variants']['variants'];
 
-            // Subject field
+            // Create a wrapper group for this template's variants with conditional logic
+            $template_group_fields = [];
+
+            foreach ($variants as $variant_key => $variant_config) {
+                $variant_label = $variant_config['label'] ?? ucfirst($variant_key);
+
+                // Unique keys per template to avoid conflicts
+                $unique_suffix = $template_id . '_' . $variant_key;
+
+                // Tab for each variant
+                $template_group_fields[] = [
+                    'key' => 'field_variant_tab_' . $unique_suffix,
+                    'label' => $variant_label,
+                    'name' => 'variant_tab_' . $unique_suffix,
+                    '_name' => 'variant_tab_' . $unique_suffix,
+                    'type' => 'tab',
+                    'required' => 0,
+                    'placement' => 'left',
+                    'endpoint' => 0,
+                ];
+
+                // Subject field
+                $template_group_fields[] = [
+                    'key' => 'field_variant_subject_' . $unique_suffix,
+                    'label' => __('Subject', 'lexoforms'),
+                    'name' => 'variant_' . $variant_key . '_subject',
+                    '_name' => 'variant_' . $variant_key . '_subject',
+                    'type' => 'text',
+                    'instructions' => sprintf(__('Email subject for %s variant.', 'lexoforms'), $variant_label),
+                    'required' => 0,
+                    'placeholder' => '',
+                    'maxlength' => '',
+                ];
+
+                // Content field
+                $template_group_fields[] = [
+                    'key' => 'field_variant_content_' . $unique_suffix,
+                    'label' => __('Content', 'lexoforms'),
+                    'name' => 'variant_' . $variant_key . '_content',
+                    '_name' => 'variant_' . $variant_key . '_content',
+                    'type' => 'wysiwyg',
+                    'instructions' => sprintf(__('Email content for %s variant.', 'lexoforms'), $variant_label),
+                    'required' => 0,
+                    'default_value' => '',
+                    'tabs' => 'all',
+                    'toolbar' => 'full',
+                    'media_upload' => 1,
+                    'delay' => 0,
+                ];
+
+                // Attachment field
+                $template_group_fields[] = [
+                    'key' => 'field_variant_attachment_' . $unique_suffix,
+                    'label' => __('Attachment', 'lexoforms'),
+                    'name' => 'variant_' . $variant_key . '_attachment',
+                    '_name' => 'variant_' . $variant_key . '_attachment',
+                    'type' => 'file',
+                    'instructions' => sprintf(__('Optional attachment for %s variant.', 'lexoforms'), $variant_label),
+                    'required' => 0,
+                    'return_format' => 'array',
+                    'library' => 'all',
+                    'mime_types' => '',
+                    'max_size' => '20',
+                ];
+            }
+
+            // Wrap all variant fields for this template in a group with conditional logic
+            // The conditional logic checks if this specific template is selected
             $sub_fields[] = [
-                'key' => 'field_variant_subject_' . $variant_key,
-                'label' => __('Subject', 'lexoforms'),
-                'name' => 'variant_' . $variant_key . '_subject',
-                '_name' => 'variant_' . $variant_key . '_subject',
-                'type' => 'text',
-                'instructions' => sprintf(__('Email subject for %s variant.', 'lexoforms'), $variant_label),
+                'key' => 'field_template_variants_group_' . $template_id,
+                'label' => '', // No label, just a wrapper
+                'name' => 'template_variants_' . $template_id,
+                '_name' => 'template_variants_' . $template_id,
+                'type' => 'group',
                 'required' => 0,
-                'placeholder' => '',
-                'maxlength' => '',
-            ];
-
-            // Content field
-            $sub_fields[] = [
-                'key' => 'field_variant_content_' . $variant_key,
-                'label' => __('Content', 'lexoforms'),
-                'name' => 'variant_' . $variant_key . '_content',
-                '_name' => 'variant_' . $variant_key . '_content',
-                'type' => 'wysiwyg',
-                'instructions' => sprintf(__('Email content for %s variant.', 'lexoforms'), $variant_label),
-                'required' => 0,
-                'default_value' => '',
-                'tabs' => 'all',
-                'toolbar' => 'full',
-                'media_upload' => 1,
-                'delay' => 0,
-            ];
-
-            // Attachment field
-            $sub_fields[] = [
-                'key' => 'field_variant_attachment_' . $variant_key,
-                'label' => __('Attachment', 'lexoforms'),
-                'name' => 'variant_' . $variant_key . '_attachment',
-                '_name' => 'variant_' . $variant_key . '_attachment',
-                'type' => 'file',
-                'instructions' => sprintf(__('Optional attachment for %s variant.', 'lexoforms'), $variant_label),
-                'required' => 0,
-                'return_format' => 'array',
-                'library' => 'all',
-                'mime_types' => '',
-                'max_size' => '20',
+                'layout' => 'block',
+                'wrapper' => [
+                    'class' => 'lexoforms-template-variants-group',
+                ],
+                'conditional_logic' => [
+                    [
+                        [
+                            // Reference by field key for cross-group conditional logic
+                            'field' => FIELD_PREFIX . 'html_template',
+                            'operator' => '==',
+                            'value' => $template_id,
+                        ],
+                    ],
+                ],
+                'sub_fields' => $template_group_fields,
             ];
         }
 
@@ -488,7 +528,6 @@ class CleverReachIntegration extends Singleton
                     HOUR_IN_SECONDS
                 );
             }
-
         } catch (\Exception $e) {
             // Handle any exceptions
             // Update cr_status (sub-field in cr_integration group)
@@ -718,6 +757,15 @@ class CleverReachIntegration extends Singleton
             $groups_by_name[$group['name']] = $group['id'];
         }
 
+        // Build map of templates that have visitor_email_variants
+        $templateLoader = TemplateLoader::getInstance();
+        $templates = $templateLoader->getAvailableTemplates() ?: [];
+        $templates_with_variants = [];
+
+        foreach ($templates as $template_id => $template) {
+            $templates_with_variants[$template_id] = !empty($template['visitor_email_variants']['variants']);
+        }
+
         wp_localize_script(
             DOMAIN . '/admin-lf.js',
             'lexoformIntegration',
@@ -727,6 +775,7 @@ class CleverReachIntegration extends Singleton
                 'existing_group_names' => $group_names,
                 'forms_by_name' => $forms_by_name,
                 'groups_by_name' => $groups_by_name,
+                'templates_with_variants' => $templates_with_variants,
                 'i18n' => [
                     'duplicate_form_warning' => __('A form with this name already exists. Do you want to use the existing form instead?', 'lexoforms'),
                     'duplicate_group_warning' => __('A group with this name already exists. Do you want to use the existing group instead?', 'lexoforms'),
