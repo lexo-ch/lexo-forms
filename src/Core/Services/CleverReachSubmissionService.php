@@ -245,6 +245,11 @@ class CleverReachSubmissionService extends Singleton
                     if ($field_name === 'email') {
                         $email = $value;
                     } else {
+                        // Check if field has options with cr_value mapping
+                        if (!empty($field['options']) && isset($field['options'][$value]['cr_value'])) {
+                            $value = $field['options'][$value]['cr_value'];
+                        }
+
                         // Separate global and group attributes
                         if ($field['global']) {
                             $global_attributes[$field_name] = $value;

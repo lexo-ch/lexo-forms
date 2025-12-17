@@ -166,6 +166,7 @@ class TemplateLoader extends Singleton
             'source' => $source,
             'file' => $file,
             'filename' => $filename,
+            'visitor_email_variants' => $data['visitor_email_variants'] ?? null,
         ];
     }
 

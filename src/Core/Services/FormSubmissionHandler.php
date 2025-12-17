@@ -384,12 +384,34 @@ class FormSubmissionHandler extends Singleton
                 return;
             }
 
-            // Get confirmation email settings with proper fallback hierarchy
-            $subject = $this->getEmailSubject($form_id, $email_settings);
+            // Check if template has visitor email variants
+            $variant_config = $this->getVisitorEmailVariantConfig($form_id, $form_data, $template);
+
+            if ($variant_config) {
+                // Use variant-specific settings with fallback to default
+                $subject = $variant_config['subject'];
+                $email_body = $variant_config['content'];
+                $attachment = $variant_config['attachment'];
+
+                // Fallback to default settings if variant fields are empty
+                if (empty($subject)) {
+                    $subject = $this->getEmailSubject($form_id, $email_settings);
+                }
+                if (empty($email_body)) {
+                    $email_body = $this->getEmailBody($form_id, $email_settings);
+                }
+                if (empty($attachment)) {
+                    $attachment = $email_settings[FIELD_PREFIX . 'additional_email_document'] ?? null;
+                }
+            } else {
+                // Use default confirmation email settings
+                $subject = $this->getEmailSubject($form_id, $email_settings);
+                $email_body = $this->getEmailBody($form_id, $email_settings);
+                $attachment = $email_settings[FIELD_PREFIX . 'additional_email_document'] ?? null;
+            }
+
             $sender_email = $this->getEmailSender($form_id, $email_settings);
             $sender_name = $this->getEmailSenderName($form_id, $email_settings);
-            $email_body = $this->getEmailBody($form_id, $email_settings);
-            $attachment = $email_settings[FIELD_PREFIX . 'additional_email_document'] ?? null;
 
             // Replace placeholders in subject and body
             $subject = $this->replacePlaceholders($subject, $form_data);
@@ -397,11 +419,27 @@ class FormSubmissionHandler extends Singleton
 
             // Prepare attachment if exists
             $attachments = [];
-            if (!empty($attachment) && is_array($attachment) && !empty($attachment['url'])) {
-                $file_path = get_attached_file($attachment['ID']);
-                if ($file_path && file_exists($file_path)) {
-                    $attachments[] = $file_path;
+            if (!empty($attachment)) {
+                // Normalize attachment to get ID
+                $attachment_id = null;
+                if (is_array($attachment) && !empty($attachment['ID'])) {
+                    $attachment_id = $attachment['ID'];
+                } elseif (is_numeric($attachment)) {
+                    $attachment_id = $attachment;
                 }
+
+                if ($attachment_id) {
+                    $file_path = get_attached_file($attachment_id);
+                    if ($file_path && file_exists($file_path)) {
+                        $attachments[] = $file_path;
+                    }
+                }
+            }
+
+            // Skip sending if both subject and body are empty
+            if (empty($subject) && empty($email_body)) {
+                Logger::emailError('Skipping confirmation email - subject and body are empty', $form_id);
+                return;
             }
 
             // Send confirmation email using email service (with BCC support)
@@ -422,6 +460,70 @@ class FormSubmissionHandler extends Singleton
         } catch (Exception $e) {
             Logger::emailError('Confirmation email exception: ' . $e->getMessage(), $form_id);
         }
+    }
+
+    /**
+     * Get visitor email variant configuration based on form data
+     *
+     * @param int $form_id
+     * @param array $form_data
+     * @param array $template
+     * @return array|null Returns variant config or null if no variants
+     */
+    private function getVisitorEmailVariantConfig(int $form_id, array $form_data, array $template): ?array
+    {
+        // Check if template has visitor email variants
+        if (empty($template['visitor_email_variants']['variants'])) {
+            return null;
+        }
+
+        $variants_config = $template['visitor_email_variants'];
+        $controlling_field = $variants_config['controlling_field'] ?? '';
+
+        if (empty($controlling_field) || !isset($form_data[$controlling_field])) {
+            return null;
+        }
+
+        $selected_variant = $form_data[$controlling_field];
+
+        // Check if selected variant exists in template
+        if (!isset($variants_config['variants'][$selected_variant])) {
+            return null;
+        }
+
+        // ACF nested group fields - use full field name path
+        // Format: parent_group_name_child_group_name_field_name
+        $field_prefix = FIELD_PREFIX . 'email_settings_' . FIELD_PREFIX . 'visitor_email_variants_';
+
+        $subject = get_field($field_prefix . 'variant_' . $selected_variant . '_subject', $form_id) ?: '';
+        $content = get_field($field_prefix . 'variant_' . $selected_variant . '_content', $form_id) ?: '';
+        $attachment_data = get_field($field_prefix . 'variant_' . $selected_variant . '_attachment', $form_id);
+
+        // Normalize attachment to array format expected by email handler
+        $attachment = null;
+        if (!empty($attachment_data)) {
+            if (is_array($attachment_data)) {
+                $attachment = $attachment_data;
+            } elseif (is_numeric($attachment_data)) {
+                // If only ID returned, build the array
+                $attachment = [
+                    'ID' => $attachment_data,
+                    'url' => wp_get_attachment_url($attachment_data),
+                ];
+            }
+        }
+
+        // Only return variant config if at least one field is set
+        if (empty($subject) && empty($content) && empty($attachment)) {
+            return null;
+        }
+
+        return [
+            'subject' => $subject,
+            'content' => $content,
+            'attachment' => $attachment,
+            'variant_key' => $selected_variant,
+        ];
     }
 
     /**

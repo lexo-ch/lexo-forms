@@ -262,6 +262,11 @@ $fields[] = [
                         'operator' => '==',
                         'value' => '1',
                     ],
+                    [
+                        'field' => 'field_has_visitor_email_variants',
+                        'operator' => '!=',
+                        'value' => '1',
+                    ],
                 ],
             ],
         ],
@@ -323,6 +328,11 @@ $fields[] = [
                         'operator' => '==',
                         'value' => '1',
                     ],
+                    [
+                        'field' => 'field_has_visitor_email_variants',
+                        'operator' => '!=',
+                        'value' => '1',
+                    ],
                 ],
             ],
         ],
@@ -343,6 +353,11 @@ $fields[] = [
                     [
                         'field' => 'field_enable_additional_email',
                         'operator' => '==',
+                        'value' => '1',
+                    ],
+                    [
+                        'field' => 'field_has_visitor_email_variants',
+                        'operator' => '!=',
                         'value' => '1',
                     ],
                 ],
@@ -390,12 +405,52 @@ $fields[] = [
                 ],
             ],
         ],
+        // Hidden field to track if template has visitor email variants
+        [
+            'key' => 'field_has_visitor_email_variants',
+            'label' => '',
+            'name' => FIELD_PREFIX . 'has_visitor_email_variants',
+            '_name' => FIELD_PREFIX . 'has_visitor_email_variants',
+            'type' => 'true_false',
+            'wrapper' => [
+                'class' => 'acf-hidden',
+                'style' => 'display:none !important;',
+            ],
+            'default_value' => 0,
+            'ui' => 1,
+        ],
+        // VISITOR EMAIL VARIANTS GROUP - Dynamic fields based on template
+        [
+            'key' => 'field_lexoform_visitor_email_variants_group',
+            'label' => __('Visitor Email Variants', 'lexoforms'),
+            'name' => FIELD_PREFIX . 'visitor_email_variants',
+            '_name' => FIELD_PREFIX . 'visitor_email_variants',
+            'type' => 'group',
+            'instructions' => __('Configure different email content for each option selected by the visitor.', 'lexoforms'),
+            'required' => 0,
+            'layout' => 'block',
+            'conditional_logic' => [
+                [
+                    [
+                        'field' => 'field_enable_additional_email',
+                        'operator' => '==',
+                        'value' => '1',
+                    ],
+                    [
+                        'field' => 'field_has_visitor_email_variants',
+                        'operator' => '==',
+                        'value' => '1',
+                    ],
+                ],
+            ],
+            'sub_fields' => [], // Will be populated dynamically via acf/load_field hook
+        ],
     ],
 ];
 
 /**
  * ============================================================================
- * SECTION 3: CleverReach Integration
+ * SECTION 4: CleverReach Integration
  * ============================================================================
  */
 

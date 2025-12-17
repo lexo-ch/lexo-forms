@@ -40,6 +40,12 @@ class CleverReachIntegration extends Singleton
         add_filter('acf/load_field/name=lexoform_handler_type', [$this, 'loadHandlerTypeChoices']);
         add_filter('acf/load_field/name=lexoform_cr_connection_available', [$this, 'loadCRConnectionStatus']);
 
+        // Use load_value to override the stored value for has_visitor_email_variants
+        add_filter('acf/load_value/name=lexoform_has_visitor_email_variants', [$this, 'loadHasVisitorEmailVariantsValue'], 10, 3);
+
+        // Load visitor email variants dynamically based on template
+        add_filter('acf/load_field/key=field_lexoform_visitor_email_variants_group', [$this, 'loadVisitorEmailVariantsFields']);
+
         // Render CR connection info message field dynamically (use prepare_field which runs after values are loaded)
         add_filter('acf/prepare_field/key=field_cr_connection_info', [$this, 'prepareCRConnectionInfoMessage']);
 
@@ -188,6 +194,130 @@ class CleverReachIntegration extends Singleton
 
         $field['value'] = $isConnected ? 1 : 0;
         $field['default_value'] = $isConnected ? 1 : 0;
+
+        return $field;
+    }
+
+    /**
+     * Load has_visitor_email_variants value based on selected template
+     * Uses acf/load_value to override stored database value
+     *
+     * @param mixed $value The value from database
+     * @param int $post_id The post ID
+     * @param array $field The field array
+     * @return mixed
+     */
+    public function loadHasVisitorEmailVariantsValue($value, $post_id, $field)
+    {
+        // Only process for our post type
+        if (get_post_type($post_id) !== 'cpt-lexoforms') {
+            return $value;
+        }
+
+        // Get template ID from database
+        $general_settings = get_field(FIELD_PREFIX . 'general_settings', $post_id) ?: [];
+        $template_id = $general_settings[FIELD_PREFIX . 'html_template'] ?? '';
+
+        if (empty($template_id)) {
+            return 0;
+        }
+
+        $templateLoader = TemplateLoader::getInstance();
+        $template = $templateLoader->getTemplateById($template_id);
+
+        $has_variants = !empty($template['visitor_email_variants']['variants']);
+
+        return $has_variants ? 1 : 0;
+    }
+
+    /**
+     * Load visitor email variants fields dynamically based on template
+     */
+    public function loadVisitorEmailVariantsFields($field): array
+    {
+        global $post;
+
+        if (!$post || $post->post_type !== 'cpt-lexoforms') {
+            return $field;
+        }
+
+        $general_settings = get_field(FIELD_PREFIX . 'general_settings', $post->ID) ?: [];
+        $template_id = $general_settings[FIELD_PREFIX . 'html_template'] ?? '';
+
+        if (empty($template_id)) {
+            return $field;
+        }
+
+        $templateLoader = TemplateLoader::getInstance();
+        $template = $templateLoader->getTemplateById($template_id);
+
+        if (empty($template['visitor_email_variants']['variants'])) {
+            return $field;
+        }
+
+        $variants = $template['visitor_email_variants']['variants'];
+        $sub_fields = [];
+
+        foreach ($variants as $variant_key => $variant_config) {
+            $variant_label = $variant_config['label'] ?? ucfirst($variant_key);
+
+            // Tab for each variant
+            $sub_fields[] = [
+                'key' => 'field_variant_tab_' . $variant_key,
+                'label' => $variant_label,
+                'name' => 'variant_tab_' . $variant_key,
+                '_name' => 'variant_tab_' . $variant_key,
+                'type' => 'tab',
+                'placement' => 'left',
+                'endpoint' => 0,
+            ];
+
+            // Subject field
+            $sub_fields[] = [
+                'key' => 'field_variant_subject_' . $variant_key,
+                'label' => __('Subject', 'lexoforms'),
+                'name' => 'variant_' . $variant_key . '_subject',
+                '_name' => 'variant_' . $variant_key . '_subject',
+                'type' => 'text',
+                'instructions' => sprintf(__('Email subject for %s variant.', 'lexoforms'), $variant_label),
+                'required' => 0,
+                'placeholder' => '',
+                'maxlength' => '',
+            ];
+
+            // Content field
+            $sub_fields[] = [
+                'key' => 'field_variant_content_' . $variant_key,
+                'label' => __('Content', 'lexoforms'),
+                'name' => 'variant_' . $variant_key . '_content',
+                '_name' => 'variant_' . $variant_key . '_content',
+                'type' => 'wysiwyg',
+                'instructions' => sprintf(__('Email content for %s variant.', 'lexoforms'), $variant_label),
+                'required' => 0,
+                'default_value' => '',
+                'tabs' => 'all',
+                'toolbar' => 'full',
+                'media_upload' => 1,
+                'delay' => 0,
+            ];
+
+            // Attachment field
+            $sub_fields[] = [
+                'key' => 'field_variant_attachment_' . $variant_key,
+                'label' => __('Attachment', 'lexoforms'),
+                'name' => 'variant_' . $variant_key . '_attachment',
+                '_name' => 'variant_' . $variant_key . '_attachment',
+                'type' => 'file',
+                'instructions' => sprintf(__('Optional attachment for %s variant.', 'lexoforms'), $variant_label),
+                'required' => 0,
+                'return_format' => 'array',
+                'library' => 'all',
+                'mime_types' => '',
+                'max_size' => '20',
+            ];
+        }
+
+        $field['sub_fields'] = $sub_fields;
 
         return $field;
     }
