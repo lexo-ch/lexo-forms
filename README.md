@@ -55,6 +55,53 @@ echo do_shortcode('[lexo_form id="123"]');
 Forms are built using PHP templates located in `template-forms/`.
 Custom templates can also be registered by creating a `template-forms/` directory in your active theme and placing template files inside it. The plugin automatically loads templates from both locations.
 
+### Form Preview Images
+
+Each form template can have a preview image displayed in the admin template selector. Preview images help users visually identify templates.
+
+#### How It Works
+
+1. Place preview images in `template-forms/previews/` directory
+2. Name the image file the same as the template (e.g., `contact.svg` for `contact.php`)
+3. The plugin automatically detects and displays the preview
+
+#### Supported Formats
+
+Images are searched in this priority order:
+- `.webp` (recommended for best compression)
+- `.png`
+- `.jpg` / `.jpeg`
+- `.svg` (recommended for scalable graphics)
+
+#### Directory Structure
+
+```
+template-forms/
+├── contact.php
+├── newsletter.php
+└── previews/
+    ├── contact.svg
+    └── newsletter.svg
+```
+
+#### Theme Override
+
+Theme templates can also have previews:
+
+```
+your-theme/
+└── template-forms/
+    ├── custom-form.php
+    └── previews/
+        └── custom-form.webp
+```
+
+#### Lightbox Feature
+
+Clicking on a preview image opens a lightbox for a larger view. This is handled automatically by the admin JavaScript (`LexoFormsLightbox` module).
+
+To disable zoom for specific previews, add the `lexoforms-preview-wrap--no-zoom` CSS class.
+
 #### Contact Form Template
 
 ```php
@@ -91,6 +138,84 @@ $fields = [
 - **Email Only** — Send only email notifications.
 - **CleverReach Only** — Send only to CleverReach.
 - **Email & CleverReach** — Send to both (recommended).
+
+### Visitor Email Variants
+
+Visitor Email Variants allow different confirmation emails based on user selection in the form (e.g., different emails for "Sales inquiry" vs "Support request").
+
+#### How It Works
+
+1. Template defines a `controlling_field` (e.g., a select/radio field)
+2. Template defines `variants` with keys matching the field options
+3. Admin configures subject, content, and attachment for each variant
+4. On submission, the system sends the email matching the user's selection
+
+#### Template Configuration
+
+Add `visitor_email_variants` to your template's return array:
+
+```php
+// template-forms/inquiry.php
+return [
+    'name' => $name,
+    'fields' => $fields,
+    'html' => $html,
+    'visitor_email_variants' => [
+        'controlling_field' => 'inquiry_type', // Field name that controls variant
+        'variants' => [
+            'sales' => [
+                'label' => 'Sales Inquiry',  // Label shown in admin
+            ],
+            'support' => [
+                'label' => 'Support Request',
+            ],
+            'partnership' => [
+                'label' => 'Partnership',
+            ],
+        ],
+    ],
+];
+```
+
+#### Form Field Example
+
+The controlling field must be defined in `$fields`:
+
+```php
+$fields = [
+    [
+        'name' => 'inquiry_type',
+        'type' => 'text',
+        'html_type' => 'select',
+        'label' => ['de' => 'Anfragetyp', 'en' => 'Inquiry Type'],
+        'options' => [
+            'sales' => ['de' => 'Verkauf', 'en' => 'Sales'],
+            'support' => ['de' => 'Support', 'en' => 'Support'],
+            'partnership' => ['de' => 'Partnerschaft', 'en' => 'Partnership'],
+        ],
+        'required' => true,
+        'email_label' => ['de' => 'Typ', 'en' => 'Type'],
+    ],
+    // ... other fields
+];
+```
+
+#### Admin Configuration
+
+When a template with variants is selected:
+
+1. The "Visitor Email Variants" section appears in Email Settings
+2. Each variant has its own tab with:
+   - Subject field
+   - Content (WYSIWYG editor)
+   - Attachment (optional file)
+
+#### Behavior
+
+- If template has variants → standard visitor email fields are hidden
+- Variant selection is automatic based on form submission data
+- If no matching variant found → no visitor email sent
+- Each variant can have completely different content and attachments
 
 ### Email Configuration
 
@@ -377,6 +502,117 @@ add_filter('lexo-forms/forms/email/label-language', function($language) {
     return 'en';
 });
 ```
+
+---
+
+### Contact Form Privacy Filters
+
+These filters allow customization of the privacy notice displayed in the contact form template.
+
+#### `lexo-forms/forms/contact/privacy_url`
+
+Filter the privacy policy page URL.
+
+```php
+apply_filters('lexo-forms/forms/contact/privacy_url', string $url);
+```
+
+**Default:** `''` (empty, privacy notice hidden when empty)
+
+**Example**
+
+```php
+add_filter('lexo-forms/forms/contact/privacy_url', function($url) {
+    return get_privacy_policy_url(); // WordPress privacy page
+});
+
+// Or custom URL
+add_filter('lexo-forms/forms/contact/privacy_url', function($url) {
+    return 'https://example.com/datenschutz';
+});
+```
+
+---
+
+#### `lexo-forms/forms/contact/privacy_text`
+
+Filter the privacy link text (multilingual array).
+
+```php
+apply_filters('lexo-forms/forms/contact/privacy_text', array $text);
+```
+
+**Default:**
+
+```php
+[
+    'de' => 'Datenschutz',
+    'en' => 'Privacy Policy',
+    'fr' => 'Politique de confidentialité',
+    'it' => 'Informativa sulla privacy'
+]
+```
+
+**Example**
+
+```php
+add_filter('lexo-forms/forms/contact/privacy_text', function($text) {
+    $text['de'] = 'Datenschutzerklärung';
+    $text['en'] = 'Data Protection';
+    return $text;
+});
+```
+
+---
+
+#### `lexo-forms/forms/contact/privacy_message`
+
+Filter the message displayed after the privacy link.
+
+```php
+apply_filters('lexo-forms/forms/contact/privacy_message', array $message);
+```
+
+**Default:**
+
+```php
+[
+    'de' => ' ist uns wichtig.',
+    'en' => ' is important to us.',
+    'fr' => ' est importante pour nous.',
+    'it' => ' è importante per noi.'
+]
+```
+
+**Example**
+
+```php
+add_filter('lexo-forms/forms/contact/privacy_message', function($message) {
+    return [
+        'de' => ' - Ihre Daten sind bei uns sicher.',
+        'en' => ' - Your data is safe with us.',
+    ];
+});
+```
+
+**Complete Example**
+
+```php
+// Enable privacy notice with all customizations
+add_filter('lexo-forms/forms/contact/privacy_url', function() {
+    return get_privacy_policy_url();
+});
+
+add_filter('lexo-forms/forms/contact/privacy_text', function() {
+    return ['de' => 'Datenschutz', 'en' => 'Privacy'];
+});
+
+add_filter('lexo-forms/forms/contact/privacy_message', function() {
+    return ['de' => ' ist uns wichtig.', 'en' => ' matters to us.'];
+});
+```
+
+This renders as: `[Privacy](url) matters to us.`
 
 ---
 
