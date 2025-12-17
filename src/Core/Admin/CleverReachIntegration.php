@@ -309,7 +309,7 @@ class CleverReachIntegration extends Singleton
                     'required' => 0,
                     'default_value' => '',
                     'tabs' => 'all',
-                    'toolbar' => 'full',
+                    'toolbar' => 'lexoformsadditionalemail',
                     'media_upload' => 1,
                     'delay' => 0,
                 ];
