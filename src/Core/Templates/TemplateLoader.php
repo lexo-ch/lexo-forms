@@ -149,8 +149,8 @@ class TemplateLoader extends Singleton
             return null;
         }
 
-        // Generate unique ID
-        $id = $this->getTemplateHash($file);
+        // Generate unique ID (using source + filename for cross-environment consistency)
+        $id = $this->getTemplateHash($file, $source);
         $filename = basename($file, '.php');
 
         // Find preview image (check for jpg, png, webp)
@@ -258,12 +258,19 @@ class TemplateLoader extends Singleton
     /**
      * Generate unique hash for template
      *
+     * Uses source + filename to ensure consistent IDs across different environments.
+     * This allows database exports/imports between production and local without
+     * losing template selections.
+     *
      * @param string $file Template file path
+     * @param string $source 'plugin' or 'theme'
      * @return string
      */
-    private function getTemplateHash(string $file): string
+    private function getTemplateHash(string $file, string $source): string
     {
-        return md5($file);
+        // Use source + filename for consistent IDs across environments
+        $filename = basename($file);
+        return md5($source . ':' . $filename);
     }
 
     /**
