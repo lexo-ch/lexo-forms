@@ -1,3 +1,30 @@
+# [1.2.0](https://github.com/lexo-ch/lexo-forms/compare/v1.1.0...v1.2.0) (2025-12-18)
+
+
+### Bug Fixes
+
+* **admin:** Fix custom fields for templates ([ecc760e](https://github.com/lexo-ch/lexo-forms/commit/ecc760e12825b86c5e3e8de85d9c805ac21cd852))
+* **admin:** Fix custom visitor email ([f2a1704](https://github.com/lexo-ch/lexo-forms/commit/f2a1704b7d51888bd0c5364fc50aac84d2c39389))
+* **admin:** Fix default preview image height ([1aabb57](https://github.com/lexo-ch/lexo-forms/commit/1aabb57595fd679f2084a8276ff11870f9c231a9))
+* **admin:** Fix visitor email toolbar ([7922895](https://github.com/lexo-ch/lexo-forms/commit/792289512f50636da78cc85ca7444fd0b9d22ada))
+* **admin:** Fixed stale cache in used_on column for ACF flexible content ([ad16725](https://github.com/lexo-ch/lexo-forms/commit/ad16725dc699d81202efb66b7ffcbae32df6e4c9))
+* **admin:** Form preview - zoom button style ([5dd735d](https://github.com/lexo-ch/lexo-forms/commit/5dd735df57e47e51836a2ae8a1a585e9621f9e0f))
+* **admin:** hide form preview metabox when template has no preview ([cf87f97](https://github.com/lexo-ch/lexo-forms/commit/cf87f97f363638ff20ad6fe4e41417b04e5becfe))
+* **contact:** Fix placeholders ([29d6b0d](https://github.com/lexo-ch/lexo-forms/commit/29d6b0d1bf092261655cb8916a5bb5df4aaefea6))
+* **core:** Fix custom email label ([99f5fce](https://github.com/lexo-ch/lexo-forms/commit/99f5fce8eb1da0b031845501a19306f7e352ea2b))
+* **core:** Fix form preview logic ([1ce06cd](https://github.com/lexo-ch/lexo-forms/commit/1ce06cd8d21576331334094818f4bcb148c44985))
+* **core:** Fix template selection ([ce4f3d1](https://github.com/lexo-ch/lexo-forms/commit/ce4f3d138b5e63c9ecace3786bf55c31b487e34a))
+* **core:** Template hash - problem with export ([6a14bef](https://github.com/lexo-ch/lexo-forms/commit/6a14beff49594570abb0f611378d0df11cb004c6))
+* **core:** Translation update ([118b012](https://github.com/lexo-ch/lexo-forms/commit/118b0123c09073cf4b91909782e2869f7aa07b4e))
+* **translations:** Add new translations ([86c0996](https://github.com/lexo-ch/lexo-forms/commit/86c09963798813791a4313b660ac94a7096aef23))
+
+
+### Features
+
+* **admin:** add form preview column and metabox ([435beb8](https://github.com/lexo-ch/lexo-forms/commit/435beb8091e0def5a6c3898c6983844d56d4b1e9))
+* **admin:** add lightbox for form preview images ([434fc5a](https://github.com/lexo-ch/lexo-forms/commit/434fc5ab42bbee2813905119ca5555b86e48d6e3))
+* **contact:** add privacy policy link filter ([9f98225](https://github.com/lexo-ch/lexo-forms/commit/9f98225a606a8d15704c565315ccb3f9db5e7e1b))
+
 # [1.1.0](https://github.com/lexo-ch/lexo-forms/compare/v1.0.1...v1.1.0) (2025-12-11)
 
 

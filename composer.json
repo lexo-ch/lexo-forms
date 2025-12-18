@@ -1,7 +1,7 @@
 {
     "name": "lexo/lexo-forms",
     "description": "LEXO forms plugin with CleverReach integration.",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "homepage": "https://www.lexo.ch/",
     "license": "GPL-2.0-only",
     "authors": [
