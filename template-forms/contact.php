@@ -170,18 +170,40 @@ $grid_classes = apply_filters(
     $grid_columns
 );
 
+// Privacy policy link (filterable from theme)
+$privacy_url = apply_filters('lexo-forms/forms/contact/privacy_url', '');
+$privacy_text = apply_filters('lexo-forms/forms/contact/privacy_text', [
+    'de' => 'Datenschutz',
+    'en' => 'Privacy Policy',
+    'fr' => 'Politique de confidentialité',
+    'it' => 'Informativa sulla privacy'
+]);
+$privacy_message = apply_filters('lexo-forms/forms/contact/privacy_message', [
+    'de' => ' ist uns wichtig.',
+    'en' => ' is important to us.',
+    'fr' => ' est importante pour nous.',
+    'it' => ' è importante per noi.'
+]);
+
 // Form HTML
 ob_start();
 ?>
     <div class="contact-form-wrapper">
         <form class="contact-form" data-action="lexo-form" data-form-type="contact">
-            <input type="hidden" name="form_id" value="{{FORM_ID}}" class="send_field" readonly>
+            <input type="hidden" name="form_id" value="{{FORM_ID}}" readonly>
             <div class="<?php echo esc_attr($grid_classes); ?>">
                 <?php foreach ($fields as $field) { ?>
                     <?php FormHelpers::renderField($field); ?>
                 <?php } ?>
             </div>
             <div class="form-submit">
+                <?php if (!empty($privacy_url) && filter_var($privacy_url, FILTER_VALIDATE_URL)) { ?>
+                    <div class="privacy-notice">
+                        <a href="<?php echo esc_url($privacy_url); ?>" target="_blank" rel="noopener noreferrer">
+                            <?php echo esc_html(FormHelpers::getTranslatedText($privacy_text)); ?>
+                        </a><?php echo esc_html(FormHelpers::getTranslatedText($privacy_message)); ?>
+                    </div>
+                <?php } ?>
                 <button type="submit" class="btn btn-primary submitable">
                     <?php echo esc_html(FormHelpers::getTranslatedText($submit_button)); ?>
                 </button>

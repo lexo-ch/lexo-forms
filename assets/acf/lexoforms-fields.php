@@ -45,21 +45,21 @@ $fields[] = [
     'required' => 0,
     'layout' => 'block',
     'sub_fields' => [
-        // HTML Form Template (Select)
+        // HTML Form Template (Button Group with images)
         [
             'key' => FIELD_PREFIX . 'html_template',
             'label' => __('HTML Form Template', 'lexoforms'),
             'name' => FIELD_PREFIX . 'html_template',
-            'type' => 'select',
+            'type' => 'button_group',
             'instructions' => __('Select HTML form template.', 'lexoforms'),
             'required' => 1,
             'choices' => [], // Will be populated dynamically via acf/load_field hook
-            'default_value' => false,
-            'allow_null' => 0,
-            'multiple' => 0,
-            'ui' => 1,
-            'ajax' => 0,
+            'default_value' => '',
             'return_format' => 'value',
+            'layout' => 'horizontal',
+            'wrapper' => [
+                'class' => 'lexoforms-template-selector',
+            ],
         ],
         // Hidden field to track CR connection status
         [
@@ -262,6 +262,11 @@ $fields[] = [
                         'operator' => '==',
                         'value' => '1',
                     ],
+                    [
+                        'field' => 'field_has_visitor_email_variants',
+                        'operator' => '!=',
+                        'value' => '1',
+                    ],
                 ],
             ],
         ],
@@ -323,6 +328,11 @@ $fields[] = [
                         'operator' => '==',
                         'value' => '1',
                     ],
+                    [
+                        'field' => 'field_has_visitor_email_variants',
+                        'operator' => '!=',
+                        'value' => '1',
+                    ],
                 ],
             ],
         ],
@@ -343,6 +353,11 @@ $fields[] = [
                     [
                         'field' => 'field_enable_additional_email',
                         'operator' => '==',
+                        'value' => '1',
+                    ],
+                    [
+                        'field' => 'field_has_visitor_email_variants',
+                        'operator' => '!=',
                         'value' => '1',
                     ],
                 ],
@@ -390,19 +405,59 @@ $fields[] = [
                 ],
             ],
         ],
+        // Hidden field to track if template has visitor email variants
+        [
+            'key' => 'field_has_visitor_email_variants',
+            'label' => '',
+            'name' => FIELD_PREFIX . 'has_visitor_email_variants',
+            '_name' => FIELD_PREFIX . 'has_visitor_email_variants',
+            'type' => 'true_false',
+            'wrapper' => [
+                'class' => 'acf-hidden',
+                'style' => 'display:none !important;',
+            ],
+            'default_value' => 0,
+            'ui' => 1,
+        ],
+        // VISITOR EMAIL VARIANTS GROUP - Dynamic fields based on template
+        [
+            'key' => 'field_lexoform_visitor_email_variants_group',
+            'label' => __('Visitor Email Variants', 'lexoforms'),
+            'name' => FIELD_PREFIX . 'visitor_email_variants',
+            '_name' => FIELD_PREFIX . 'visitor_email_variants',
+            'type' => 'group',
+            'instructions' => __('Configure different email content for each option selected by the visitor.', 'lexoforms'),
+            'required' => 0,
+            'layout' => 'block',
+            'conditional_logic' => [
+                [
+                    [
+                        'field' => 'field_enable_additional_email',
+                        'operator' => '==',
+                        'value' => '1',
+                    ],
+                    [
+                        'field' => 'field_has_visitor_email_variants',
+                        'operator' => '==',
+                        'value' => '1',
+                    ],
+                ],
+            ],
+            'sub_fields' => [], // Will be populated dynamically via acf/load_field hook
+        ],
     ],
 ];
 
 /**
  * ============================================================================
- * SECTION 3: CleverReach Integration
+ * SECTION 4: CleverReach Integration
  * ============================================================================
  */
 
 // Tab: CR Integration
 $fields[] = [
     'key' => FIELD_PREFIX . 'tab_integration',
-    'label' => __('CR Integration', 'lexoforms'),
+    'label' => __('CleverReach Integration', 'lexoforms'),
     'name' => '',
     'type' => 'tab',
     'placement' => 'left',
@@ -476,14 +531,14 @@ $fields[] = [
         // CR Form Action (radio)
         [
             'key' => 'field_form_action',
-            'label' => __('CR Form', 'lexoforms'),
+            'label' => __('CleverReach Form', 'lexoforms'),
             'name' => FIELD_PREFIX . 'form_action',
             'type' => 'radio',
             'instructions' => __('Choose whether to use an existing CleverReach form or create a new one.', 'lexoforms'),
             'required' => 1,
             'choices' => [
-                'use_existing' => __('Use Existing CR Form', 'lexoforms'),
-                'create_new' => __('Create New CR Form', 'lexoforms'),
+                'use_existing' => __('Use Existing CleverReach Form', 'lexoforms'),
+                'create_new' => __('Create New CleverReach Form', 'lexoforms'),
             ],
             'default_value' => 'use_existing',
             'layout' => 'vertical',
@@ -535,14 +590,14 @@ $fields[] = [
         // CR Group Action (radio) - Conditional B
         [
             'key' => 'field_group_action',
-            'label' => __('CR Group', 'lexoforms'),
+            'label' => __('CleverReach Group', 'lexoforms'),
             'name' => FIELD_PREFIX . 'group_action',
             'type' => 'radio',
             'instructions' => __('Choose whether to use an existing CleverReach group or create a new one.', 'lexoforms'),
             'required' => 1,
             'choices' => [
-                'use_existing_group' => __('Use Existing CR Group', 'lexoforms'),
-                'create_new_group' => __('Create New CR Group', 'lexoforms'),
+                'use_existing_group' => __('Use Existing CleverReach Group', 'lexoforms'),
+                'create_new_group' => __('Create New CleverReach Group', 'lexoforms'),
             ],
             'default_value' => 'use_existing_group',
             'layout' => 'vertical',

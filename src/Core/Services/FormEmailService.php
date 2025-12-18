@@ -67,13 +67,16 @@ class FormEmailService extends EmailHandler
                 <?php foreach ($template['fields'] as $field_config) { ?>
                     <?php
                     $field_name = $field_config['name'];
-                    if (isset($form_data[$field_name]) && !empty($form_data[$field_name])) { ?>
+                    if (isset($form_data[$field_name]) && !empty($form_data[$field_name])) { 
+                        // Get display value - use label from options if available
+                        $display_value = $this->getDisplayValueForEmail($field_config, $form_data[$field_name]);
+                        ?>
                         <tr>
                             <td>
                                 <?php echo esc_html($this->getEmailLabel($field_config, $field_name)) ?>:
                             </td>
                             <td>
-                                <?php echo stripslashes($form_data[$field_name]) ?>
+                                <?php echo stripslashes($display_value) ?>
                             </td>
                         </tr>
                     <?php } ?>
@@ -92,6 +95,44 @@ class FormEmailService extends EmailHandler
         <?php
 
         return ob_get_clean();
+    }
+
+    /**
+     * Get display value for email - translates option keys to labels
+     *
+     * @param array $field_config Field configuration
+     * @param string $value Raw value from form data
+     * @return string Display value for email
+     */
+    private function getDisplayValueForEmail(array $field_config, string $value): string
+    {
+        // Check if field has options mapping
+        if (!empty($field_config['options']) && isset($field_config['options'][$value])) {
+            $option = $field_config['options'][$value];
+
+            // Priority 1: Use 'email_label' if available (explicit email display text)
+            if (!empty($option['email_label'])) {
+                return $option['email_label'];
+            }
+
+            // Priority 2: Use 'label' if available (general display text)
+            if (!empty($option['label'])) {
+                return $option['label'];
+            }
+
+            // Priority 3: Try to translate label_key via filter (theme can hook into this)
+            if (!empty($option['label_key'])) {
+                $language = FormMessages::getSiteLanguage();
+                $translated = apply_filters('lexo-forms/translate_label_key', '', $option['label_key'], $language);
+                if (!empty($translated)) {
+                    return $translated;
+                }
+            }
+
+            // Do NOT use cr_value for email - that's for CleverReach only
+        }
+
+        return $value;
     }
 
     /**

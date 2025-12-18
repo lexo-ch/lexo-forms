@@ -96,6 +96,7 @@ class FormHelpers
 		$placeholder_text = self::getTranslatedText($field['placeholder']);
 		$required_attr = !empty($field['required']) ? 'required' : '';
 		$required_star = !empty($field['required']) ? ' <span class="required">*</span>' : '';
+		$placeholder_text = !empty($field['required']) ? $placeholder_text . ' *' : $placeholder_text;
 
 		?>
 		<div class="form-field form-field-<?php echo esc_attr($field['name']); ?>">
@@ -106,13 +107,13 @@ class FormHelpers
 			switch ($field['html_type']) {
 				case 'textarea':
 					?>
-					<textarea name="<?php echo esc_attr($field['name']); ?>" id="<?php echo esc_attr($field_id); ?>" class="send_field" placeholder="<?php echo esc_attr($placeholder_text); ?>" <?php echo $required_attr; ?>></textarea>
+					<textarea name="<?php echo esc_attr($field['name']); ?>" id="<?php echo esc_attr($field_id); ?>" placeholder="<?php echo esc_attr($placeholder_text); ?>" <?php echo $required_attr; ?>></textarea>
 					<?php
 					break;
 
 				case 'select':
 					?>
-					<select name="<?php echo esc_attr($field['name']); ?>" id="<?php echo esc_attr($field_id); ?>" class="send_field" <?php echo $required_attr; ?>>
+					<select name="<?php echo esc_attr($field['name']); ?>" id="<?php echo esc_attr($field_id); ?>" <?php echo $required_attr; ?>>
 						<?php if (isset($field['options']) && is_array($field['options'])) { ?>
 							<?php foreach ($field['options'] as $option_value => $option_label) { ?>
 								<option value="<?php echo esc_attr($option_value); ?>">
@@ -128,7 +129,7 @@ class FormHelpers
 				default:
 					$input_type = isset($field['input_type']) ? $field['input_type'] : 'text';
 					?>
-					<input type="<?php echo esc_attr($input_type); ?>" name="<?php echo esc_attr($field['name']); ?>" id="<?php echo esc_attr($field_id); ?>" class="send_field" placeholder="<?php echo esc_attr($placeholder_text); ?>" <?php echo $required_attr; ?>>
+					<input type="<?php echo esc_attr($input_type); ?>" name="<?php echo esc_attr($field['name']); ?>" id="<?php echo esc_attr($field_id); ?>" placeholder="<?php echo esc_attr($placeholder_text); ?>" <?php echo $required_attr; ?>>
 					<?php
 					break;
 			}

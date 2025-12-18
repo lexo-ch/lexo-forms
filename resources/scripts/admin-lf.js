@@ -116,7 +116,42 @@
     if (typeof lexoformIntegration !== 'undefined') {
         const LexoFormIntegration = {
             init: function() {
-                // Field visibility is handled by ACF conditional logic.
+                this.bindTemplateChange();
+                // Trigger on init to set initial state
+                this.updateVisitorEmailVariantsField();
+            },
+
+            bindTemplateChange: function() {
+                const self = this;
+                // Listen for template selection change (button_group field)
+                $(document).on('change', '[data-name="lexoform_html_template"] input[type="radio"]', function() {
+                    self.updateVisitorEmailVariantsField();
+                });
+            },
+
+            updateVisitorEmailVariantsField: function() {
+                // Get selected template - ACF nested fields use just the field name, not full path
+                const selectedTemplate = $('[data-name="lexoform_html_template"] input[type="radio"]:checked').val();
+                
+                if (!selectedTemplate || !lexoformIntegration.templates_with_variants) {
+                    return;
+                }
+
+                // Check if this template has visitor_email_variants
+                const hasVariants = lexoformIntegration.templates_with_variants[selectedTemplate] || false;
+                
+                // Get current state of the switch
+                const $switch = $('[data-name="lexoform_has_visitor_email_variants"] .acf-switch');
+                const isCurrentlyOn = $switch.hasClass('-on');
+                
+                // Only click if state needs to change
+                if (hasVariants && !isCurrentlyOn) {
+                    // Need to turn ON
+                    $switch.click();
+                } else if (!hasVariants && isCurrentlyOn) {
+                    // Need to turn OFF
+                    $switch.click();
+                }
             },
 
             checkDuplicates: function() {
@@ -455,6 +490,71 @@
                 $code.text(originalText).removeClass('copied');
             }, 1500);
         });
+    });
+
+    // ============================================================
+    // MODULE 6: Form Preview Lightbox
+    // ============================================================
+    const LexoFormsLightbox = {
+        $overlay: null,
+
+        init: function() {
+            this.$overlay = $('#lexoforms-lightbox-overlay');
+
+            if (!this.$overlay.length) {
+                return;
+            }
+
+            this.bindEvents();
+        },
+
+        bindEvents: function() {
+            const self = this;
+
+            // Open lightbox on preview click (for list table and template selector)
+            // Exclude --no-zoom modifier (plugin templates)
+            $(document).on('click', '.lexoforms-preview-wrap:not(.lexoforms-preview-wrap--no-zoom), .lexoforms-template-zoom', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                // Find image in parent container (template choice, preview wrap, or ACF label)
+                const $container = $(this).closest('.lexoforms-template-choice, .lexoforms-preview-wrap, label');
+                const $img = $container.find('img').first();
+                const src = $img.attr('src');
+                const alt = $img.attr('alt');
+                if (src) {
+                    self.open(src, alt);
+                }
+            });
+
+            // Close on overlay click
+            this.$overlay.on('click', function(e) {
+                if (e.target === this || $(e.target).hasClass('lexoforms-lightbox-close')) {
+                    self.close();
+                }
+            });
+
+            // Close on Escape
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && self.$overlay.hasClass('active')) {
+                    self.close();
+                }
+            });
+        },
+
+        open: function(src, alt) {
+            this.$overlay.find('.lexoforms-lightbox-image').attr('src', src).attr('alt', alt || '');
+            this.$overlay.addClass('active');
+            $('body').addClass('lexoforms-lightbox-open');
+        },
+
+        close: function() {
+            this.$overlay.removeClass('active');
+            $('body').removeClass('lexoforms-lightbox-open');
+        }
+    };
+
+    $(function() {
+        LexoFormsLightbox.init();
     });
 
 })(window, jQuery, window.tinymce || null);
