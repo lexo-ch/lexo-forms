@@ -1049,6 +1049,26 @@ class FormsPostType extends Singleton
             </div>
         </div>
 
+        <div class="lexoforms-modal-overlay" id="lexoforms-template-change-modal">
+            <div class="lexoforms-modal">
+                <h2 class="template-change-title"><?php esc_html_e('Template Change Warning', 'lexoforms'); ?></h2>
+                <p class="warning-text">
+                    <?php esc_html_e('Changing the template will add the following new CleverReach fields:', 'lexoforms'); ?>
+                </p>
+                <div class="usage-list template-change-list">
+                    <ul id="lexoforms-new-fields-list"></ul>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="button button-secondary" id="lexoforms-template-cancel">
+                        <?php esc_html_e('Cancel', 'lexoforms'); ?>
+                    </button>
+                    <button type="button" class="button button-primary" id="lexoforms-template-confirm">
+                        <?php esc_html_e('Save Form', 'lexoforms'); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="lexoforms-lightbox-overlay" class="lexoforms-lightbox-overlay">
             <div class="lexoforms-lightbox-content">
                 <button type="button" class="lexoforms-lightbox-close">&#10005;</button>

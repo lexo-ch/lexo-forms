@@ -64,6 +64,9 @@ class CleverReachIntegration extends Singleton
 
         // AJAX endpoint for loading visitor email variant fields
         add_action('wp_ajax_lexoforms_load_variant_fields', [$this, 'ajaxLoadVariantFields']);
+
+        // AJAX endpoint for getting template CR fields (for template change warning)
+        add_action('wp_ajax_lexoforms_get_template_cr_fields', [$this, 'ajaxGetTemplateCRFields']);
     }
 
     /**
@@ -766,6 +769,30 @@ class CleverReachIntegration extends Singleton
             $templates_with_variants[$template_id] = !empty($template['visitor_email_variants']['variants']);
         }
 
+        // Get saved data and calculate new fields per template (backend logic)
+        $saved_template_id = '';
+        $templates_new_cr_fields = [];
+
+        if ($post->ID && get_post_status($post->ID) !== 'auto-draft') {
+            $general_settings = get_field(FIELD_PREFIX . 'general_settings', $post->ID) ?: [];
+            $saved_template_id = $general_settings[FIELD_PREFIX . 'html_template'] ?? '';
+
+            // Get existing CR group fields (if connected)
+            $cr_settings = get_field(FIELD_PREFIX . 'cr_integration', $post->ID) ?: [];
+            $group_id = $cr_settings[FIELD_PREFIX . 'group_id'] ?? '';
+
+            if ($group_id) {
+                $existing_cr_fields = $this->getExistingCRGroupFieldNames((int) $group_id);
+
+                // Calculate new fields for each template (fields not in CR group)
+                foreach ($templates as $template_id => $template) {
+                    $template_fields = $this->getTemplateCRFieldNames($template_id);
+                    $new_fields = array_values(array_diff($template_fields, $existing_cr_fields));
+                    $templates_new_cr_fields[$template_id] = $new_fields;
+                }
+            }
+        }
+
         wp_localize_script(
             DOMAIN . '/admin-lf.js',
             'lexoformIntegration',
@@ -776,14 +803,98 @@ class CleverReachIntegration extends Singleton
                 'forms_by_name' => $forms_by_name,
                 'groups_by_name' => $groups_by_name,
                 'templates_with_variants' => $templates_with_variants,
+                'saved_template_id' => $saved_template_id,
+                'templates_new_cr_fields' => $templates_new_cr_fields,
                 'i18n' => [
                     'duplicate_form_warning' => __('A form with this name already exists. Do you want to use the existing form instead?', 'lexoforms'),
                     'duplicate_group_warning' => __('A group with this name already exists. Do you want to use the existing group instead?', 'lexoforms'),
                     'yes' => __('Yes, use existing', 'lexoforms'),
-                    'no' => __('No, create new', 'lexoforms')
+                    'no' => __('No, create new', 'lexoforms'),
                 ]
             ]
         );
+    }
+
+    /**
+     * Get CR field names for a template (fields with send_to_cr = true)
+     *
+     * @param string $template_id Template ID
+     * @return array Array of field names
+     */
+    private function getTemplateCRFieldNames(string $template_id): array
+    {
+        $templateLoader = TemplateLoader::getInstance();
+        $template = $templateLoader->getTemplateById($template_id);
+
+        if (!$template || empty($template['fields'])) {
+            return [];
+        }
+
+        $cr_fields = [];
+        foreach ($template['fields'] as $field) {
+            if (!empty($field['send_to_cr']) && $field['send_to_cr'] === true) {
+                $cr_fields[] = $field['name'];
+            }
+        }
+
+        return $cr_fields;
+    }
+
+    /**
+     * Get existing field names from CR group
+     *
+     * @param int $group_id CleverReach group ID
+     * @return array Array of field names that exist in the group
+     */
+    private function getExistingCRGroupFieldNames(int $group_id): array
+    {
+        $groupsService = GroupsService::getInstance();
+        $field_names = [];
+
+        // Get group-specific attributes
+        $group_attributes = $groupsService->getGroupAttributes($group_id);
+        if (is_array($group_attributes)) {
+            foreach ($group_attributes as $attr) {
+                if (isset($attr['name'])) {
+                    $field_names[] = $attr['name'];
+                }
+            }
+        }
+
+        // Get global attributes (these are shared across all groups)
+        $global_attributes = $groupsService->getGlobalAttributes();
+        if (is_array($global_attributes)) {
+            foreach ($global_attributes as $attr) {
+                if (isset($attr['name'])) {
+                    $field_names[] = $attr['name'];
+                }
+            }
+        }
+
+        // Also add reserved/default CR fields that always exist
+        // Also add reserved/default CR fields that always exist
+        $reserved_fields = ['email', 'activated', 'registered', 'deactivated', 'bounced', 'source'];
+        $field_names = array_merge($field_names, $reserved_fields);
+
+        return array_unique($field_names);
+    }
+
+    /**
+     * AJAX handler for getting template CR fields
+     */
+    public function ajaxGetTemplateCRFields(): void
+    {
+        check_ajax_referer('lexoforms_admin', 'nonce');
+
+        $template_id = sanitize_text_field($_POST['template_id'] ?? '');
+
+        if (empty($template_id)) {
+            wp_send_json_error(['message' => __('Template ID is required', 'lexoforms')]);
+        }
+
+        $cr_fields = $this->getTemplateCRFieldNames($template_id);
+
+        wp_send_json_success(['fields' => $cr_fields]);
     }
 
 }
