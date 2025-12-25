@@ -1,3 +1,11 @@
+## [1.2.1](https://github.com/lexo-ch/lexo-forms/compare/v1.2.0...v1.2.1) (2025-12-25)
+
+
+### Bug Fixes
+
+* **admin:** add template change warning modal for new CR fields ([e353f73](https://github.com/lexo-ch/lexo-forms/commit/e353f73c154225c5028a48e37c69b1c056227b50))
+* **translations:** Add new translations ([fa7b078](https://github.com/lexo-ch/lexo-forms/commit/fa7b078cda193d87d915974bbf35c3da9ec73491))
+
 # [1.2.0](https://github.com/lexo-ch/lexo-forms/compare/v1.1.0...v1.2.0) (2025-12-18)
 
 
