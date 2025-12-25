@@ -121,6 +121,46 @@
     }
 }
 
+// Template Change Warning Modal - specific styles
+#lexoforms-template-change-modal {
+    .template-change-title {
+        color: #dba617;
+    }
+
+    .template-change-list {
+        padding: 12px 16px;
+
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        li {
+            padding: 6px 0;
+            margin: 0;
+            color: #1d2327;
+            font-weight: 500;
+            border-bottom: 1px solid #e0e0e0;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:hover {
+                background: transparent;
+            }
+
+            &::before {
+                content: "•";
+                color: #dba617;
+                font-weight: bold;
+                margin-right: 8px;
+            }
+        }
+    }
+}
+
 // ==========================================================================
 // Form Actions Metabox
 // ==========================================================================

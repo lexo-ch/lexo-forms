@@ -115,17 +115,108 @@
     // ============================================================
     if (typeof lexoformIntegration !== 'undefined') {
         const LexoFormIntegration = {
+            savedTemplateId: lexoformIntegration.saved_template_id || '',
+
             init: function() {
                 this.bindTemplateChange();
-                // Trigger on init to set initial state
+                this.bindSaveInterception();
                 this.updateVisitorEmailVariantsField();
             },
 
             bindTemplateChange: function() {
                 const self = this;
-                // Listen for template selection change (button_group field)
-                $(document).on('change', '[data-name="lexoform_html_template"] input[type="radio"]', function() {
+                $(document).on('change.lexoformTemplate', '[data-name="lexoform_html_template"] input[type="radio"]', function() {
                     self.updateVisitorEmailVariantsField();
+                });
+            },
+
+            bindSaveInterception: function() {
+                const self = this;
+
+                // Intercept Save Form button
+                $('#lexoforms-save-btn').off('click.templateCheck').on('click.templateCheck', function(e) {
+                    if (self.shouldShowWarning()) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        self.showWarningModal();
+                        return false;
+                    }
+                    $('#publish').click();
+                });
+
+                // Intercept native Publish/Update button
+                $('#publish').off('click.templateCheck').on('click.templateCheck', function(e) {
+                    if (self.shouldShowWarning()) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        self.showWarningModal();
+                        return false;
+                    }
+                });
+            },
+
+            shouldShowWarning: function() {
+                // Skip warning if user already confirmed via modal
+                if (this.bypassWarning) {
+                    return false;
+                }
+                return this.getAddedCRFields().length > 0;
+            },
+
+            isCRIntegrationEnabled: function() {
+                const handlerType = $('[data-name="lexoform_handler_type"] input[type="radio"]:checked').val();
+                return handlerType === 'cr_only' || handlerType === 'email_and_cr';
+            },
+
+            getAddedCRFields: function() {
+                if (!this.savedTemplateId) return [];
+
+                const currentTemplateId = $('[data-name="lexoform_html_template"] input[type="radio"]:checked').val();
+                if (currentTemplateId === this.savedTemplateId) return [];
+                if (!this.isCRIntegrationEnabled()) return [];
+
+                return lexoformIntegration.templates_new_cr_fields?.[currentTemplateId] || [];
+            },
+
+            showWarningModal: function() {
+                const self = this;
+                const $modal = $('#lexoforms-template-change-modal');
+                const $list = $modal.find('#lexoforms-new-fields-list');
+
+                // Populate fields list
+                $list.empty();
+                this.getAddedCRFields().forEach(function(field) {
+                    $list.append($('<li>').text(field));
+                });
+
+                $modal.addClass('active');
+
+                // Bind modal events (one-time)
+                $modal.off('click.templateModal')
+                    .on('click.templateModal', '#lexoforms-template-cancel', function() {
+                        $modal.removeClass('active');
+                    })
+                    .on('click.templateModal', '#lexoforms-template-confirm', function() {
+                        $modal.removeClass('active');
+                        // Update savedTemplateId to current template so modal won't show again
+                        // after page reloads (CR fields will be added during save)
+                        const currentTemplateId = $('[data-name="lexoform_html_template"] input[type="radio"]:checked').val();
+                        self.savedTemplateId = currentTemplateId;
+                        // Also clear the new fields for this template since they'll be added
+                        if (lexoformIntegration.templates_new_cr_fields) {
+                            lexoformIntegration.templates_new_cr_fields[currentTemplateId] = [];
+                        }
+                        self.bypassWarning = true;
+                        $('#publish').click();
+                    })
+                    .on('click.templateModal', function(e) {
+                        if (e.target === $modal[0]) $modal.removeClass('active');
+                    });
+
+                $(document).off('keydown.templateModal').on('keydown.templateModal', function(e) {
+                    if (e.key === 'Escape' && $modal.hasClass('active')) {
+                        $modal.removeClass('active');
+                    }
                 });
             },
 
@@ -405,6 +496,11 @@
         },
 
         initSaveButton: function() {
+            // Only bind if LexoFormIntegration is NOT active (it handles save button with template check)
+            if (typeof lexoformIntegration !== 'undefined') {
+                return;
+            }
+
             const $saveBtn = $('#lexoforms-save-btn');
             if ($saveBtn.length) {
                 $saveBtn.on('click', function(e) {
