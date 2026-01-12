@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LEXO Forms\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-18 14:55+0000\n"
+"POT-Creation-Date: 2026-01-12 10:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -354,6 +354,7 @@ msgid "Description"
 msgstr ""
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:247
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:690
 msgid "Disabled"
 msgstr ""
 
@@ -428,7 +429,14 @@ msgstr ""
 msgid "Email subject for %s variant."
 msgstr ""
 
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:684
+msgid ""
+"Enable to send double opt-in confirmation email to new subscribers. Disable "
+"to skip the confirmation process."
+msgstr ""
+
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:246
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:689
 msgid "Enabled"
 msgstr ""
 
@@ -527,7 +535,7 @@ msgstr ""
 msgid "Form Actions"
 msgstr ""
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:719
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:733
 msgid "Form Configuration"
 msgstr ""
 
@@ -847,6 +855,10 @@ msgstr ""
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:241
 msgid "Send an email to the person who submitted the form."
+msgstr ""
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:681
+msgid "Send Double opt link"
 msgstr ""
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:238
