@@ -1,3 +1,16 @@
+# [1.3.0](https://github.com/lexo-ch/lexo-forms/compare/v1.2.1...v1.3.0) (2026-01-12)
+
+
+### Bug Fixes
+
+* **captcha:** prevent duplicate error logging ([932a037](https://github.com/lexo-ch/lexo-forms/commit/932a037b4f7cb33e2c30bcf13a7ab97d774afde1))
+* **translations:** Add new translations ([a9b7843](https://github.com/lexo-ch/lexo-forms/commit/a9b784320610435c007fcbdbe5840a77b828be3b))
+
+
+### Features
+
+* **cleverreach:** add toggle to skip double opt-in email ([c54af08](https://github.com/lexo-ch/lexo-forms/commit/c54af0835e15033b95aaa8b38fe5fbc4d36cf73a))
+
 ## [1.2.1](https://github.com/lexo-ch/lexo-forms/compare/v1.2.0...v1.2.1) (2025-12-25)
 
 
