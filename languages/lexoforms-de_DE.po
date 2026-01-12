@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: LEXO Forms\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-31 22:45+0000\n"
-"PO-Revision-Date: 2025-12-18 14:57+0000\n"
+"PO-Revision-Date: 2026-01-12 10:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -386,6 +386,7 @@ msgid "Description"
 msgstr "Beschreibung"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:247
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:690
 msgid "Disabled"
 msgstr "Deaktiviert"
 
@@ -464,7 +465,16 @@ msgstr "E-Mail-Betreff"
 msgid "Email subject for %s variant."
 msgstr "E-Mail-Betreff für die %s-Variante."
 
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:684
+msgid ""
+"Enable to send double opt-in confirmation email to new subscribers. Disable "
+"to skip the confirmation process."
+msgstr ""
+"Aktivieren, um neuen Abonnenten eine Double-Opt-in-Bestätigungs-E-Mail zu "
+"senden. Deaktivieren, um den Bestätigungsprozess zu überspringen."
+
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:246
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:689
 msgid "Enabled"
 msgstr "Aktiviert"
 
@@ -563,7 +573,7 @@ msgstr "Formular"
 msgid "Form Actions"
 msgstr "Formularaktionen"
 
-#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:719
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:733
 msgid "Form Configuration"
 msgstr "Formularkonfiguration"
 
@@ -913,6 +923,10 @@ msgstr ""
 msgid "Send an email to the person who submitted the form."
 msgstr ""
 "Senden Sie eine E-Mail an die Person, die das Formular übermittelt hat."
+
+#: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:681
+msgid "Send Double opt link"
+msgstr "Double-Opt-in-Link versenden"
 
 #: ../../../../../../../Documents/GitHub/lexo-forms/assets/acf/lexoforms-fields.php:238
 msgid "Send Email to Visitor"

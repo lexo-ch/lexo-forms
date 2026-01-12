@@ -56,9 +56,14 @@ class FormSubmissionHandler extends Singleton
     public function handleSubmission(): void
     {
         try {
-
             // Validate captcha using existing LEXO system
-            $this->validateCaptcha();
+            try {
+                $this->validateCaptcha();
+            } catch (Exception $captcha_exception) {
+                // Captcha errors are already logged in lexo captcha system, just show error to user
+                wp_send_json_error($captcha_exception->getMessage());
+                return;
+            }
 
             // Get form ID
             $form_id = $this->getFormId();

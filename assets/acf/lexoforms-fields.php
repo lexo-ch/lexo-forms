@@ -675,6 +675,20 @@ $fields[] = [
             'new_lines' => '',
             'esc_html' => 0,
         ],
+        // Send Double Opt-in Link
+        [
+            'key' => 'field_send_double_opt_link',
+            'label' => __('Send Double opt link', 'lexoforms'),
+            'name' => FIELD_PREFIX . 'send_double_opt_link',
+            'type' => 'true_false',
+            'instructions' => __('Enable to send double opt-in confirmation email to new subscribers. Disable to skip the confirmation process.', 'lexoforms'),
+            'required' => 0,
+            'message' => '',
+            'default_value' => 1,
+            'ui' => 1,
+            'ui_on_text' => __('Enabled', 'lexoforms'),
+            'ui_off_text' => __('Disabled', 'lexoforms'),
+        ],
         // CR Status (hidden - for data storage)
         [
             'key' => 'field_cr_status',

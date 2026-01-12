@@ -85,6 +85,8 @@ class CleverReachSubmissionService extends Singleton
             $cr_integration = get_field(FIELD_PREFIX . 'cr_integration', $form_id) ?: [];
             $cr_form_id = $cr_integration[FIELD_PREFIX . 'form_id'] ?? null;
             $cr_status = $cr_integration[FIELD_PREFIX . 'cr_status'] ?? null;
+            // Get send_double_opt_link setting (default to true for backward compatibility)
+            $send_double_opt_link_enabled = $cr_integration[FIELD_PREFIX . 'send_double_opt_link'] ?? true;
 
             // Check if CleverReach integration is enabled
             if ($handler_type !== 'email_and_cr' && $handler_type !== 'cr_only') {
@@ -150,17 +152,18 @@ class CleverReachSubmissionService extends Singleton
                     return ['success' => false, 'already_exists' => true, 'error' => 'Recipient already activated'];
 
                 case 'inactive':
-                    $result = $this->updateExistingRecipient($group_id, $email, $recipient_data);
+                    $result = $this->updateExistingRecipient($group_id, $email, $recipient_data, $send_double_opt_link_enabled);
                     break;
 
                 case 'not_found':
                 default:
-                    $result = $this->addRecipientToGroup($group_id, $recipient_data);
+                    $result = $this->addRecipientToGroup($group_id, $recipient_data, $send_double_opt_link_enabled);
                     break;
             }
 
             if ($result) {
-                if ($send_double_opt_in) {
+                // Send double opt-in email only if enabled
+                if ($send_double_opt_in && $send_double_opt_link_enabled) {
                     $double_opt_in_result = $this->api->sendDoubleOptInEmail($group_id, $email, $cr_form_id);
 
                     if (
@@ -303,9 +306,10 @@ class CleverReachSubmissionService extends Singleton
      *
      * @param int $group_id CleverReach group ID
      * @param array $recipient_data Recipient data
+     * @param bool $send_double_opt_link Whether double opt-in is enabled
      * @return bool Success status
      */
-    private function addRecipientToGroup(int $group_id, array $recipient_data): bool
+    private function addRecipientToGroup(int $group_id, array $recipient_data, bool $send_double_opt_link): bool
     {
         try {
             // Create recipient data with global_attributes separated
@@ -315,6 +319,11 @@ class CleverReachSubmissionService extends Singleton
                 'global_attributes' => $recipient_data['global_attributes'], // Global attributes separately
                 'registered' => $recipient_data['registered']
             ];
+
+            // If double opt-in is disabled, activate immediately
+            if (!$send_double_opt_link) {
+                $addData['activated'] = time();
+            }
 
             $result = $this->api->addRecipient($group_id, $addData);
 
@@ -336,9 +345,10 @@ class CleverReachSubmissionService extends Singleton
      * @param int $group_id CleverReach group ID
      * @param string $email Recipient email
      * @param array $recipient_data Recipient data
+     * @param bool $send_double_opt_link Whether double opt-in is enabled
      * @return bool Success status
      */
-    private function updateExistingRecipient(int $group_id, string $email, array $recipient_data): bool
+    private function updateExistingRecipient(int $group_id, string $email, array $recipient_data, bool $send_double_opt_link): bool
     {
         try {
             // Update with separated attributes structure
@@ -347,6 +357,11 @@ class CleverReachSubmissionService extends Singleton
                 'attributes' => $recipient_data['group_attributes'],
                 'global_attributes' => $recipient_data['global_attributes']
             ];
+
+            // If double opt-in is disabled, activate immediately
+            if (!$send_double_opt_link) {
+                $updateData['activated'] = time();
+            }
 
             $result = $this->api->updateRecipient($group_id, $email, $updateData);
 
