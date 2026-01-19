@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/lexo-ch/lexo-forms/compare/v1.3.0...v1.3.1) (2026-01-19)
+
+
+### Bug Fixes
+
+* **core:** Fix Return-Path to be like mail_from and update email from flow for confirmation mail ([9890e36](https://github.com/lexo-ch/lexo-forms/commit/9890e36c183f7ce16744a0273055a2366079fc68))
+
 # [1.3.0](https://github.com/lexo-ch/lexo-forms/compare/v1.2.1...v1.3.0) (2026-01-12)
 
 
