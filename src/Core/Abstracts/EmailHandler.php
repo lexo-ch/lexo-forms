@@ -184,12 +184,17 @@ abstract class EmailHandler
     protected function configurePHPMailer($phpmailer, array $config): void
     {
         try {
+            $from_email = !empty($config['from_email']) ? $config['from_email'] : EMAIL_FROM_EMAIL;
+            $from_name = !empty($config['from_name']) ? $config['from_name'] : EMAIL_FROM_NAME;
+
             // Set From address
-            if (!empty($config['from_email'])) {
-                $phpmailer->setFrom($config['from_email'], $config['from_name'] ?: EMAIL_FROM_NAME);
+            if (!empty($from_email)) {
+                $phpmailer->setFrom($from_email, $from_name);
+                // Ensure Return-Path/envelope sender follows the From address.
+                $phpmailer->Sender = $from_email;
             } else {
                 // If no from_email configured, at least set FromName (WordPress will use default email)
-                $phpmailer->FromName = !empty($config['from_name']) ? $config['from_name'] : EMAIL_FROM_NAME;
+                $phpmailer->FromName = $from_name;
             }
 
             // Set Reply-To address
