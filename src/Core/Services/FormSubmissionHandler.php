@@ -405,8 +405,8 @@ class FormSubmissionHandler extends Singleton
                 $attachment = $email_settings[FIELD_PREFIX . 'additional_email_document'] ?? null;
             }
 
-            $sender_email = $this->getEmailSender($form_id, $email_settings);
-            $sender_name = $this->getEmailSenderName($form_id, $email_settings);
+            $sender_email = $this->getEmailSender($form_id, $email_settings, $form_data);
+            $sender_name = $this->getEmailSenderName($form_id, $email_settings, $form_data);
 
             // Replace placeholders in subject and body
             $subject = $this->replacePlaceholders($subject, $form_data);
@@ -562,9 +562,10 @@ class FormSubmissionHandler extends Singleton
      *
      * @param int $form_id
      * @param array $email_settings Email settings group
+     * @param array $form_data Submitted form data
      * @return string
      */
-    private function getEmailSender(int $form_id, array $email_settings): string
+    private function getEmailSender(int $form_id, array $email_settings, array $form_data): string
     {
         // Priority 1: Confirmation email sender
         $sender_email = $email_settings[FIELD_PREFIX . 'additional_sender_email'] ?? '';
@@ -578,7 +579,21 @@ class FormSubmissionHandler extends Singleton
             return $sender_email;
         }
 
-        // Priority 3: Filter fallback
+        // Priority 3: Use global email config filter as fallback
+        $default_config = [
+            'recipients' => [],
+            'subject' => 'New Form Submission',
+            'from_email' => '',
+            'from_name' => '',
+            'reply_to_email' => '',
+            'reply_to_name' => ''
+        ];
+        $config = apply_filters('lexo-forms/cr/email/config', $default_config, $form_id, $form_data);
+        if (!empty($config['from_email'])) {
+            return $config['from_email'];
+        }
+
+        // Priority 4: Filter fallback
         return apply_filters('lexo-forms/cr/email/confirmation/sender', '', $form_id);
     }
 
@@ -590,9 +605,10 @@ class FormSubmissionHandler extends Singleton
      *
      * @param int $form_id
      * @param array $email_settings Email settings group
+     * @param array $form_data Submitted form data
      * @return string
      */
-    private function getEmailSenderName(int $form_id, array $email_settings): string
+    private function getEmailSenderName(int $form_id, array $email_settings, array $form_data): string
     {
         // Priority 1: Confirmation email sender name
         $sender_name = $email_settings[FIELD_PREFIX . 'additional_sender_name'] ?? '';
@@ -606,7 +622,21 @@ class FormSubmissionHandler extends Singleton
             return $sender_name;
         }
 
-        // Priority 3: Filter fallback
+        // Priority 3: Use global email config filter as fallback
+        $default_config = [
+            'recipients' => [],
+            'subject' => 'New Form Submission',
+            'from_email' => '',
+            'from_name' => '',
+            'reply_to_email' => '',
+            'reply_to_name' => ''
+        ];
+        $config = apply_filters('lexo-forms/cr/email/config', $default_config, $form_id, $form_data);
+        if (!empty($config['from_name'])) {
+            return $config['from_name'];
+        }
+
+        // Priority 4: Filter fallback
         return apply_filters('lexo-forms/cr/email/confirmation/sender-name', EMAIL_FROM_NAME, $form_id);
     }
 
